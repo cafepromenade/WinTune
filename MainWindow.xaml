@@ -69,6 +69,7 @@
                         <NavigationViewItem Content="Services · 服務" Tag="module.services"><NavigationViewItem.Icon><FontIcon Glyph="&#xE9F5;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Scheduled Tasks · 排程工作" Tag="module.tasks"><NavigationViewItem.Icon><FontIcon Glyph="&#xE823;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Devices · 裝置" Tag="module.devices"><NavigationViewItem.Icon><FontIcon Glyph="&#xE975;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="ViVeTool · 功能旗標" Tag="module.vivetool"><NavigationViewItem.Icon><FontIcon Glyph="&#xE9D5;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Registry Editor · 登錄編輯器" Tag="module.regedit"><NavigationViewItem.Icon><FontIcon Glyph="&#xE74C;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Startup Apps · 開機程式" Tag="module.startup"><NavigationViewItem.Icon><FontIcon Glyph="&#xE7B5;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Event Viewer · 事件檢視器" Tag="module.events"><NavigationViewItem.Icon><FontIcon Glyph="&#xE7C3;" /></NavigationViewItem.Icon></NavigationViewItem>
