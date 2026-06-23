@@ -604,8 +604,7 @@ _Source: howtogeek / windowsforum — Windows has no built-in key remap; people 
 - [x] **In-app Keyboard Remapper (SharpKeys-style)** · App 內鍵盤重新對應 — DONE this iteration: remap or disable keys by building the HKLM Scancode Map binary; shows current maps, add/remove, apply (admin, reboot), clear all. No external tool.
 - [ ] **Mouse button settings** · 滑鼠按鍵設定
   - _HKCU\Control Panel\Mouse SwapMouseButtons + double-click speed/wheel lines (already partly in Win11Pro); add a dedicated in-app panel with live SystemParametersInfo apply._
-- [ ] **Text expander / snippets** · 文字展開（縮寫片語）
-  - _In-app snippet store + a low-level keyboard hook (SetWindowsHookEx WH_KEYBOARD_LL) to expand typed triggers. Pure C#/Win32, no external tool._
+- [x] **Hotkey & Macro Runner + Text expander / snippets** · 熱鍵與巨集 + 文字展開（縮寫片語） — DONE: in-app module that registers global chords via user32 RegisterHotKey (WM_HOTKEY pumped on a background message thread); each binding launches an app, runs a PowerShell snippet, or replays text via SendInput. Includes an in-app snippet store + a WH_KEYBOARD_LL low-level keyboard hook that expands typed triggers. Bindings + snippets persist as JSON via SettingsStore; the hotkey pump starts at launch and keeps firing in the tray. Pure C#/Win32, no external tool, no redirect.
 
 ## 🌱 Newly discovered — iteration 18 · 第 18 次迭代新發掘
 
