@@ -188,6 +188,11 @@ public sealed partial class MainWindow : Window
             case "android":
                 Navigator.GoToModule?.Invoke("module.adb");
                 break;
+            case "vpn":
+            case "nordvpn":
+            case "tailscale":
+                Navigator.GoToModule?.Invoke("module.vpn");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -295,6 +300,7 @@ public sealed partial class MainWindow : Window
         "module.clipboard" => typeof(ClipboardModule),
         "module.packages" => typeof(PackageManagerModule),
         "module.adb" => typeof(AndroidAdbModule),
+        "module.vpn" => typeof(VpnMeshModule),
         _ => typeof(DashboardPage),
     };
 
@@ -433,6 +439,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.adb":
                 NavFrame.Navigate(typeof(AndroidAdbModule));
+                break;
+            case "module.vpn":
+                NavFrame.Navigate(typeof(VpnMeshModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

@@ -822,6 +822,10 @@ launching the other app.
 - [ ] **Tailscale GUI (wraps the CLI)** · Tailscale 介面 — wrap `tailscale` CLI: up/down, status, device list (`tailscale status --json`), IP, exit-node pick, `tailscale ping`. Native UI.
 - [ ] **SSMS installer** · SSMS 安裝器 — install SQL Server Management Studio via winget (`Microsoft.SQLServerManagementStudio`) with progress; part of the dev/deps panel.
 
+### VPN & Mesh — done + follow-ups (iter 32)
+- [x] **NordVPN + Tailscale GUIs** · NordVPN + Tailscale 介面 — DONE: VPN & Mesh module wraps NordVPN.exe CLI (connect/quick/by-country/by-group, disconnect) + tailscale CLI (up/down/status/ip/ping + parsed device list from status --json). `module.vpn`/`--page vpn`/`nordvpn`/`tailscale`. Detect-missing → Package Manager hint.
+  - [ ] follow-ups: Tailscale **exit-node** picker (`tailscale set --exit-node`), Tailscale Funnel/Serve, NordVPN **Meshnet**, generic **Windows VPN manager** (Get/Add-VpnConnection + rasdial for any IKEv2/L2TP/OpenVPN profile), **WireGuard** config import.
+
 ### Program-wide goals
 - [ ] **1000-feature goal** · 1000 功能目標 — keep the loop discovering REAL features (no padding). Current: ~30 modules + 1140 catalog tweaks/ops + 17 recipes. Track the real total in About.
 - [ ] **Docs + wiki + CLI reference** · 文件 + wiki + CLI 參考 — generate docs/CLI.md (every `--page <id>`, `--category`, `--export-docs`, `--page search:<q>`), a GitHub wiki, and keep README + per-feature docs current.
