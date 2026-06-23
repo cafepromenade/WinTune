@@ -277,6 +277,8 @@ public sealed partial class MainWindow : Window
             case "vm":
             case "sandbox":
                 Navigator.GoToModule?.Invoke("module.wslvm");
+            case "onedrive":
+                Navigator.GoToModule?.Invoke("module.onedrive");
                 break;
             case null:
             case "":
@@ -398,6 +400,7 @@ public sealed partial class MainWindow : Window
         "module.powertoys" => typeof(PowerToysExtrasModule),
         "module.wslvm" => typeof(WslVmModule),
         "module.fonts" => typeof(FontManagerModule),
+        "module.onedrive" => typeof(OneDriveModule),
         _ => typeof(DashboardPage),
     };
 
@@ -569,6 +572,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(WslVmModule));
             case "module.fonts":
                 NavFrame.Navigate(typeof(FontManagerModule));
+            case "module.onedrive":
+                NavFrame.Navigate(typeof(OneDriveModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

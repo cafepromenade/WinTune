@@ -66,6 +66,7 @@ public static class ModuleRegistry
         new() { Tag = "module.powertoys", En = "PowerToys Extras", Zh = "PowerToys 額外工具", Glyph = ((char)0xE945).ToString(), Keywords = "powertoys image resizer ocr text extractor always on top topmost paste plain text 圖片縮放 文字擷取 置頂 純文字" },
         new() { Tag = "module.wslvm", En = "WSL & VM Launcher", Zh = "WSL 與 VM 啟動器", Glyph = ((char)0xEC7A).ToString(), Keywords = "wsl linux distro ubuntu debian windows sandbox wsb virtual machine vm hyper-v export import 子系統 沙盒 虛擬機" },
         new() { Tag = "module.fonts", En = "Font Manager", Zh = "字型管理", Glyph = ((char)0xE8D2).ToString(), Keywords = "font fonts install preview uninstall ttf otf typeface typography 字型 字款 安裝 預覽 移除" },
+        new() { Tag = "module.onedrive", En = "OneDrive", Zh = "OneDrive", Glyph = ((char)0xE753).ToString(), Keywords = "onedrive files on demand pin dehydrate online only cloud free space storage sense sync 雲端 釘選 脫水 釋放空間 同步 隨選" },
     };
 
     public static IEnumerable<ModuleInfo> Search(string query)
