@@ -44,8 +44,15 @@ public sealed partial class ArchivesModule : Page
         NewArcBtn.Content = P("New…", "新建…");
         SrcFileBtn.Content = P("File…", "檔案…");
         SrcFolderBtn.Content = P("Folder…", "資料夾…");
-        CreateLabel.Text = P("Create archive (format · level · password)", "建立壓縮檔（格式 · 等級 · 密碼）");
+        CreateLabel.Text = P("Create archive (format · level · password · options)", "建立壓縮檔（格式 · 等級 · 密碼 · 選項）");
         PasswordBox.PlaceholderText = P("Optional password…", "可選密碼…");
+        VolumeBox.PlaceholderText = P("Split volumes, e.g. 100m", "分卷，例如 100m");
+        SfxCheck.Content = P("Self-extracting .exe", "自解壓 .exe");
+        HeaderEncCheck.Content = P("Encrypt file names", "加密檔名");
+        SolidCheck.Content = P("Solid", "實體壓縮");
+        MtCheck.Content = P("Multi-thread", "多執行緒");
+        RarNote.Text = P("Tip: 7-Zip can create 7z, zip, tar, gzip, bzip2, xz and wim — but not .rar. Self-extracting, solid and encrypt-file-names apply to 7z only.",
+            "提示：7-Zip 可以整 7z、zip、tar、gzip、bzip2、xz、wim — 但係整唔到 .rar。自解壓、實體同加密檔名淨係 7z 先用得。");
         CreateBtn.Content = P("Create", "建立");
         OpsFilter.PlaceholderText = P("Filter operations…", "篩選操作…");
         AdvancedHeader.Text = P($"Advanced operations ({GitOpsCount()})", $"進階操作（{GitOpsCount()}）");
@@ -159,7 +166,15 @@ public sealed partial class ArchivesModule : Page
         var fmt = (FormatBox.SelectedItem as ComboBoxItem)?.Tag as string ?? "7z";
         var level = int.Parse((LevelBox.SelectedItem as ComboBoxItem)?.Tag as string ?? "5");
         var pwd = PasswordBox.Password;
-        await RunAndShow(CreateBtn, () => ArchiveService.Create(fmt, level, string.IsNullOrEmpty(pwd) ? null : pwd));
+        var vol = VolumeBox.Text;
+        bool sfx = SfxCheck.IsChecked == true;
+        bool hdr = HeaderEncCheck.IsChecked == true;
+        bool solid = SolidCheck.IsChecked == true;
+        bool mt = MtCheck.IsChecked == true;
+        await RunAndShow(CreateBtn, () => ArchiveService.Create(
+            fmt, level, string.IsNullOrEmpty(pwd) ? null : pwd,
+            encryptHeader: hdr, solid: solid, multithread: mt, sfx: sfx,
+            volumeSize: string.IsNullOrWhiteSpace(vol) ? null : vol));
     }
 
     private void OpsFilter_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)

@@ -79,6 +79,21 @@
                         <PasswordBox x:Name="PasswordBox" Grid.Column="2" />
                         <Button x:Name="CreateBtn" Grid.Column="3" Click="Create_Click" Style="{StaticResource AccentButtonStyle}" />
                     </Grid>
+                    <Grid ColumnSpacing="14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="VolumeBox" Grid.Column="0" Width="150" />
+                        <CheckBox x:Name="SfxCheck" Grid.Column="1" />
+                        <CheckBox x:Name="HeaderEncCheck" Grid.Column="2" IsChecked="True" />
+                        <CheckBox x:Name="SolidCheck" Grid.Column="3" />
+                        <CheckBox x:Name="MtCheck" Grid.Column="4" IsChecked="True" />
+                    </Grid>
+                    <TextBlock x:Name="RarNote" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
                 </StackPanel>
             </Border>
 

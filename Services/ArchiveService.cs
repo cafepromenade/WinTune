@@ -155,8 +155,30 @@ public static class ArchiveService
         => RunArgs("x {archive} -o{outdir} -y", true, false, ct);
 
     public static Task<TweakResult> Create(string format, int level, string? password, CancellationToken ct = default)
+        => Create(format, level, password, encryptHeader: true, solid: false, multithread: false, sfx: false, volumeSize: null, ct);
+
+    /// <summary>
+    /// 建立壓縮檔，連進階選項 · Create an archive with the full set of real 7-Zip switches:
+    /// header (file-name) encryption, solid blocks, multithreading, a self-extracting .exe, and split volumes.
+    /// 7-Zip 只可以「建立」佢支援嘅寫入格式（7z/zip/tar/gzip/bzip2/xz/wim）— 整唔到 .rar。
+    /// </summary>
+    public static Task<TweakResult> Create(string format, int level, string? password,
+        bool encryptHeader, bool solid, bool multithread, bool sfx, string? volumeSize, CancellationToken ct = default)
     {
-        var pw = string.IsNullOrEmpty(password) ? "" : $" -p\"{password}\" -mhe=on";
-        return RunArgs($"a -t{format} -mx={level}{pw} {{archive}} {{src}}", true, true, ct);
+        bool is7z = string.Equals(format, "7z", StringComparison.OrdinalIgnoreCase);
+        var sb = new System.Text.StringBuilder($"a -t{format} -mx={level}");
+
+        if (!string.IsNullOrEmpty(password))
+        {
+            sb.Append($" -p\"{password}\"");
+            if (encryptHeader && is7z) sb.Append(" -mhe=on"); // hide file names (7z only)
+        }
+        if (solid && is7z) sb.Append(" -ms=on");
+        if (multithread) sb.Append(" -mmt=on");
+        if (sfx && is7z) sb.Append(" -sfx"); // self-extracting .exe (7z module)
+        if (!string.IsNullOrWhiteSpace(volumeSize)) sb.Append($" -v{volumeSize.Trim()}");
+
+        sb.Append(" {archive} {src}");
+        return RunArgs(sb.ToString(), true, true, ct);
     }
 }

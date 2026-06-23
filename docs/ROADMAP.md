@@ -9,6 +9,7 @@
 - [x] **Git & GitHub module** · Git 與 GitHub 模組 — repo ops, chunked uploader, 111 git/gh operations
 - [x] **Maintenance & Diagnostics module** · 維護與診斷模組 — 102 real ops (services, disk health, SFC/DISM, drivers, updates, event logs, power reports)
 - [x] **Archives module** · 壓縮檔模組 — 7-Zip create/extract/list/test/benchmark + 100 advanced operations
+- [x] **Archives Create panel — advanced options (iter 44)** · 建立面板進階選項 — the bespoke Create panel now exposes real 7-Zip switches: **split volumes** (`-v`, e.g. 100m), **self-extracting .exe** (`-sfx`), **encrypt file names** (`-mhe=on`), **solid** (`-ms=on`) and **multi-thread** (`-mmt=on`), via an extended `ArchiveService.Create` overload (SFX/solid/header-enc gated to 7z). Tip added that 7-Zip writes 7z/zip/tar/gzip/bzip2/xz/wim but **not .rar**. Verified end-to-end against real 7z.exe (split→.001–.004, sfx→.exe, mhe→names hidden).
 - [x] **Developer & Terminal module** · 開發與終端機模組 — 100 ops (winget/docker/runtimes/env·ports/CLIs)
 - [x] **Browser Control module** · 瀏覽器控制模組 — 100 ops (Chrome/Edge launch·flags·policies·profiles)
 - [x] **Encryption & Vault module** · 加密與保險庫模組 — 100 ops (BitLocker/VeraCrypt/EFS/certs/Defender)
