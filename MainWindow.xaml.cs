@@ -57,6 +57,9 @@ public sealed partial class MainWindow : Window
             case "devices":
                 Navigator.GoToModule?.Invoke("module.devices");
                 break;
+            case "startup":
+                Navigator.GoToModule?.Invoke("module.startup");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -163,6 +166,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.devices":
                 NavFrame.Navigate(typeof(DevicesModule));
+                break;
+            case "module.startup":
+                NavFrame.Navigate(typeof(StartupModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

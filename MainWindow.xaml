@@ -77,6 +77,11 @@
                         <FontIcon Glyph="&#xE975;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Startup Apps · 開機程式" Tag="module.startup">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7B5;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>

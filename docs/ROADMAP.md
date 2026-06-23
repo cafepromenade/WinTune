@@ -501,5 +501,13 @@ _Source: windowscentral "Top 10 open-source Windows 11 apps recommended by Reddi
 - [ ] **Startup-apps manager (enable/disable)** · 開機程式管理（啟用／停用）
   - _List from HKCU/HKLM ...\Run + Startup folders + Win32_StartupCommand; toggle via the Explorer\StartupApproved\Run binary blob (byte0 0x02=enabled / 0x03=disabled). In-app, replaces Task Manager's Startup tab._
 
+## 🌱 Newly discovered — iteration 6 · 第 6 次迭代新發掘
+
+- [x] **In-app Startup-apps Manager** · App 內開機程式管理員　(replaces Task Manager Startup tab) — DONE this iteration: lists Run keys + Startup folders, enable/disable via the StartupApproved blob, native bilingual, no redirect.
+- [ ] **One-click "trim startup bloat"** · 一鍵清開機臃腫
+  - _Recipe that disables common non-essential startup entries (Steam, Epic, OEM updaters) by writing 0x03 to their StartupApproved\Run value — reversible. Pair with the Startup manager._
+- [ ] **Show boot time / last boot duration** · 顯示開機時間
+  - _Get-WinEvent -LogName 'Microsoft-Windows-Diagnostics-Performance/Operational' -Id 100 for boot duration (ms); surface in System Info / Startup module._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
