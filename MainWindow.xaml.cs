@@ -249,6 +249,10 @@ public sealed partial class MainWindow : Window
             case "backup":
             case "config":
                 Navigator.GoToModule?.Invoke("module.configbackup");
+            case "native":
+            case "pinvoke":
+            case "system32":
+                Navigator.GoToModule?.Invoke("module.native");
                 break;
             case null:
             case "":
@@ -363,6 +367,7 @@ public sealed partial class MainWindow : Window
         "module.homeassistant" => typeof(HomeAssistantModule),
         "module.comms" => typeof(CommunicationsModule),
         "module.configbackup" => typeof(ConfigBackupModule),
+        "module.native" => typeof(NativeUtilitiesModule),
         _ => typeof(DashboardPage),
     };
 
@@ -517,6 +522,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(CommunicationsModule));
             case "module.configbackup":
                 NavFrame.Navigate(typeof(ConfigBackupModule));
+            case "module.native":
+                NavFrame.Navigate(typeof(NativeUtilitiesModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
