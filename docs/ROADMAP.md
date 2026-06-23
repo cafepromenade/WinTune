@@ -654,5 +654,44 @@ _Source: bitsum / xda / whatsoftware — Task Manager forgets priority on restar
 - [ ] **Persistent priority rules** · 持久優先權規則
   - _Save {exe name → priority} to config; a lightweight watcher re-applies on launch (Process Lasso style). Needs the existing settings-save plumbing._
 
+## 🌱 Newly discovered — iteration 23 · 第 23 次迭代新發掘
+
+This batch came from three parallel agent workflows: a forum pain-point sweep, a System32 DLL-capability scan, and an adversarially-verified API-mechanism pass.
+
+### Built this iteration · 今次整咗
+- [x] **Per-process CPU affinity** · 每個程序 CPU 親和性 — System Monitor → Priority menu → "CPU affinity…": a core-checkbox dialog (Process.ProcessorAffinity bitmask, 64-core cap, "All cores" reset).
+- [x] **Efficiency Mode (EcoQoS)** · 效率模式 — System Monitor → Priority menu → "Efficiency mode on/off": SetProcessInformation(ProcessPowerThrottling, EXECUTION_SPEED) + Idle priority, exactly like Task Manager (adversarially verified struct = 3×ULONG, version 1, Win11 22000+).
+
+### Library-backed candidates (System32 DLL scan) · 由 System32 掃描
+- [ ] **Active Connections (TCPView-style)** · 即時連線檢視 — `iphlpapi.dll` GetExtendedTcpTable/GetExtendedUdpTable (TCP_TABLE_OWNER_PID_ALL=5) → live sockets + owning PID; **kill a connection** via SetTcpEntry (dwState=MIB_TCP_STATE_DELETE_TCB=12, admin).
+- [ ] **Saved Wi-Fi passwords** · 已儲存 Wi-Fi 密碼 — `wlanapi.dll` WlanGetProfileList + WlanGetProfile(WLAN_PROFILE_GET_PLAINTEXT_KEY=4) → parse `<keyMaterial>`; delete via WlanDeleteProfile.
+- [ ] **Nearby Wi-Fi scanner** · 附近 Wi-Fi 掃描 — `wlanapi.dll` WlanScan + WlanGetAvailableNetworkList (SSID, signal quality, auth/cipher, has-profile).
+- [ ] **SMB shares + sessions auditor** · 共享同工作階段稽核 — `netapi32.dll` NetShareEnum (level 2) + NetSessionEnum (level 10) — what you publish + who's connected.
+- [ ] **Power-plan switcher (+ Ultimate Performance)** · 電源計劃切換 — `powrprof.dll` PowerEnumerate/PowerGetActiveScheme/PowerSetActiveScheme; unlock Ultimate Performance (duplicatescheme GUID e9a42b02…).
+- [ ] **Monitor brightness (DDC/CI)** · 螢幕亮度 — `dxva2.dll` GetPhysicalMonitorsFromHMONITOR + Get/SetMonitorBrightness (external monitors too).
+- [ ] **Per-app volume mixer** · 每個程式音量 — Core Audio COM: IMMDeviceEnumerator + IAudioSessionManager2 / ISimpleAudioVolume (mute/level per app), IAudioEndpointVolume (master).
+- [ ] **In-app Event Viewer** · 事件檢視器 — `wevtapi.dll` EvtQuery/EvtNext/EvtRender with human-readable bilingual filters.
+- [ ] **Log off / disconnect other users** · 登出其他使用者 — `wtsapi32.dll` WTSEnumerateSessions + WTSLogoffSession/WTSDisconnectSession (admin).
+- [ ] **Certificate viewer** · 憑證檢視 — `crypt32.dll` CertEnumCertificatesInStore over My/Root/CA stores.
+- [ ] **Device enable/disable** · 裝置啟用／停用 — `setupapi.dll`+`cfgmgr32.dll` SetupDiSetClassInstallParams(DIF_PROPERTYCHANGE) to disable/enable a device in-app.
+- [ ] **Disk SMART health** · 磁碟 SMART 健康 — `kernel32` DeviceIoControl IOCTL_STORAGE_QUERY_PROPERTY / SMART_RCV_DRIVE_DATA (temp, reallocated sectors, power-on hours).
+- [ ] **Mount VHD/VHDX/ISO** · 掛載 VHD／ISO — `virtdisk.dll` OpenVirtualDisk + AttachVirtualDisk.
+- [ ] **Per-disk / GPU live counters** · 每磁碟／GPU 即時計數 — `pdh.dll` PdhOpenQuery/PdhAddCounter to enrich System Monitor (disk %, GPU engine %).
+- [ ] **Process module list** · 程序模組清單 — `psapi.dll` EnumProcessModules (Process Explorer-style loaded-DLL view).
+- [ ] **Font installer** · 字型安裝 — `gdi32.dll` AddFontResource/RemoveFontResource + HKLM Fonts key.
+- [ ] **Paired Bluetooth devices** · 已配對藍牙裝置 — `bluetoothapis.dll` BluetoothFindFirstDevice + BluetoothRemoveDevice.
+
+### Forum pain-points (Reddit / SuperUser / MS community) · 論壇痛點
+- [ ] **System File Repair runner** · 系統檔案修復 — stream DISM /ScanHealth→/RestoreHealth then sfc /scannow; parse CBS.log [SR] lines for a verdict.
+- [ ] **Network reset toolkit** · 網絡重設工具箱 — flush DNS / winsock reset / int ip reset / release-renew-registerdns, each with parsed status.
+- [ ] **Take ownership / reset permissions** · 取得擁有權 — System.Security.AccessControl SetOwner + FullControl rule after AdjustTokenPrivileges(SeTakeOwnership/SeRestore); one-click undo.
+- [ ] **Battery health report** · 電池健康報告 — powercfg /batteryreport /xml → parse Design vs FullCharge capacity, cycle count, wear % into native cards (no HTML hunt).
+- [ ] **Quick restore point** · 快速還原點 — WMI SystemRestore.CreateRestorePoint; bypass 24h limiter (SystemRestorePointCreationFrequency=0).
+- [ ] **Component store (WinSxS) cleaner** · WinSxS 清理 — DISM /AnalyzeComponentStore then /StartComponentCleanup [/ResetBase] with rollback warning.
+- [ ] **Long paths enabler** · 長路徑啟用 — HKLM …\FileSystem\LongPathsEnabled = 1.
+- [ ] **NumLock-at-boot fixer** · 開機 NumLock — HKU\.DEFAULT + HKCU Control Panel\Keyboard InitialKeyboardIndicators=2; warn on Fast Startup.
+- [ ] **Startup delay tuner** · 啟動延遲 — HKCU …\Explorer\Serialize\StartupDelayInMSec=0 (create Serialize key).
+- [ ] **Verbose boot diagnostics** · 詳細開機診斷 — HKLM …\Policies\System\VerboseStatus=1.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

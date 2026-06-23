@@ -16,6 +16,18 @@ public sealed class TaskInfo
 
     public string Full => (TaskPath ?? "") + (TaskName ?? "");
     public bool IsDisabled => State == "Disabled";
+
+    /// <summary>Bilingual display of the raw scheduler state · 排程狀態嘅雙語顯示。</summary>
+    public string StateText => State switch
+    {
+        "Ready" => Loc.I.Pick("Ready", "就緒"),
+        "Running" => Loc.I.Pick("Running", "執行中"),
+        "Disabled" => Loc.I.Pick("Disabled", "已停用"),
+        "Queued" => Loc.I.Pick("Queued", "排隊中"),
+        "Unknown" => Loc.I.Pick("Unknown", "未知"),
+        "" => "",
+        _ => State,
+    };
 }
 
 /// <summary>

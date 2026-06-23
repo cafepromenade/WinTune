@@ -71,10 +71,10 @@
                             <ComboBoxItem Content="xz" Tag="xz" />
                         </ComboBox>
                         <ComboBox x:Name="LevelBox" Grid.Column="1" MinWidth="150" SelectedIndex="2">
-                            <ComboBoxItem Content="0 · Store" Tag="0" />
-                            <ComboBoxItem Content="1 · Fast" Tag="1" />
-                            <ComboBoxItem Content="5 · Normal" Tag="5" />
-                            <ComboBoxItem Content="9 · Ultra" Tag="9" />
+                            <ComboBoxItem Content="0 · Store · 唔壓縮" Tag="0" />
+                            <ComboBoxItem Content="1 · Fast · 快" Tag="1" />
+                            <ComboBoxItem Content="5 · Normal · 普通" Tag="5" />
+                            <ComboBoxItem Content="9 · Ultra · 極限" Tag="9" />
                         </ComboBox>
                         <PasswordBox x:Name="PasswordBox" Grid.Column="2" />
                         <Button x:Name="CreateBtn" Grid.Column="3" Click="Create_Click" Style="{StaticResource AccentButtonStyle}" />

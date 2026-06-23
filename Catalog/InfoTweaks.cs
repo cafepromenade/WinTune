@@ -25,7 +25,7 @@ public static class InfoTweaks
 
         Tweak.Info("info.cpu-threads", "Logical processors", "邏輯處理器",
             "Logical processor count and OS architecture.", "邏輯處理器數目同作業系統架構。",
-            () => $"{SystemInfo.LogicalProcessors} threads · {SystemInfo.Architecture}"),
+            () => $"{SystemInfo.LogicalProcessors} {Loc.I.Pick("threads", "執行緒")} · {SystemInfo.Architecture}"),
 
         Tweak.Info("info.ram-total", "Installed memory", "已安裝記憶體",
             "Total physical RAM.", "實體記憶體總量。",

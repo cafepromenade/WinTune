@@ -145,6 +145,63 @@ public static class SystemMonitor
         catch { return false; }
     }
 
+    // ---- CPU affinity (managed) ----
+    public static int CoreCount => Math.Min(64, Math.Max(1, Environment.ProcessorCount));
+
+    public static long GetAffinity(int pid)
+    {
+        try { using var p = Process.GetProcessById(pid); return p.ProcessorAffinity.ToInt64(); }
+        catch { return 0; }
+    }
+
+    public static bool SetAffinity(int pid, long mask)
+    {
+        if (mask == 0) return false;
+        try { using var p = Process.GetProcessById(pid); p.ProcessorAffinity = new IntPtr(mask); return true; }
+        catch { return false; }
+    }
+
+    // ---- Efficiency Mode (EcoQoS) — same as Task Manager: EXECUTION_SPEED throttle + Idle priority.
+    // Verified against MS Learn SetProcessInformation / PROCESS_POWER_THROTTLING_STATE (Win11 22000+). ----
+    [StructLayout(LayoutKind.Sequential)]
+    private struct PROCESS_POWER_THROTTLING_STATE { public uint Version, ControlMask, StateMask; }
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool SetProcessInformation(IntPtr h, int infoClass, ref PROCESS_POWER_THROTTLING_STATE info, uint size);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern IntPtr OpenProcess(uint access, bool inherit, uint pid);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool CloseHandle(IntPtr h);
+    [DllImport("kernel32.dll", SetLastError = true)]
+    private static extern bool SetPriorityClass(IntPtr h, uint cls);
+
+    private const int ProcessPowerThrottling = 4;
+    private const uint PT_VERSION = 1, PT_EXECUTION_SPEED = 0x1;
+    private const uint IDLE_CLASS = 0x40, NORMAL_CLASS = 0x20;
+    private const uint PROCESS_SET_INFORMATION = 0x0200;
+
+    /// <summary>Toggle Windows 11 "Efficiency mode" (EcoQoS) on a process. Needs admin for other users'
+    /// processes; silently returns false where unsupported (pre-22000) or denied.</summary>
+    public static bool SetEfficiency(int pid, bool on)
+    {
+        IntPtr h = OpenProcess(PROCESS_SET_INFORMATION, false, (uint)pid);
+        if (h == IntPtr.Zero) return false;
+        try
+        {
+            var st = new PROCESS_POWER_THROTTLING_STATE
+            {
+                Version = PT_VERSION,
+                ControlMask = on ? PT_EXECUTION_SPEED : 0,
+                StateMask = on ? PT_EXECUTION_SPEED : 0,
+            };
+            bool ok = SetProcessInformation(h, ProcessPowerThrottling, ref st, (uint)Marshal.SizeOf<PROCESS_POWER_THROTTLING_STATE>());
+            ok &= SetPriorityClass(h, on ? IDLE_CLASS : NORMAL_CLASS);
+            return ok;
+        }
+        catch { return false; }
+        finally { CloseHandle(h); }
+    }
+
     public static string Bytes(double b)
     {
         string[] u = { "B", "KB", "MB", "GB", "TB" };

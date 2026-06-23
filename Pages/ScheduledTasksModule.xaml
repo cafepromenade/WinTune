@@ -50,7 +50,7 @@
                                 <TextBlock Text="{Binding TaskName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Text="{Binding TaskPath}" FontSize="11" FontFamily="Consolas" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Text="{Binding State}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock Grid.Column="1" Text="{Binding StateText}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
                                 <Button Click="Run_Click" Padding="8,4,8,4" ToolTipService.ToolTip="Run · 執行"><FontIcon Glyph="&#xE768;" FontSize="12" /></Button>
                                 <Button Click="Stop_Click" Padding="8,4,8,4" ToolTipService.ToolTip="Stop · 停止"><FontIcon Glyph="&#xE71A;" FontSize="12" /></Button>

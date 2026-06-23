@@ -34,7 +34,7 @@ public sealed partial class AboutPage : Page
         });
         Root.Children.Add(new TextBlock
         {
-            Text = $"Windows 11 · {TweakCatalog.Count} features · {Categories.All.Length} categories · WinUI 3",
+            Text = $"Windows 11 · {TweakCatalog.Count} {Loc.I.Pick("features", "項功能")} · {Categories.All.Length} {Loc.I.Pick("categories", "個分類")} · WinUI 3",
             Foreground = (Brush)Application.Current.Resources["TextFillColorSecondaryBrush"],
         });
 
@@ -63,7 +63,7 @@ public sealed partial class AboutPage : Page
         Root.Children.Add(new TextBlock
         {
             Margin = new Thickness(0, 8, 0, 0),
-            Text = "Version 1.0.0  ·  MIT License  ·  Built with .NET + WinUI 3",
+            Text = Loc.I.Pick("Version 1.0.0  ·  MIT License  ·  Built with .NET + WinUI 3", "版本 1.0.0  ·  MIT 授權  ·  用 .NET + WinUI 3 整"),
             FontSize = 12,
             Foreground = (Brush)Application.Current.Resources["TextFillColorTertiaryBrush"],
         });

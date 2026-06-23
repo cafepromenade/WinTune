@@ -78,7 +78,7 @@ public sealed partial class DashboardPage : Page
     {
         StatsPanel.Children.Clear();
         AddStat("", "Operating system", "作業系統", SystemInfo.OsFull);
-        AddStat("", "Processor", "處理器", $"{SystemInfo.CpuName}  ({SystemInfo.LogicalProcessors} threads · {SystemInfo.Architecture})");
+        AddStat("", "Processor", "處理器", $"{SystemInfo.CpuName}  ({SystemInfo.LogicalProcessors} {Loc.I.Pick("threads", "執行緒")} · {SystemInfo.Architecture})");
         AddStat("", "Memory", "記憶體", SystemInfo.RamUsage);
         AddStat("", "Graphics", "顯示卡", SystemInfo.GpuName);
         AddStat("", "System drive", "系統磁碟", SystemInfo.SystemDrive);

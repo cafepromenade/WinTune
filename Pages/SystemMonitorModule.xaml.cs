@@ -129,7 +129,73 @@ public sealed partial class SystemMonitorModule : Page
             item.Click += (_, _) => SystemMonitor.SetPriority(row.Pid, cls);
             mf.Items.Add(item);
         }
+
+        mf.Items.Add(new MenuFlyoutSeparator());
+        var ecoOn = new MenuFlyoutItem { Text = P("Efficiency mode: on", "效率模式：開") };
+        ecoOn.Click += (_, _) => SystemMonitor.SetEfficiency(row.Pid, true);
+        mf.Items.Add(ecoOn);
+        var ecoOff = new MenuFlyoutItem { Text = P("Efficiency mode: off", "效率模式：關") };
+        ecoOff.Click += (_, _) => SystemMonitor.SetEfficiency(row.Pid, false);
+        mf.Items.Add(ecoOff);
+
+        mf.Items.Add(new MenuFlyoutSeparator());
+        var aff = new MenuFlyoutItem { Text = P("CPU affinity…", "CPU 親和性…") };
+        aff.Click += async (_, _) => await ShowAffinityDialog(row);
+        mf.Items.Add(aff);
+
         mf.ShowAt(b);
+    }
+
+    private async System.Threading.Tasks.Task ShowAffinityDialog(ProcRow row)
+    {
+        int n = SystemMonitor.CoreCount;
+        long cur = SystemMonitor.GetAffinity(row.Pid);
+
+        var panel = new StackPanel { Spacing = 8 };
+        panel.Children.Add(new TextBlock
+        {
+            Text = P($"Choose which logical cores \"{row.Name}\" may run on.", $"揀「{row.Name}」可以喺邊幾個邏輯核心上面行。"),
+            TextWrapping = TextWrapping.Wrap,
+        });
+
+        const int cols = 4;
+        var grid = new Grid { ColumnSpacing = 10, RowSpacing = 4 };
+        for (int c = 0; c < cols; c++) grid.ColumnDefinitions.Add(new ColumnDefinition());
+        var boxes = new CheckBox[n];
+        for (int i = 0; i < n; i++)
+        {
+            var cb = new CheckBox { Content = $"CPU {i}", IsChecked = cur == 0 || (cur & (1L << i)) != 0 };
+            boxes[i] = cb;
+            int r = i / cols, c = i % cols;
+            while (grid.RowDefinitions.Count <= r) grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            Grid.SetRow(cb, r); Grid.SetColumn(cb, c);
+            grid.Children.Add(cb);
+        }
+        panel.Children.Add(new ScrollViewer { Content = grid, MaxHeight = 280, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
+
+        var dlg = new ContentDialog
+        {
+            Title = P("CPU affinity", "CPU 親和性"),
+            Content = panel,
+            PrimaryButtonText = P("Apply", "套用"),
+            SecondaryButtonText = P("All cores", "全部核心"),
+            CloseButtonText = P("Cancel", "取消"),
+            DefaultButton = ContentDialogButton.Primary,
+            XamlRoot = XamlRoot,
+        };
+
+        var res = await dlg.ShowAsync();
+        if (res == ContentDialogResult.Primary)
+        {
+            long mask = 0;
+            for (int i = 0; i < n; i++) if (boxes[i].IsChecked == true) mask |= 1L << i;
+            if (mask != 0) SystemMonitor.SetAffinity(row.Pid, mask);
+        }
+        else if (res == ContentDialogResult.Secondary)
+        {
+            long all = n >= 64 ? -1L : (1L << n) - 1;
+            SystemMonitor.SetAffinity(row.Pid, all);
+        }
     }
 
     private (string, ProcessPriorityClass)[] Priorities() => new[]
