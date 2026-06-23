@@ -339,6 +339,7 @@ public sealed partial class MainWindow : Window
         "module.packages" => typeof(PackageManagerModule),
         "module.adb" => typeof(AndroidAdbModule),
         "module.vpn" => typeof(VpnMeshModule),
+        "module.homeassistant" => typeof(HomeAssistantModule),
         _ => typeof(DashboardPage),
     };
 
@@ -483,6 +484,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.vpn":
                 NavFrame.Navigate(typeof(VpnMeshModule));
+                break;
+            case "module.homeassistant":
+                NavFrame.Navigate(typeof(HomeAssistantModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
