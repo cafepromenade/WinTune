@@ -823,11 +823,11 @@ launching the other app.
 ### Networking / VPN & DB tools (CLI-wrapping GUIs)
 - [ ] **NordVPN GUI (wraps the CLI)** · NordVPN 介面 — wrap `nordvpn` CLI: connect/disconnect, pick country/city/server, status, settings (killswitch, autoconnect), meshnet. In-app native UI over the CLI.
 - [ ] **Tailscale GUI (wraps the CLI)** · Tailscale 介面 — wrap `tailscale` CLI: up/down, status, device list (`tailscale status --json`), IP, exit-node pick, `tailscale ping`. Native UI.
-- [ ] **SSMS installer** · SSMS 安裝器 — install SQL Server Management Studio via winget (`Microsoft.SQLServerManagementStudio`) with progress; part of the dev/deps panel.
+- [x] **SSMS installer** · SSMS 安裝器 — DONE: `Microsoft.SQLServerManagementStudio` added to `PackageService.Deps`, so it installs (with progress) from the Package Manager's common-dependencies one-click list.
 
 ### VPN & Mesh — done + follow-ups (iter 32)
 - [x] **NordVPN + Tailscale GUIs** · NordVPN + Tailscale 介面 — DONE: VPN & Mesh module wraps NordVPN.exe CLI (connect/quick/by-country/by-group, disconnect) + tailscale CLI (up/down/status/ip/ping + parsed device list from status --json). `module.vpn`/`--page vpn`/`nordvpn`/`tailscale`. Detect-missing → Package Manager hint.
-  - [ ] follow-ups: Tailscale **exit-node** picker (`tailscale set --exit-node`), Tailscale Funnel/Serve, NordVPN **Meshnet**, generic **Windows VPN manager** (Get/Add-VpnConnection + rasdial for any IKEv2/L2TP/OpenVPN profile), **WireGuard** config import.
+  - [x] follow-ups DONE (iter: vpn-followups): Tailscale **exit-node** picker (`tailscale set --exit-node=`, auto-discovered from `status --json` `ExitNodeOption`, + advertise-this-PC + LAN access), Tailscale **Serve/Funnel** (`serve --bg <port>` / `funnel --bg <port>` + status/reset), NordVPN **Meshnet** (`set meshnet on|off`, `meshnet peer list`), generic **Windows VPN manager** (`Get/Add/Remove-VpnConnection` for IKEv2/L2TP/SSTP/PPTP/Automatic + `rasdial` connect/disconnect, native list with per-row Actions menu + destructive-remove confirm), **WireGuard** config import (`wireguard.exe /installtunnelservice <conf>` via file picker, tunnel list w/ live service status + remove). New services: `WindowsVpnService.cs`, `WireGuardService.cs`; extended `TailscaleService.cs` + `NordVpnService.cs`. WireGuard engine auto-install via winget `WireGuard.WireGuard`.
 
 ## 🖥️ GUI / UX & automation requests (iter 33, rapid user batch)
 

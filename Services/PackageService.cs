@@ -49,6 +49,7 @@ public static class PackageService
         new() { En = "Docker Desktop", Zh = "Docker Desktop", Id = "Docker.DockerDesktop" },
         new() { En = "VeraCrypt (encryption)", Zh = "VeraCrypt（加密）", Id = "IDRIX.VeraCrypt" },
         new() { En = "scrcpy (Android mirror)", Zh = "scrcpy（Android 投屏）", Id = "Genymobile.scrcpy" },
+        new() { En = "SQL Server Management Studio (SSMS)", Zh = "SQL Server 管理工具（SSMS）", Id = "Microsoft.SQLServerManagementStudio" },
     };
 
     public static async Task<List<PkgResult>> Search(string query, CancellationToken ct = default)
