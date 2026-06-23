@@ -19,7 +19,7 @@
 - [x] **Settings import/export** · 設定匯入／匯出 — export/import WinTune settings as JSON (Settings page)
 
 ## 🎯 Requested big features (queued) · 已點名嘅大功能（排緊隊）
-- [ ] **Settings & Control Panel hub** · 設定與控制台總匯 — bilingual searchable launcher for every `ms-settings:` page + every Control Panel applet (`control /name`, `*.cpl`).
+- [x] **Settings & Control Panel hub** · 設定與控制台總匯 — bilingual searchable launcher for every `ms-settings:` page + every Control Panel applet (`control /name`, `*.cpl`). Implemented as the SettingsHub module (allowed launcher-style exception — many applets have no in-app equivalent).
 - [x] **Interactive Registry Editor** · 互動式登錄編輯器 — bespoke in-app tree browser + value view/add/edit/delete over RegistryHelper, bilingual. (no regedit.exe redirect)
 
 > **Design rule (user directive):** everything must run **purely in-app, NOT as redirects** to external
