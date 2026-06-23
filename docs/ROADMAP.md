@@ -589,5 +589,14 @@ _Source: windowsforum / howtogeek / pdq — debloat by removing Store/UWP apps; 
 - [ ] **Reinstall all default Store apps** · 重新安裝所有預設商店應用程式
   - _Recovery: Get-AppxPackage -AllUsers | Foreach Add-AppxPackage -Register "...AppXManifest.xml". A "restore apps" safety action._
 
+## 🌱 Newly discovered — iteration 16 · 第 16 次迭代新發掘
+
+_Source: windowsforum / Microsoft Learn — power users want FancyZones/AquaSnap-style tiling beyond native Snap._
+- [x] **In-app Window Manager (snap zones)** · App 內視窗管理（分區貼齊） — DONE this iteration: list open windows (EnumWindows), snap selected to halves/quarters/thirds + maximize/centre via SetWindowPos (work-area aware). Pure P/Invoke, no redirect.
+- [ ] **Tile / cascade all windows** · 平鋪／層疊所有視窗
+  - _Win32 TileWindows / CascadeWindows over the list of top-level windows, in-app. One-click arrange-all._
+- [ ] **Always-on-top toggle** · 視窗永遠置頂
+  - _SetWindowPos(HWND_TOPMOST/HWND_NOTOPMOST) on the selected window. Pin any window above others, in-app._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

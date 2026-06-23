@@ -85,6 +85,10 @@ public sealed partial class MainWindow : Window
             case "apps":
                 Navigator.GoToModule?.Invoke("module.uninstall");
                 break;
+            case "windows":
+            case "windowmanager":
+                Navigator.GoToModule?.Invoke("module.windows");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -215,6 +219,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.uninstall":
                 NavFrame.Navigate(typeof(AppUninstallerModule));
+                break;
+            case "module.windows":
+                NavFrame.Navigate(typeof(WindowManagerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

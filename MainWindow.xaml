@@ -117,6 +117,11 @@
                         <FontIcon Glyph="&#xE74D;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Window Manager · 視窗管理" Tag="module.windows">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE737;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
