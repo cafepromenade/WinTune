@@ -78,6 +78,9 @@ public sealed partial class MainWindow : Window
             case "diskanalyzer":
                 Navigator.GoToModule?.Invoke("module.disk");
                 break;
+            case "drives":
+                Navigator.GoToModule?.Invoke("module.drives");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -202,6 +205,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.disk":
                 NavFrame.Navigate(typeof(DiskAnalyzerModule));
+                break;
+            case "module.drives":
+                NavFrame.Navigate(typeof(DrivesModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

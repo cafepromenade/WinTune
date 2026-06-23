@@ -562,5 +562,14 @@ _Source: windirstat.net — Windows' built-in storage breakdown is limited; user
 - [ ] **Treemap visualisation** · 樹狀圖視覺化
   - _Render folder sizes as nested rectangles (squarified treemap) on a Canvas for an at-a-glance view, like WinDirStat. Pure C# drawing._
 
+## 🌱 Newly discovered — iteration 13 · 第 13 次迭代新發掘
+
+_Source: xda-developers / hawkdive — Microsoft buries power-user tools; PowerToys fills gaps (FancyZones, Keyboard Manager, Run)._
+- [x] **In-app Drives module** · App 內磁碟機模組 — DONE this iteration: drive overview (used/free bars via DriveInfo) + mount/dismount ISO·VHD (Mount/Dismount-DiskImage) + create VHD (New-VHD). Pure C# list + native cmdlets, no redirect.
+- [ ] **Window manager (snap zones / move-resize)** · 視窗管理（分區／移動縮放）
+  - _Native: enumerate top-level windows via EnumWindows; move/resize with SetWindowPos to preset zones (halves/quarters/thirds). In-app, replaces FancyZones for basic layouts._
+- [ ] **Keyboard remapper** · 鍵盤重新對應
+  - _HKCU/HKLM\SYSTEM\CurrentControlSet\Control\Keyboard Layout -> "Scancode Map" binary to remap/disable keys (e.g. CapsLock). In-app editor, reboot to apply._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
