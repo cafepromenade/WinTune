@@ -571,5 +571,14 @@ _Source: xda-developers / hawkdive — Microsoft buries power-user tools; PowerT
 - [ ] **Keyboard remapper** · 鍵盤重新對應
   - _HKCU/HKLM\SYSTEM\CurrentControlSet\Control\Keyboard Layout -> "Scancode Map" binary to remap/disable keys (e.g. CapsLock). In-app editor, reboot to apply._
 
+## 🌱 Newly discovered — iteration 14 · 第 14 次迭代新發掘
+
+_Source: windowsforum (Win11Debloat) / howtogeek — users want ONE-CLICK, reversible debloat (Copilot/Bing/telemetry)._
+- [x] **One-click "Calm Windows" + debloat Recipes** · 一鍵「靜化 Windows」+ 除臃腫流程 — DONE this iteration: Calm Windows (apply all annoyance toggles), Re-enable nags, Trim startup bloat, Disable telemetry scheduled tasks, Create restore point. Reversible, in-app.
+- [ ] **Restore point before risky recipes** · 高風險流程前先建立還原點
+  - _Prepend Checkpoint-Computer to destructive recipes; expose a "make restore point" quick action. Already have the cmdlet in System category — reuse._
+- [ ] **App uninstaller (in-app list)** · 應用程式解除安裝（app 內清單）
+  - _Get-AppxPackage / winget list for a native bilingual uninstall list with checkboxes; remove via Remove-AppxPackage / winget uninstall. In-app, no Settings redirect._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

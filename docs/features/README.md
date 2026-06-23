@@ -1,6 +1,6 @@
 # WinTune — Feature Reference · 功能總覽
 
-**1090** features, each with its own page. · **1090** 項功能，每項一頁。
+**1095** features, each with its own page. · **1095** 項功能，每項一頁。
 
 ## Appearance & Personalisation · 外觀與個人化 (14)
 - [Accent colour on Start & taskbar · 開始與工作列顯示主題色](appearance.accent-start-taskbar.md)
@@ -961,9 +961,11 @@
 - [Diagnostic data level · 診斷資料層級](privacy.telemetry-level.md)
 - [Tips when using Windows · 使用 Windows 時嘅提示](privacy.usage-tips.md)
 
-## Recipes (one-click) · 一鍵流程 (12)
+## Recipes (one-click) · 一鍵流程 (17)
+- [Calm Windows (de-annoy) · 靜化 Windows（去煩擾）](recipe.calm-windows.md)
 - [Declutter taskbar · 簡化工作列](recipe.declutter-taskbar.md)
 - [Developer setup · 開發人員設定](recipe.dev.md)
+- [Disable telemetry tasks · 停用遙測排程工作](recipe.disable-telemetry-tasks.md)
 - [Classic Explorer · 經典檔案總管](recipe.explorer-classic.md)
 - [Free up space · 釋放空間](recipe.free-space.md)
 - [Gaming mode · 遊戲模式](recipe.gaming.md)
@@ -973,6 +975,9 @@
 - [Performance boost · 效能提升](recipe.perf-boost.md)
 - [Privacy hardening · 私隱強化](recipe.privacy.md)
 - [Quick cleanup · 快速清理](recipe.quick-clean.md)
+- [Re-enable Windows nags · 還原 Windows 提示](recipe.reenable-nags.md)
+- [Create a restore point · 建立還原點](recipe.restore-point.md)
+- [Trim startup bloat · 清開機臃腫](recipe.trim-startup.md)
 - [Update everything · 全部更新](recipe.update-all.md)
 
 ## Security · 安全 (14)

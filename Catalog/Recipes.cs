@@ -126,5 +126,37 @@ public static class Recipes
             Cmd("Firewall on (all profiles)", "netsh advfirewall set allprofiles state on", admin: true),
             Cmd("SmartScreen = Warn", "reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\" /v SmartScreenEnabled /t REG_SZ /d Warn /f", admin: true),
             Cmd("UAC default", "reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System\" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 5 /f", admin: true)),
+
+        Make("recipe.calm-windows", "Calm Windows (de-annoy)", "靜化 Windows（去煩擾）",
+            "Apply every de-annoy toggle in one go — Copilot, Recall, Bing/web search, Search Highlights, lock-screen tips, Settings ads and more. Reversible.",
+            "一次過套用晒所有去煩擾開關 — Copilot、Recall、Bing／網上搜尋、搜尋焦點、鎖機畫面提示、設定廣告等等。可還原。",
+            "Calm it", "靜化", admin: true, destructive: false,
+            Apply("Apply de-annoy toggles", () => AnnoyanceTweaks.All(), on: true),
+            Cmd("Restart Explorer", Restart)),
+
+        Make("recipe.reenable-nags", "Re-enable Windows nags", "還原 Windows 提示",
+            "Undo Calm Windows: switch the de-annoy toggles back to their default state.",
+            "還原「靜化 Windows」：將去煩擾開關掣返去預設狀態。",
+            "Restore", "還原", admin: true, destructive: false,
+            Apply("Restore nag toggles", () => AnnoyanceTweaks.All(), on: false),
+            Cmd("Restart Explorer", Restart)),
+
+        Make("recipe.trim-startup", "Trim startup bloat", "清開機臃腫",
+            "Disable common non-essential startup entries (updaters and game launchers). Reversible in the Startup Apps module.",
+            "停用常見嘅非必要開機項目（更新器同遊戲啟動器）。可以喺開機程式模組還原。",
+            "Trim", "清", admin: false, destructive: true,
+            DisableStartup("Disable bloat startup", "update", "updater", "Steam", "Epic", "Spotify", "Adobe", "iTunes", "GoogleUpdate", "Skype")),
+
+        Make("recipe.disable-telemetry-tasks", "Disable telemetry tasks", "停用遙測排程工作",
+            "Disable the well-known telemetry scheduled tasks (Compatibility Appraiser, Consolidator, UsbCeip).",
+            "停用啲出晒名嘅遙測排程工作（Compatibility Appraiser、Consolidator、UsbCeip）。",
+            "Disable", "停用", admin: true, destructive: false,
+            Ps("Disable telemetry tasks", "$ts=@('Microsoft Compatibility Appraiser','ProgramDataUpdater','Consolidator','UsbCeip','Proxy'); foreach($n in $ts){ Get-ScheduledTask -TaskName $n -ErrorAction SilentlyContinue | Disable-ScheduledTask -ErrorAction SilentlyContinue | Out-Null }; 'Done.'", admin: true)),
+
+        Make("recipe.restore-point", "Create a restore point", "建立還原點",
+            "Snapshot the system with a restore point named WinTune before you make changes.",
+            "改嘢之前，幫系統影一個叫 WinTune 嘅還原點。",
+            "Create", "建立", admin: true, destructive: false,
+            Ps("Checkpoint", "Checkpoint-Computer -Description 'WinTune' -RestorePointType MODIFY_SETTINGS; 'Restore point requested.'", admin: true)),
     };
 }

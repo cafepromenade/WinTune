@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +27,47 @@ public static class Recipe
         {
             act();
             return Task.FromResult(TweakResult.Ok("set", "已設定"));
+        });
+
+    /// <summary>
+    /// 套用一批調校 · Apply a set of tweaks: toggles get SetIsOn(on); actions are run only when on
+    /// (an action can't be "undone"). Used by "Calm Windows" etc.
+    /// </summary>
+    public static (string label, Step run) Apply(string label, Func<IEnumerable<TweakDefinition>> source, bool on = true)
+        => (label, async ct =>
+        {
+            int ok = 0, fail = 0;
+            foreach (var t in source())
+            {
+                ct.ThrowIfCancellationRequested();
+                try
+                {
+                    if (t.Kind == TweakKind.Toggle && t.SetIsOn is not null) { t.SetIsOn(on); ok++; }
+                    else if (on && t.Kind == TweakKind.Action && t.RunAsync is not null)
+                    {
+                        var r = await t.RunAsync(ct);
+                        if (r.Success) ok++; else fail++;
+                    }
+                }
+                catch { fail++; }
+            }
+            return new TweakResult(fail == 0, new LocalizedText($"{ok} applied, {fail} failed", $"套用咗 {ok} 項，{fail} 項失敗"), null);
+        });
+
+    /// <summary>停用名稱包含關鍵字嘅開機項目 · Disable startup entries whose name contains any keyword.</summary>
+    public static (string label, Step run) DisableStartup(string label, params string[] keywords)
+        => (label, ct =>
+        {
+            int n = 0;
+            foreach (var item in StartupManager.List())
+            {
+                if (!item.Enabled) continue;
+                if (keywords.Any(k => item.Name.Contains(k, StringComparison.OrdinalIgnoreCase)))
+                {
+                    try { StartupManager.SetEnabled(item, false); n++; } catch { /* HKLM needs admin */ }
+                }
+            }
+            return Task.FromResult(TweakResult.Ok($"Disabled {n} startup item(s)", $"停用咗 {n} 個開機項目"));
         });
 
     public static TweakDefinition Make(string id, string enT, string zhT, string enD, string zhD,
