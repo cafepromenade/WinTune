@@ -544,5 +544,14 @@ _Source: howtogeek / neowin / windowsforum — Explorer bulk-ops, organization &
 - [ ] **Empty-folder cleaner** · 清空資料夾
   - _Pure C#: recursively find directories with no files (and no non-empty subdirs); preview; remove. In-app._
 
+## 🌱 Newly discovered — iteration 11 · 第 11 次迭代新發掘
+
+_Source: Microsoft Community Hub — Windows has NO built-in duplicate finder; 3rd-party tools are slow / high false-positives._
+- [x] **In-app Duplicate File Finder** · App 內重複檔案搜尋 — DONE this iteration: size pre-filter then SHA-256 content hash (zero false positives), grouped results, one-click recycle of redundant copies, shows wasted space. Pure C#, no external tool.
+- [ ] **Largest files finder** · 最大檔案搜尋
+  - _Pure C#: enumerate a folder recursively, sort by size desc, show the top N biggest files with a recycle action. Helps reclaim space fast._
+- [ ] **Folder size analyser** · 資料夾大細分析
+  - _Pure C#: compute total size per immediate subfolder (recursive sum), show a sorted bar list to spot what's eating disk. In-app._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

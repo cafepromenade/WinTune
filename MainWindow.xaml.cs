@@ -70,6 +70,10 @@ public sealed partial class MainWindow : Window
             case "bulk":
                 Navigator.GoToModule?.Invoke("module.bulkops");
                 break;
+            case "duplicates":
+            case "dupes":
+                Navigator.GoToModule?.Invoke("module.duplicates");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -188,6 +192,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.bulkops":
                 NavFrame.Navigate(typeof(BulkOpsModule));
+                break;
+            case "module.duplicates":
+                NavFrame.Navigate(typeof(DuplicatesModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
