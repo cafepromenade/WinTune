@@ -264,6 +264,10 @@ public sealed partial class MainWindow : Window
             case "ocr":
             case "imageresizer":
                 Navigator.GoToModule?.Invoke("module.powertoys");
+            case "wsl":
+            case "vm":
+            case "sandbox":
+                Navigator.GoToModule?.Invoke("module.wslvm");
                 break;
             case null:
             case "":
@@ -382,6 +386,7 @@ public sealed partial class MainWindow : Window
         "module.configbackup" => typeof(ConfigBackupModule),
         "module.native" => typeof(NativeUtilitiesModule),
         "module.powertoys" => typeof(PowerToysExtrasModule),
+        "module.wslvm" => typeof(WslVmModule),
         _ => typeof(DashboardPage),
     };
 
@@ -546,6 +551,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(NativeUtilitiesModule));
             case "module.powertoys":
                 NavFrame.Navigate(typeof(PowerToysExtrasModule));
+            case "module.wslvm":
+                NavFrame.Navigate(typeof(WslVmModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

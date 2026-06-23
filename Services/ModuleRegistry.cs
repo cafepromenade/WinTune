@@ -63,6 +63,7 @@ public static class ModuleRegistry
         new() { Tag = "module.configbackup", En = "Config & Backup", Zh = "設定與備份", Glyph = ((char)0xE8F7).ToString(), Keywords = "config backup snapshot restore export import bundle zip git schedule mirror reg winget integrity 設定 備份 快照 還原 匯出 匯入 排程 鏡像" },
         new() { Tag = "module.native", En = "Native Utilities", Zh = "原生工具", Glyph = ((char)0xE950).ToString(), Keywords = "wifi password saved nearby scan smb shares sessions brightness ddc certificate users logoff disconnect gpu disk counters process modules bluetooth pinvoke wlan 原生 密碼 共享 亮度 憑證 藍牙 模組" },
         new() { Tag = "module.powertoys", En = "PowerToys Extras", Zh = "PowerToys 額外工具", Glyph = ((char)0xE945).ToString(), Keywords = "powertoys image resizer ocr text extractor always on top topmost paste plain text 圖片縮放 文字擷取 置頂 純文字" },
+        new() { Tag = "module.wslvm", En = "WSL & VM Launcher", Zh = "WSL 與 VM 啟動器", Glyph = ((char)0xEC7A).ToString(), Keywords = "wsl linux distro ubuntu debian windows sandbox wsb virtual machine vm hyper-v export import 子系統 沙盒 虛擬機" },
     };
 
     public static IEnumerable<ModuleInfo> Search(string query)
