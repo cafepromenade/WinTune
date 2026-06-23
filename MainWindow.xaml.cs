@@ -37,6 +37,9 @@ public sealed partial class MainWindow : Window
         // 背景運行：關窗收入系統匣，剪貼簿監察繼續運行。
         // Keep running when closed: close hides to the tray; the clipboard monitor keeps going.
         ClipboardService.Start(DispatcherQueue);
+        // 全域熱鍵泵：開機就跑，收入系統匣都繼續響。
+        // Global hotkey pump: starts now so registered chords fire even while WinTune sits in the tray.
+        HotkeyMacroService.StartHotkeys();
         TrayService.Install(ShowFromTray, QuitFromTray, "WinTune · 視窗調校");
         AppWindow.Closing += OnAppWindowClosing;
     }
@@ -120,6 +123,11 @@ public sealed partial class MainWindow : Window
             case "registry":
                 Navigator.GoToModule?.Invoke("module.regedit");
                 break;
+            case "doctors":
+            case "systemdoctors":
+            case "doctor":
+                Navigator.GoToModule?.Invoke("module.doctors");
+                break;
             case "services":
                 Navigator.GoToModule?.Invoke("module.services");
                 break;
@@ -129,6 +137,11 @@ public sealed partial class MainWindow : Window
                 break;
             case "devices":
                 Navigator.GoToModule?.Invoke("module.devices");
+                break;
+            case "vivetool":
+            case "vive":
+            case "featureflags":
+                Navigator.GoToModule?.Invoke("module.vivetool");
                 break;
             case "startup":
                 Navigator.GoToModule?.Invoke("module.startup");
@@ -163,6 +176,12 @@ public sealed partial class MainWindow : Window
             case "remap":
                 Navigator.GoToModule?.Invoke("module.keyboard");
                 break;
+            case "hotkeys":
+            case "hotkey":
+            case "macro":
+            case "expander":
+                Navigator.GoToModule?.Invoke("module.hotkeys");
+                break;
             case "hosts":
                 Navigator.GoToModule?.Invoke("module.hosts");
                 break;
@@ -172,6 +191,11 @@ public sealed partial class MainWindow : Window
             case "recorder":
             case "record":
                 Navigator.GoToModule?.Invoke("module.recorder");
+                break;
+            case "capture":
+            case "snip":
+            case "screenshot":
+                Navigator.GoToModule?.Invoke("module.capture");
                 break;
             case "monitor":
             case "sysmon":
@@ -220,10 +244,70 @@ public sealed partial class MainWindow : Window
             case "android":
                 Navigator.GoToModule?.Invoke("module.adb");
                 break;
+            case "fastboot":
+            case "flasher":
+                Navigator.GoToModule?.Invoke("module.fastboot");
+                break;
+            case "emulator":
+            case "avd":
+                Navigator.GoToModule?.Invoke("module.emulator");
+                break;
             case "vpn":
             case "nordvpn":
             case "tailscale":
                 Navigator.GoToModule?.Invoke("module.vpn");
+                break;
+            case "comms":
+            case "communications":
+            case "mail":
+            case "email":
+            case "outlook":
+            case "teams":
+            case "discord":
+            case "telegram":
+            case "slack":
+                Navigator.GoToModule?.Invoke("module.comms");
+                break;
+            case "configbackup":
+            case "backup":
+            case "config":
+                Navigator.GoToModule?.Invoke("module.configbackup");
+                break;
+            case "native":
+            case "pinvoke":
+            case "system32":
+                Navigator.GoToModule?.Invoke("module.native");
+                break;
+            case "powertoys":
+            case "extras":
+            case "ocr":
+            case "imageresizer":
+                Navigator.GoToModule?.Invoke("module.powertoys");
+                break;
+            case "wsl":
+            case "vm":
+            case "sandbox":
+                Navigator.GoToModule?.Invoke("module.wslvm");
+                break;
+            case "onedrive":
+                Navigator.GoToModule?.Invoke("module.onedrive");
+                break;
+            case "time":
+            case "timezone":
+            case "clock":
+            case "unit":
+                Navigator.GoToModule?.Invoke("module.timeunit");
+                break;
+            case "settingshub":
+            case "controlpanel":
+            case "mssettings":
+                Navigator.GoToModule?.Invoke("module.settingshub");
+                break;
+            case "imaging":
+            case "rpi":
+            case "raspberrypi":
+            case "minecraft":
+                Navigator.GoToModule?.Invoke("module.imaging");
                 break;
             case "voice":
             case "tts":
@@ -311,9 +395,11 @@ public sealed partial class MainWindow : Window
         "module.archives" => typeof(ArchivesModule),
         "module.media" => typeof(MediaModule),
         "module.regedit" => typeof(RegistryEditor),
+        "module.doctors" => typeof(SystemDoctorsModule),
         "module.services" => typeof(ServicesModule),
         "module.tasks" => typeof(ScheduledTasksModule),
         "module.devices" => typeof(DevicesModule),
+        "module.vivetool" => typeof(ViveToolModule),
         "module.startup" => typeof(StartupModule),
         "module.rename" => typeof(RenameModule),
         "module.bulkops" => typeof(BulkOpsModule),
@@ -323,10 +409,13 @@ public sealed partial class MainWindow : Window
         "module.uninstall" => typeof(AppUninstallerModule),
         "module.windows" => typeof(WindowManagerModule),
         "module.keyboard" => typeof(KeyboardModule),
+        "module.hotkeys" => typeof(HotkeyMacroModule),
         "module.hosts" => typeof(HostsEditorModule),
         "module.mouse" => typeof(MouseModule),
         "module.recorder" => typeof(ScreenRecorderModule),
+        "module.capture" => typeof(CaptureStudioModule),
         "module.monitor" => typeof(SystemMonitorModule),
+        "module.battery" => typeof(BatteryThermalModule),
         "module.connections" => typeof(ConnectionsModule),
         "module.events" => typeof(EventViewerModule),
         "module.mixer" => typeof(VolumeMixerModule),
@@ -337,7 +426,20 @@ public sealed partial class MainWindow : Window
         "module.clipboard" => typeof(ClipboardModule),
         "module.packages" => typeof(PackageManagerModule),
         "module.adb" => typeof(AndroidAdbModule),
+        "module.fastboot" => typeof(FastbootModule),
+        "module.emulator" => typeof(EmulatorModule),
         "module.vpn" => typeof(VpnMeshModule),
+        "module.homeassistant" => typeof(HomeAssistantModule),
+        "module.comms" => typeof(CommunicationsModule),
+        "module.configbackup" => typeof(ConfigBackupModule),
+        "module.native" => typeof(NativeUtilitiesModule),
+        "module.powertoys" => typeof(PowerToysExtrasModule),
+        "module.wslvm" => typeof(WslVmModule),
+        "module.fonts" => typeof(FontManagerModule),
+        "module.onedrive" => typeof(OneDriveModule),
+        "module.timeunit" => typeof(TimeUnitModule),
+        "module.settingshub" => typeof(SettingsHubModule),
+        "module.imaging" => typeof(ImagingGameModule),
         "module.voice" => typeof(VoiceModule),
         _ => typeof(DashboardPage),
     };
@@ -400,6 +502,9 @@ public sealed partial class MainWindow : Window
             case "module.regedit":
                 NavFrame.Navigate(typeof(RegistryEditor));
                 break;
+            case "module.doctors":
+                NavFrame.Navigate(typeof(SystemDoctorsModule));
+                break;
             case "module.services":
                 NavFrame.Navigate(typeof(ServicesModule));
                 break;
@@ -408,6 +513,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.devices":
                 NavFrame.Navigate(typeof(DevicesModule));
+                break;
+            case "module.vivetool":
+                NavFrame.Navigate(typeof(ViveToolModule));
                 break;
             case "module.startup":
                 NavFrame.Navigate(typeof(StartupModule));
@@ -436,6 +544,9 @@ public sealed partial class MainWindow : Window
             case "module.keyboard":
                 NavFrame.Navigate(typeof(KeyboardModule));
                 break;
+            case "module.hotkeys":
+                NavFrame.Navigate(typeof(HotkeyMacroModule));
+                break;
             case "module.hosts":
                 NavFrame.Navigate(typeof(HostsEditorModule));
                 break;
@@ -445,8 +556,14 @@ public sealed partial class MainWindow : Window
             case "module.recorder":
                 NavFrame.Navigate(typeof(ScreenRecorderModule));
                 break;
+            case "module.capture":
+                NavFrame.Navigate(typeof(CaptureStudioModule));
+                break;
             case "module.monitor":
                 NavFrame.Navigate(typeof(SystemMonitorModule));
+                break;
+            case "module.battery":
+                NavFrame.Navigate(typeof(BatteryThermalModule));
                 break;
             case "module.connections":
                 NavFrame.Navigate(typeof(ConnectionsModule));
@@ -478,8 +595,47 @@ public sealed partial class MainWindow : Window
             case "module.adb":
                 NavFrame.Navigate(typeof(AndroidAdbModule));
                 break;
+            case "module.fastboot":
+                NavFrame.Navigate(typeof(FastbootModule));
+                break;
+            case "module.emulator":
+                NavFrame.Navigate(typeof(EmulatorModule));
+                break;
             case "module.vpn":
                 NavFrame.Navigate(typeof(VpnMeshModule));
+                break;
+            case "module.homeassistant":
+                NavFrame.Navigate(typeof(HomeAssistantModule));
+                break;
+            case "module.comms":
+                NavFrame.Navigate(typeof(CommunicationsModule));
+                break;
+            case "module.configbackup":
+                NavFrame.Navigate(typeof(ConfigBackupModule));
+                break;
+            case "module.native":
+                NavFrame.Navigate(typeof(NativeUtilitiesModule));
+                break;
+            case "module.powertoys":
+                NavFrame.Navigate(typeof(PowerToysExtrasModule));
+                break;
+            case "module.wslvm":
+                NavFrame.Navigate(typeof(WslVmModule));
+                break;
+            case "module.fonts":
+                NavFrame.Navigate(typeof(FontManagerModule));
+                break;
+            case "module.onedrive":
+                NavFrame.Navigate(typeof(OneDriveModule));
+                break;
+            case "module.timeunit":
+                NavFrame.Navigate(typeof(TimeUnitModule));
+                break;
+            case "module.settingshub":
+                NavFrame.Navigate(typeof(SettingsHubModule));
+                break;
+            case "module.imaging":
+                NavFrame.Navigate(typeof(ImagingGameModule));
                 break;
             case "module.voice":
                 NavFrame.Navigate(typeof(VoiceModule));

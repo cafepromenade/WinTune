@@ -20,7 +20,7 @@
 - [x] **Settings import/export** · 設定匯入／匯出 — export/import WinTune settings as JSON (Settings page)
 
 ## 🎯 Requested big features (queued) · 已點名嘅大功能（排緊隊）
-- [ ] **Settings & Control Panel hub** · 設定與控制台總匯 — bilingual searchable launcher for every `ms-settings:` page + every Control Panel applet (`control /name`, `*.cpl`).
+- [x] **Settings & Control Panel hub** · 設定與控制台總匯 — bilingual searchable launcher for every `ms-settings:` page + every Control Panel applet (`control /name`, `*.cpl`). Implemented as the SettingsHub module (allowed launcher-style exception — many applets have no in-app equivalent).
 - [x] **Interactive Registry Editor** · 互動式登錄編輯器 — bespoke in-app tree browser + value view/add/edit/delete over RegistryHelper, bilingual. (no regedit.exe redirect)
 
 > **Design rule (user directive):** everything must run **purely in-app, NOT as redirects** to external
@@ -281,33 +281,33 @@
   - _7z.exe a archive.7z <files> -mtc=on -mta=on -mtm=on -ssp — -mtc/-mta/-mtm store Created/Accessed/Modified times in the .7z; verified switch -ssp stops Windows from updating the source files' Last-Access-Time while 7-Zip reads them. Add -sni to also store NT security info._
 
 ### Communications · 🆕 new module / 新模組  (14)
-- [ ] **Compose Outlook draft (no auto-send)** · 整封 Outlook 草稿（唔會自動寄）
+- [x] **Compose Outlook draft (no auto-send)** · 整封 Outlook 草稿（唔會自動寄）
   - _Launch classic Outlook with new-message switches: "%ProgramFiles%\Microsoft Office\root\Office16\OUTLOOK.EXE" /c ipm.note /m "someone@example.com?subject=...&cc=...&body=...". /c ipm.note forces a new mail item; /m carries an RFC 6068 mailto query. Resolve the exact OUTLOOK.EXE path at runtime (Office16 path varies by install/bitness; new Outlook has no /c switch). Opens a draft only, never sends._
-- [ ] **Open mailto: compose in default mail app** · 用預設信件 App 開 mailto: 寫信
+- [x] **Open mailto: compose in default mail app** · 用預設信件 App 開 mailto: 寫信
   - _Start-Process "mailto:someone@example.com?subject=...&body=..." routes through whatever owns the mailto protocol (new Outlook, Thunderbird, web). RFC 6068 keys: subject, cc, bcc, body (URL-encoded). Honors the registered mailto UserChoice handler instead of hardcoding Outlook._
-- [ ] **Attach files to a new mail (drag-pick)** · 揀檔案落新郵件做附件
+- [x] **Attach files to a new mail (drag-pick)** · 揀檔案落新郵件做附件
   - _Classic Outlook: OUTLOOK.EXE /a "C:\path\file.pdf" opens a fresh message with that file staged as an attachment; combine with /m to pre-address. /a accepts one file path; loop-launch or zip first for multiple. No send. Classic Outlook only._
-- [ ] **Jump to an Outlook folder on launch** · 跳去指定 Outlook 資料夾
+- [x] **Jump to an Outlook folder on launch** · 跳去指定 Outlook 資料夾
   - _Classic Outlook: OUTLOOK.EXE /select outlook:Calendar (also outlook:Inbox, outlook:Contacts, outlook:Tasks, outlook:Notes, outlook:Drafts). The /select switch with an outlook: namespace path opens that store folder on launch._
-- [ ] **Open a Discord channel / server** · 直接開個 Discord 頻道或者 server
+- [x] **Open a Discord channel / server** · 直接開個 Discord 頻道或者 server
   - _Start-Process "discord://-/channels/<guildId>/<channelId>" (omit channelId to land on the last viewed channel; use discord://-/channels/@me for DMs home). The installed handler is Discord.exe --url -- "%1" (verified in HKCU\Software\Classes\discord\shell\open\command), so the OS resolves the discord:// URL. IDs are user-supplied; no login._
-- [ ] **Open an existing Discord DM thread** · 開返個 Discord 私訊對話
+- [x] **Open an existing Discord DM thread** · 開返個 Discord 私訊對話
   - _Start-Process "discord://-/channels/@me/<dmChannelId>" opens an existing DM channel by its numeric channel id (the @me route is the documented DM namespace mirrored from the web app). User-supplied id only; no credential entry. (Profile-by-userId and settings/<pane> deep links are NOT exposed by the discord:// scheme and were dropped.)_
-- [ ] **Start a Teams 1:1 / group chat** · 開個 Teams 一對一或者群組傾偈
+- [x] **Start a Teams 1:1 / group chat** · 開個 Teams 一對一或者群組傾偈
   - _Start-Process "https://teams.microsoft.com/l/chat/0/0?users=joe@contoso.com,bob@contoso.com&topicName=...&message=..." — the official Teams deep-link form (the https l/chat URL launches the desktop client via the registered ms-teams/msteams handler and falls back to web). users is a comma list of UPNs; message pre-fills, does not auto-send._
-- [ ] **Schedule a new Teams meeting** · 排個新嘅 Teams 會議
+- [x] **Schedule a new Teams meeting** · 排個新嘅 Teams 會議
   - _Start-Process "https://teams.microsoft.com/l/meeting/new?subject=...&attendees=user1@x.com,user2@x.com&startTime=<ISO8601>&endTime=<ISO8601>&content=...". Official deep link; opens the meeting-scheduling form pre-filled, user clicks Send. No auto-send._
-- [ ] **Open a Teams call deep link** · 撳一下打 Teams 電話
+- [x] **Open a Teams call deep link** · 撳一下打 Teams 電話
   - _Start-Process "https://teams.microsoft.com/l/call/0/0?users=joe@contoso.com" — documented Teams l/call deep link; opens the desktop client and starts a call to the given UPN(s). Replaces the unsupported Graph presence-write item, which needs OAuth credentials the suite never enters._
-- [ ] **Share a URL/text to Telegram** · 分享條 link 去 Telegram
+- [x] **Share a URL/text to Telegram** · 分享條 link 去 Telegram
   - _Start-Process "tg://msg_url?url=<urlencoded>&text=<urlencoded>" opens Telegram Desktop's chat-picker with the URL+text staged in the compose box (documented at core.telegram.org/api/links). User picks the chat and sends. Plain text-only share: tg://msg?text=<urlencoded>._
-- [ ] **Open a Telegram chat by username** · 開個 Telegram 傾偈
+- [x] **Open a Telegram chat by username** · 開個 Telegram 傾偈
   - _Start-Process "tg://resolve?domain=<username>" opens that public chat/channel; add &post=<id> to jump to a specific channel post. Documented tg:// links only (the &videochat/&voicechat join params are not public and were dropped). Username only; no login._
-- [ ] **Open a Slack channel / DM** · 開個 Slack 頻道或者私訊
+- [x] **Open a Slack channel / DM** · 開個 Slack 頻道或者私訊
   - _Start-Process "slack://channel?team=<TXXXX>&id=<CXXXX>" opens that channel in the Slack desktop client; slack://user?team=<TXXXX>&id=<UXXXX> opens a DM, and slack://open?team=<TXXXX> just focuses the workspace. Documented slack:// deep links; team/channel/user IDs are user-supplied; no login._
-- [ ] **Call / text via Phone Link** · 用 Phone Link 打電話或者傳 SMS
+- [x] **Call / text via Phone Link** · 用 Phone Link 打電話或者傳 SMS
   - _Start-Process "tel:+18005551234" and Start-Process "sms:+18005551234?body=<urlencoded>" route through the registered tel:/sms: handler (Phone Link / Your Phone when a phone is paired). RFC 3966 tel and the sms: body query; opens the dialer/compose, never auto-dials or auto-sends._
-- [ ] **Pick the default mail / protocol handler** · 揀邊個做預設信件 App
+- [x] **Pick the default mail / protocol handler** · 揀邊個做預設信件 App
   - _Start-Process "ms-settings:defaultapps" opens the Default apps Settings page so the user reassigns mailto and the discord/tg/msteams/slack scheme handlers. Windows 10+ blocks programmatic UserChoice writes, so the suite deep-links the page for the user to confirm rather than forcing a handler._
 
 ### Browser Control · 🆕 new module / 新模組  (14)
@@ -341,41 +341,41 @@
   - _winget install --id Google.Chrome -e --silent / winget install --id Microsoft.Edge -e ; winget upgrade --id Google.Chrome -e --silent . Alternates Mozilla.Firefox, Brave.Brave. Real winget package identifiers._
 
 ### Config & Backup · 🆕 new module / 新模組  (14)
-- [ ] **Export all suite settings to a portable bundle** · 匯出成個套件嘅設定做一個檔案
+- [x] **Export all suite settings to a portable bundle** · 匯出成個套件嘅設定做一個檔案
   - _Serialize WinTune's own settings store (the app's settings JSON/INI under %LOCALAPPDATA%\WinTune) plus a manifest into a single .zip via System.IO.Compression.ZipFile.CreateFromDirectory; bundle includes a version stamp so import can validate. File IO + ZipFile._
-- [ ] **Import a settings bundle and re-apply tweaks** · 匯入設定檔案，再套返晒啲調整
+- [x] **Import a settings bundle and re-apply tweaks** · 匯入設定檔案，再套返晒啲調整
   - _ZipFile.ExtractToDirectory of the exported .zip into a temp dir, validate manifest version, then replay each tweak through the existing Windows-11 module apply pipeline. File IO + ZipFile._
-- [ ] **Init local git snapshot repo for config history** · 起一個本地 git 倉庫，儲低設定歷史
+- [x] **Init local git snapshot repo for config history** · 起一個本地 git 倉庫，儲低設定歷史
   - _git init in %LOCALAPPDATA%\WinTune\snapshots; on each snapshot write the current settings export into the working tree, then `git add -A` and `git commit -m "<timestamp>"`. Real git CLI._
-- [ ] **Browse snapshot history (log)** · 睇返啲快照歷史 (log)
+- [x] **Browse snapshot history (log)** · 睇返啲快照歷史 (log)
   - _git -C <snapshotsDir> log --pretty=format:%H%x09%ad%x09%s --date=iso, parse the tab-separated output into a list view. Real git CLI._
-- [ ] **Restore settings to an earlier snapshot** · 還原返去之前一個快照
+- [x] **Restore settings to an earlier snapshot** · 還原返去之前一個快照
   - _git -C <snapshotsDir> restore --source=<commit> . (or `git checkout <commit> -- .`) to repopulate the working tree, then re-run import/apply. Non-destructive: stash the current state first with `git stash`. Real git CLI._
-- [ ] **Diff current config against a snapshot** · 比較而家同舊快照嘅設定差異
+- [x] **Diff current config against a snapshot** · 比較而家同舊快照嘅設定差異
   - _git -C <snapshotsDir> diff <commit> -- settings.json (text settings serialized deterministically so diffs are meaningful). Real git CLI._
-- [ ] **Schedule automatic daily backup** · 排好每日自動備份
+- [x] **Schedule automatic daily backup** · 排好每日自動備份
   - _Register a Task Scheduler task via schtasks /Create /SC DAILY /TN "WinTune Backup" /TR "<WinTune.exe> --snapshot" /ST 03:00 /RL LIMITED (reuses the suite's existing no-UAC scheduled-task pattern). Real schtasks CLI._
-- [ ] **Export tweaked registry keys to a .reg file** · 匯出改過嘅登錄機碼做 .reg 檔
+- [x] **Export tweaked registry keys to a .reg file** · 匯出改過嘅登錄機碼做 .reg 檔
   - _For each key the Windows-11 module is known to touch, run reg export "<HKCU\...\key>" "<out>.reg" /y and concatenate into one human-reviewable, re-importable backup. Real reg.exe._
-- [ ] **Capture installed-app list with winget export** · 用 winget 匯出而家裝咗嘅程式清單
+- [x] **Capture installed-app list with winget export** · 用 winget 匯出而家裝咗嘅程式清單
   - _winget export -o apps.json --include-versions --accept-source-agreements; store the JSON in the snapshot so a rebuild can `winget import apps.json`. Real winget CLI (flags confirmed in winget v1.28)._
-- [ ] **Back up taskbar pins and Start layout files** · 備份工作列嘅固定捷徑同開始選單排版
+- [x] **Back up taskbar pins and Start layout files** · 備份工作列嘅固定捷徑同開始選單排版
   - _reg export HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband for the reliable taskbar part, plus a raw file copy of %LOCALAPPDATA%\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin (Win11 filename). NOTE: copying start2.bin back is best-effort only — Microsoft removed supported Start-layout import on Win11, so restore is not guaranteed across builds/machines; store it for reference and re-pin if needed. File copy + reg export._
-- [ ] **Mirror backups to a folder or network share** · 將備份鏡像去一個資料夾或者網絡共享
+- [x] **Mirror backups to a folder or network share** · 將備份鏡像去一個資料夾或者網絡共享
   - _robocopy "<snapshotsDir>" "<destOrUNC>" /MIR /R:2 /W:2 /NP /LOG:<log> for resilient incremental mirroring to an external drive or \\server\share. Real robocopy._
-- [ ] **Package a snapshot as a single git bundle file** · 將一個快照打包成單一個 git bundle 檔
+- [x] **Package a snapshot as a single git bundle file** · 將一個快照打包成單一個 git bundle 檔
   - _git -C <snapshotsDir> bundle create wintune-config.bundle --all to produce one transportable file containing full history; restore elsewhere with `git clone wintune-config.bundle`. Real git CLI._
-- [ ] **Prune snapshot history to reclaim space** · 清走舊快照，慳返啲空間
+- [x] **Prune snapshot history to reclaim space** · 清走舊快照，慳返啲空間
   - _Drop refs older than a chosen date, then git -C <snapshotsDir> reflog expire --expire=now --all && git gc --prune=now --aggressive to compact the repo. Real git CLI._
-- [ ] **Verify backup integrity with hashes** · 用雜湊驗一驗備份冇壞
+- [x] **Verify backup integrity with hashes** · 用雜湊驗一驗備份冇壞
   - _Get-FileHash -Algorithm SHA256 over each file in the bundle, write a checksums.txt manifest; on restore recompute and compare, and run `git -C <snapshotsDir> fsck --full` to validate the repo objects. PowerShell Get-FileHash + git fsck._
 
 ### Capture Studio · 🆕 new module / 新模組  (3)
-- [ ] **Region screen-record to MP4/GIF** · 錄起螢幕一忽嘅片，轉MP4或者GIF
+- [x] **Region screen-record to MP4/GIF** · 錄起螢幕一忽嘅片，轉MP4或者GIF
   - _Wrap bundled ffmpeg: ffmpeg -f gdigrab -framerate 30 -offset_x X -offset_y Y -video_size WxH -i desktop out.mp4. For GIF use two-pass palette: ffmpeg -i out.mp4 -vf "fps=15,scale=720:-1:flags=lanczos,palettegen" pal.png then ffmpeg -i out.mp4 -i pal.png -filter_complex paletteuse out.gif. Region chosen via a transparent overlay window that supplies the offset/video_size args._
-- [ ] **Instant rectangular snip to clipboard** · 即刻㩒個矩形截圖入剪貼簿
+- [x] **Instant rectangular snip to clipboard** · 即刻㩒個矩形截圖入剪貼簿
   - _Invoke the built-in Snipping Tool clip mode via its registered URL protocol (HKCR\ms-screenclip): Process.Start("ms-screenclip:") or explorer.exe ms-screenclip:. Optionally bind a global hotkey that SendInput-simulates Win+Shift+S. The resulting PNG is read back with Clipboard.GetImage()._
-- [ ] **OCR text from any image or screen region** · 由圖或者螢幕嗰忽認返啲字出嚟
+- [x] **OCR text from any image or screen region** · 由圖或者螢幕嗰忽認返啲字出嚟
   - _WinRT Windows.Media.Ocr.OcrEngine.TryCreateFromUserProfileLanguages(); decode the bitmap with BitmapDecoder, await engine.RecognizeAsync(softwareBitmap), join OcrResult.Lines and copy to clipboard. For Cantonese/Chinese check OcrEngine.AvailableRecognizerLanguages for a zh-Hant/zh-Hans recognizer and prompt to add the language pack if absent._
 
 ### DNS & Hosts Manager · 🆕 new module / 新模組  (2)
@@ -391,9 +391,9 @@
   - _Enable history first: HKCU\Software\Microsoft\Clipboard value EnableClipboardHistory (REG_DWORD)=1 (or open ms-settings:clipboard). At runtime use Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync(); re-copy a chosen entry with SetHistoryItemAsContent; 'paste plain' builds a fresh DataPackage with SetText only to drop rich formats._
 
 ### Battery & Thermal Dashboard · 🆕 new module / 新模組  (2)
-- [ ] **Battery health & wear report** · 睇電池健康同耗損報告
+- [x] **Battery health & wear report** · 睇電池健康同耗損報告 — DONE: new Battery & Thermal module. Live charge/status/runtime via Win32_Battery (EstimatedChargeRemaining/BatteryStatus/EstimatedRunTime); powercfg /batteryreport parsed for DESIGN vs FULL CHARGE CAPACITY → wear %, cycle count, chemistry; powercfg /energy run in-app with error/warning counts. All shown in-app (cards + dialogs), no redirect. Bilingual.
   - _Run powercfg /batteryreport /output report.html and parse DESIGN CAPACITY vs FULL CHARGE CAPACITY to compute wear %; run powercfg /energy for power-draw warnings. Live charge level via the Win32_Battery WMI class (EstimatedChargeRemaining, BatteryStatus)._
-- [ ] **Live CPU/GPU temperature & fan monitor** · 即時睇CPU/GPU溫度同風扇
+- [x] **Live CPU/GPU temperature & fan monitor** · 即時睇CPU/GPU溫度同風扇 — DONE: LibreHardwareMonitorLib (CPU/GPU/motherboard) traversed each second for Temperature/Fan/Load sensors in a live table + hottest-sensor card; falls back to MSAcpi_ThermalZoneTemperature WMI (with an empty-state explainer) when no admin-level driver exposes real sensors.
   - _Wrap the LibreHardwareMonitorLib NuGet: new Computer { IsCpuEnabled = true, IsGpuEnabled = true }.Open(), then traverse Hardware[].Sensors where SensorType is Temperature/Fan/Load. Fallback to the MSAcpi_ThermalZoneTemperature WMI class for a coarse thermal-zone reading without admin drivers._
 
 ### WSL & VM Launcher · 🆕 new module / 新模組  (2)
@@ -407,7 +407,7 @@
   - _P/Invoke Gdi32: read the pixel under the cursor with GetCursorPos + GetPixel(GetDC(IntPtr.Zero), x, y); convert to HEX/RGB/HSL/HSV and copy the chosen format to clipboard. Draw a zoom loupe from a BitBlt of the screen DC around the cursor._
 
 ### Font Manager · 🆕 new module / 新模組  (1)
-- [ ] **Install / preview / uninstall fonts in bulk** · 一次過裝、睇同移除啲字型
+- [x] **Install / preview / uninstall fonts in bulk** · 一次過裝、睇同移除啲字型
   - _Per-user install (no UAC): copy .ttf/.otf to %LOCALAPPDATA%\Microsoft\Windows\Fonts and add a value under HKCU\Software\Microsoft\Windows NT\CurrentVersion\Fonts named '<Face> (TrueType)' = the file path, then broadcast WM_FONTCHANGE. Machine-wide variant: copy to %WINDIR%\Fonts + the HKLM equivalent. Preview by rendering a sample string per face._
 
 ### Hotkey & Macro Runner · 🆕 new module / 新模組  (1)
@@ -415,7 +415,7 @@
   - _Register chords with user32 RegisterHotKey and pump WM_HOTKEY; map each id to an action: Process.Start an app, run a PowerShell snippet, or replay input via SendInput. Persist bindings to JSON; optionally bundle AutoHotkey v2 (AutoHotkey64.exe script.ahk) for richer key remaps._
 
 ### OneDrive · 🆕 new module / 新模組  (1)
-- [ ] **Pin / Dehydrate OneDrive Files-On-Demand & Set Auto-Free Threshold** · 設定OneDrive檔案隨選同自動釋放空間
+- [x] **Pin / Dehydrate OneDrive Files-On-Demand & Set Auto-Free Threshold** · 設定OneDrive檔案隨選同自動釋放空間
   - _OneDrive.exe /shutdown to pause sync. Per file/folder: 'attrib +U -P <path>' marks online-only (dehydrate via cloud-filter pin state), 'attrib +P -U <path>' pins it always-local. Auto-dehydration age set by DWORD ConfigStorageSenseCloudContentDehydrationThreshold under ...\StorageSense\Parameters\StoragePolicy._
 
 ### Time & Unit Tools · 🆕 new module / 新模組  (1)
@@ -605,8 +605,7 @@ _Source: howtogeek / windowsforum — Windows has no built-in key remap; people 
 - [x] **In-app Keyboard Remapper (SharpKeys-style)** · App 內鍵盤重新對應 — DONE this iteration: remap or disable keys by building the HKLM Scancode Map binary; shows current maps, add/remove, apply (admin, reboot), clear all. No external tool.
 - [ ] **Mouse button settings** · 滑鼠按鍵設定
   - _HKCU\Control Panel\Mouse SwapMouseButtons + double-click speed/wheel lines (already partly in Win11Pro); add a dedicated in-app panel with live SystemParametersInfo apply._
-- [ ] **Text expander / snippets** · 文字展開（縮寫片語）
-  - _In-app snippet store + a low-level keyboard hook (SetWindowsHookEx WH_KEYBOARD_LL) to expand typed triggers. Pure C#/Win32, no external tool._
+- [x] **Hotkey & Macro Runner + Text expander / snippets** · 熱鍵與巨集 + 文字展開（縮寫片語） — DONE: in-app module that registers global chords via user32 RegisterHotKey (WM_HOTKEY pumped on a background message thread); each binding launches an app, runs a PowerShell snippet, or replays text via SendInput. Includes an in-app snippet store + a WH_KEYBOARD_LL low-level keyboard hook that expands typed triggers. Bindings + snippets persist as JSON via SettingsStore; the hotkey pump starts at launch and keeps firing in the tray. Pure C#/Win32, no external tool, no redirect.
 
 ## 🌱 Newly discovered — iteration 18 · 第 18 次迭代新發掘
 
@@ -771,14 +770,18 @@ Bring Microsoft PowerToys utilities in-app, natively + bilingually. Some already
 - [x] **Color Picker** · 螢幕取色 — global WH_MOUSE_LL hook + GetPixel; HEX/RGB/HSL + copy + history. `--page colorpicker`.
 - [x] **Environment Variables** · 環境變數 — User/System get/add/edit/delete (Environment.*Variable). `--page envvars`.
 
+### Batch 2 — DONE (feat/powertoys-extras) · 第二批（完成）
+Shipped as a single **PowerToys Extras** module (`module.powertoys` / `--page powertoys`) with a 4-tab pivot:
+- [x] **Image Resizer** · 圖片批次縮放 — bulk resize via Windows.Graphics.Imaging (decode → BitmapTransform scale, aspect kept) with presets (Small/Medium/Large/Phone/Thumbnail) + custom W/H, JPEG quality, filename suffix, output folder, shrink-only. `ImageResizeService`.
+- [x] **Text Extractor (OCR)** · 螢幕文字擷取 — GDI BitBlt capture of the virtual screen → SoftwareBitmap → Windows.Media.Ocr → text shown + auto-copied to clipboard; language picker from installed OCR packs. `TextExtractorService`.
+- [x] **Always On Top** · 視窗置頂 — per-window toggle of SetWindowPos HWND_TOPMOST (reuses WindowManager), tracks pinned set, un-pin-all. `AlwaysOnTopService`.
+- [x] **Paste as Plain Text** · 純文字貼上 — one-shot strip-clipboard + Ctrl+Shift+V global low-level-keyboard-hook hotkey (strip then re-inject Ctrl+V). `PlainTextPasteService`.
+
 ### Next PowerToys batches · 之後嘅批次
-- [ ] **Image Resizer** · 圖片批次縮放 — bulk resize images (Windows.Graphics.Imaging / System.Drawing) with presets + output folder.
-- [ ] **Text Extractor (OCR)** · 螢幕文字擷取 — Windows.Media.Ocr over a selected screen region → copy text.
-- [ ] **Always On Top** · 視窗置頂 — SetWindowPos HWND_TOPMOST on a picked window (extend Window Manager).
 - [ ] **Find My Mouse / crosshairs** · 搵滑鼠／十字準星 — overlay window following the cursor (layered window).
 - [ ] **Screen Ruler** · 螢幕間尺 — measure pixels with an overlay.
 - [ ] **Quick Accent** · 快速重音 — hold-a-key accent picker (low-level keyboard hook).
-- [ ] **Paste as Plain Text** · 純文字貼上 — strip formatting from clipboard (WinRT Clipboard) + hotkey.
+- [ ] **OCR region select** · OCR 區域選取 — extend Text Extractor with a drag-to-select overlay instead of full-screen capture.
 - [ ] **Hosts/Registry/Keyboard/Rename** — already in WinTune (note the equivalence in UI).
 
 ## 🛠️ Winaero-Tweaker functions · Winaero 調校功能 (user-requested)
@@ -810,13 +813,13 @@ launching the other app.
 
 ### Android (ADB + emulator + flashing)
 - [x] **Android / ADB console** · Android／ADB 主控台 — DONE (iter 31): wraps adb — devices (`adb devices -l`), install APK, shell, logcat dump, list packages, screencap→pull→show, reboot (system/bootloader/recovery), wireless connect. Detects missing adb → points to Package Manager. `module.adb` / `--page adb`.
-  - [ ] follow-ups: file **push/pull** browser; **scrcpy** screen-mirror (wrap scrcpy.exe, install via winget Genymobile.scrcpy); **fastboot** panel (flash/unlock — pairs with PixelFlasher item); app **APK backup** (`adb shell pm path` + pull); live streaming logcat (tracked process).
-- [ ] **Android emulator control** · Android 模擬器控制 — wrap the Android SDK emulator/avdmanager: list AVDs, create/launch/stop, cold-boot/wipe. (Needs SDK; offer to install via deps.)
-- [ ] **PixelFlasher-style flasher** · Pixel 刷機（PixelFlasher 式）— wrap fastboot + the boot-image patch flow: detect device (`fastboot devices`), unlock check, flash factory image / patched boot.img, sideload OTA. DANGEROUS → heavy guards, dry-run, explicit confirmations. (Reimplement the workflow natively; do not launch PixelFlasher.)
+  - [x] follow-ups: DONE — ADB module is now a Pivot with **Console**, **Files** (push/pull browser: cd, ↑, push/pull/delete, tap-to-enter), **APK backup** (`pm list packages -3` + `pm path` + pull, save-as), **Live logcat** (tracked `adb logcat` process streaming to a bounded console with level + tag filter, start/stop/clear), and **Screen mirror** (`scrcpy` wrapper: resolution/bitrate/stay-awake/screen-off/show-touches, mirror or record-to-file, auto-install via `Genymobile.scrcpy`). Engines auto-install (adb + scrcpy).
+- [x] **Android emulator control** · Android 模擬器控制 — DONE: `module.emulator` / `--page emulator`. `EmulatorService` locates the SDK (ANDROID_SDK_ROOT/ANDROID_HOME/default), drives `avdmanager list/create/delete avd`, `sdkmanager --list_installed`, and `emulator -avd` (cold-boot/-wipe-data, tracked process), stop via `adb emu kill`. List/create (image+device picker)/launch/wipe/delete with confirmations + an engine-health bar.
+- [x] **PixelFlasher-style flasher** · Pixel 刷機（PixelFlasher 式）— DONE: `module.fastboot` / `--page fastboot`. `FastbootService` wraps fastboot — `devices`, `getvar` (unlock/product/current-slot), `flashing unlock|lock`, `flash boot`, temporary `boot` (test a patched image), `update` factory zip, and `adb sideload` OTA. Every mutating op has a **dry-run** preview (default ON) AND a **typed-keyword** confirm dialog (UNLOCK/LOCK/FLASH/SIDELOAD); persistent red danger banner. Native reimplementation — no PixelFlasher launch.
 
 ### Imaging & game tools (need the engine/repo)
-- [ ] **Raspberry Pi Imager + pi boot config** · 樹莓派燒錄 — write an OS image to an SD card (raw volume write via CreateFile on \\.\PhysicalDriveN + WriteFile, with un/dismount + size guard), pick distro, and pre-seed boot config (ssh, wifi `wpa_supplicant`, user) on the boot partition. DANGEROUS (disk write) → drive picker with strong guards.
-- [ ] **Minecraft world downloader** · Minecraft 世界下載 — integrate the local GitHub repo (a proxy/mod that records chunks to a save). Plan: build the repo's jar with the bundled JDK, expose start/stop + output folder in-app; OR reimplement the proxy. NEEDS the repo path under C:\Users\cntow\Documents\GitHub.
+- [x] **Raspberry Pi Imager + pi boot config** · 樹莓派燒錄 — DONE: `Imaging & Game Tools` module (`module.imaging` / `--page imaging`). Raw disk write via CreateFile on `\\.\PhysicalDriveN` + WriteFile (4 MiB blocks, FILE_FLAG_NO_BUFFERING|WRITE_THROUGH) with a full lock+dismount cycle (FSCTL_LOCK_VOLUME/FSCTL_DISMOUNT_VOLUME) and a strict size guard (image must fit; double-checked at the metal via IOCTL_DISK_GET_LENGTH_INFO). Strong drive picker: only removable, non-system, non-boot disks are offered by default (system/boot disks refused outright); heavy confirmation dialog requires typing the disk number; needs admin (offers elevated relaunch). Boot pre-seed writes `ssh`, `wpa_supplicant.conf` (Wi-Fi) and `userconf.txt` (SHA-512-crypt `$6$` password via a pure-C# `Sha512Crypt`) onto the FAT boot partition. `ImagingService.cs` + `Sha512Crypt.cs`.
+- [x] **Minecraft world downloader** · Minecraft 世界下載 — DONE: integrates the local `minecraft-world-downloader` repo (auto-located under Documents/GitHub, or pick it). Uses the prebuilt `target/world-downloader.jar`, or builds it with Maven (`mvn -q -DskipTests package`) using a located JDK (JAVA_HOME / PATH / Adoptium·Microsoft·Oracle·Zulu install roots; one-click `Install JDK` via winget Microsoft.OpenJDK.21). Runs the headless proxy (`java -jar … --no-gui -s <server> -l <port> -o <world> [-r N] [--auto-open-containers]`) as a tracked process with live start/stop and streamed output; world output folder picker + open. `MinecraftService.cs`.
 
 ### Networking / VPN & DB tools (CLI-wrapping GUIs)
 - [ ] **NordVPN GUI (wraps the CLI)** · NordVPN 介面 — wrap `nordvpn` CLI: connect/disconnect, pick country/city/server, status, settings (killswitch, autoconnect), meshnet. In-app native UI over the CLI.

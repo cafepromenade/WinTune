@@ -20,6 +20,7 @@ public partial class App : Application
     }
 
     private static string? _exportDocsDir;
+    private static bool _takeSnapshot;
 
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
@@ -38,6 +39,16 @@ public partial class App : Application
             return;
         }
 
+        // 無頭模式：影一個設定快照然後退出（畀每日排程備份用）。
+        // Headless mode: take one config snapshot then exit (used by the daily scheduled backup).
+        if (_takeSnapshot)
+        {
+            try { WinTune.Services.ConfigBackupService.TakeSnapshot("scheduled").GetAwaiter().GetResult(); }
+            catch { /* best effort */ }
+            Exit();
+            return;
+        }
+
         Shell = new MainWindow();
         ApplyThemeFromSettings();
         Shell.Activate();
@@ -46,8 +57,17 @@ public partial class App : Application
     private static void ParseArgs()
     {
         var argv = Environment.GetCommandLineArgs();
-        for (int i = 1; i < argv.Length - 1; i++)
+        for (int i = 1; i < argv.Length; i++)
         {
+            // Standalone flags (no value).
+            if (string.Equals(argv[i], "--snapshot", StringComparison.OrdinalIgnoreCase))
+            {
+                _takeSnapshot = true;
+                continue;
+            }
+
+            // Flags that take the next token as a value.
+            if (i >= argv.Length - 1) continue;
             if (string.Equals(argv[i], "--page", StringComparison.OrdinalIgnoreCase))
                 StartPage = argv[i + 1].Trim().ToLowerInvariant();
             else if (string.Equals(argv[i], "--export-docs", StringComparison.OrdinalIgnoreCase))

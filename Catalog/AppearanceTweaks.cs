@@ -144,5 +144,20 @@ public static class AppearanceTweaks
             "開啟 Windows「個人化 > 色彩」設定頁。",
             "Open", "開啟", "explorer.exe", "ms-settings:colors",
             keywords: "settings,colours,personalisation,色彩,個人化"),
+
+        // 15) Disable JPEG wallpaper compression (HKCU\Control Panel\Desktop\JPEGImportQuality=100).
+        // Writes the value, then re-applies the current wallpaper so the new quality takes effect.
+        Tweak.CustomToggle("appearance.wallpaper-quality", "Disable wallpaper JPEG compression", "停用桌布 JPEG 壓縮",
+            "Set wallpaper import quality to 100 so Windows stops recompressing JPG wallpapers (re-applies the current wallpaper).",
+            "將桌布匯入品質設為 100，唔再壓縮 JPG 桌布（會即時重新套用目前桌布）。",
+            getIsOn: () => RegistryHelper.ValueEquals(RegRoot.HKCU, @"Control Panel\Desktop", "JPEGImportQuality", 100),
+            setIsOn: on =>
+            {
+                if (on) RegistryHelper.SetValue(RegRoot.HKCU, @"Control Panel\Desktop", "JPEGImportQuality", 100, RegistryValueKind.DWord);
+                else RegistryHelper.DeleteValue(RegRoot.HKCU, @"Control Panel\Desktop", "JPEGImportQuality");
+                // Re-apply the current wallpaper so the new quality takes effect immediately.
+                WallpaperHelper.ReapplyCurrentWallpaper();
+            },
+            keywords: "wallpaper,jpeg,quality,compression,桌布,壓縮,品質"),
     };
 }
