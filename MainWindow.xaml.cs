@@ -120,6 +120,11 @@ public sealed partial class MainWindow : Window
             case "registry":
                 Navigator.GoToModule?.Invoke("module.regedit");
                 break;
+            case "doctors":
+            case "systemdoctors":
+            case "doctor":
+                Navigator.GoToModule?.Invoke("module.doctors");
+                break;
             case "services":
                 Navigator.GoToModule?.Invoke("module.services");
                 break;
@@ -326,6 +331,7 @@ public sealed partial class MainWindow : Window
         "module.archives" => typeof(ArchivesModule),
         "module.media" => typeof(MediaModule),
         "module.regedit" => typeof(RegistryEditor),
+        "module.doctors" => typeof(SystemDoctorsModule),
         "module.services" => typeof(ServicesModule),
         "module.tasks" => typeof(ScheduledTasksModule),
         "module.devices" => typeof(DevicesModule),
@@ -417,6 +423,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.regedit":
                 NavFrame.Navigate(typeof(RegistryEditor));
+                break;
+            case "module.doctors":
+                NavFrame.Navigate(typeof(SystemDoctorsModule));
                 break;
             case "module.services":
                 NavFrame.Navigate(typeof(ServicesModule));

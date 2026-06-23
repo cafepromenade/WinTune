@@ -66,6 +66,7 @@
                 <NavigationViewItem Content="System · 系統" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE770;" /></NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="System Doctors · 系統醫生" Tag="module.doctors"><NavigationViewItem.Icon><FontIcon Glyph="&#xE95E;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Services · 服務" Tag="module.services"><NavigationViewItem.Icon><FontIcon Glyph="&#xE9F5;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Scheduled Tasks · 排程工作" Tag="module.tasks"><NavigationViewItem.Icon><FontIcon Glyph="&#xE823;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Devices · 裝置" Tag="module.devices"><NavigationViewItem.Icon><FontIcon Glyph="&#xE975;" /></NavigationViewItem.Icon></NavigationViewItem>
