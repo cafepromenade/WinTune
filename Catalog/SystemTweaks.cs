@@ -32,11 +32,25 @@ public static class SystemTweaks
             onValue: 1, offValue: 0,
             keywords: "clipboard,win+v,剪貼簿"),
 
+        Tweak.RegToggle("system.cloud-clipboard", "Cloud clipboard sync", "雲端剪貼簿同步",
+            "Automatically upload copied items to roam across your devices via your Microsoft account.",
+            "自動上載複製嘅項目，透過 Microsoft 帳戶喺各部裝置之間漫遊。",
+            RegRoot.HKCU, @"Software\Microsoft\Clipboard", "CloudClipboardAutomaticUpload",
+            onValue: 1, offValue: 0,
+            keywords: "clipboard,cloud,sync,roam,剪貼簿,雲端,同步"),
+
         Tweak.RegToggle("system.verbose-status", "Verbose sign-in messages", "詳細登入訊息",
             "Show detailed status messages during sign-in and sign-out.", "喺登入同登出時顯示詳細狀態訊息。",
             RegRoot.HKLM, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "VerboseStatus",
             onValue: 1, offValue: 0, requiresAdmin: true, restart: RestartScope.SignOut,
             keywords: "verbose,logon,status,登入"),
+
+        Tweak.RegToggle("system.linked-connections", "Mapped-drive reconnect fix", "網絡磁碟重連修正",
+            "Let elevated and non-elevated apps share the same mapped network drives (fixes drives showing as disconnected).",
+            "令提權同非提權程式共用同一批已對應網絡磁碟（修正磁碟顯示為已中斷）。",
+            RegRoot.HKLM, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System", "EnableLinkedConnections",
+            onValue: 1, offValue: 0, requiresAdmin: true, restart: RestartScope.Reboot,
+            keywords: "mapped drive,network drive,linked connections,reconnect,網絡磁碟,重連"),
 
         Tweak.RegToggle("system.auto-reboot", "Auto-restart on crash", "當機自動重新開機",
             "Automatically reboot after a blue screen (BSOD).", "藍畫面之後自動重新開機。",

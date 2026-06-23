@@ -97,6 +97,11 @@ public static class AnnoyanceTweaks
             @"reg add ""HKCU\Software\Policies\Microsoft\Windows\WindowsAI"" /v DisableClickToDo /t REG_DWORD /d 1 /f",
             requiresAdmin: false, destructive: false, restart: RestartScope.Explorer, keywords: "click to do,ai,overlay,浮層"),
 
+        Tweak.RegToggle("annoy.remove-copilot-app", "Remove the Copilot app", "移除 Copilot app",
+            "Use policy to remove the standalone Microsoft Copilot app for the current user.", "用原則為目前用戶移除獨立嘅 Microsoft Copilot app 呀。",
+            RegRoot.HKCU, @"Software\Policies\Microsoft\Windows\WindowsAI", "RemoveMicrosoftCopilotApp",
+            onValue: 1, offValue: 0, restart: RestartScope.SignOut, keywords: "copilot,app,remove,ai,移除,助手"),
+
         // ===== ads-nags (16) =====
         Tweak.RegToggle("annoy.lockscreen-spotlight-tips-off", "Turn off lock-screen Spotlight tips", "熄鎖機畫面 Spotlight 提示",
             "Stop the rotating lock-screen overlay that shows tips and promos.", "唔再喺鎖機畫面碌出嗰啲提示同推廣呀。",
@@ -178,5 +183,20 @@ public static class AnnoyanceTweaks
             "Disable Widgets", "停用小工具",
             "reg add \"HKLM\\Software\\Policies\\Microsoft\\Dsh\" /v AllowNewsAndInterests /t REG_DWORD /d 0 /f",
             requiresAdmin: true, restart: RestartScope.Explorer, keywords: "widgets,news and interests,小工具,新聞"),
+
+        Tweak.RegToggle("annoy.consumer-features-off", "Disable Windows consumer features", "停用 Windows 消費者功能",
+            "Stop Windows from auto-installing promoted apps and showing consumer-oriented suggestions.",
+            "唔再俾 Windows 自動裝推廣 App 同顯示消費者導向嘅建議呀。",
+            RegRoot.HKLM, @"SOFTWARE\Policies\Microsoft\Windows\CloudContent", "DisableWindowsConsumerFeatures",
+            onValue: 1, offValue: 0, requiresAdmin: true, restart: RestartScope.SignOut,
+            keywords: "consumer features,cloud content,debloat,suggested apps,消費者,推廣"),
+
+        Tweak.RegToggle("annoy.settings-hide-home", "Hide the Settings homepage", "隱藏設定首頁",
+            "Hide the ad-laden Home page in the Settings app so it opens straight to System.",
+            "收埋設定 App 嗰個滿是廣告嘅首頁，開就直接去「系統」呀。",
+            RegRoot.HKLM, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer", "SettingsPageVisibility",
+            onValue: "hide:home", offValue: null, kind: RegistryValueKind.String,
+            requiresAdmin: true, restart: RestartScope.None,
+            keywords: "settings,home,homepage,hide,設定,首頁,隱藏"),
     };
 }
