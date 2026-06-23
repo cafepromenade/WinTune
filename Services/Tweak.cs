@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Win32;
@@ -167,7 +168,9 @@ public static class Tweak
         string id, string enT, string zhT, string enD, string zhD,
         string enBtn, string zhBtn, string pipeline,
         bool requiresAdmin = false, RestartScope restart = RestartScope.None, string? keywords = null)
-        => new()
+    {
+        var p = NormalizeForCsv(pipeline);
+        return new()
         {
             Id = id,
             Title = new(enT, zhT),
@@ -180,8 +183,28 @@ public static class Tweak
             ActionLabel = new(enBtn, zhBtn),
             // Silence the progress stream so its CLIXML serialization never pollutes the CSV on stderr.
             RunAsync = ct => ShellRunner.RunPowershell(
-                $"$ProgressPreference='SilentlyContinue'; {pipeline} | ConvertTo-Csv -NoTypeInformation", requiresAdmin, ct),
+                $"$ProgressPreference='SilentlyContinue'; {p} | ConvertTo-Csv -NoTypeInformation", requiresAdmin, ct),
         };
+    }
+
+    /// <summary>
+    /// 將末端嘅 Format-Table／Format-List 改寫成 Select-Object，等 ConvertTo-Csv 出到乾淨 CSV ·
+    /// Rewrite a trailing Format-Table/Format-List into Select-Object so ConvertTo-Csv yields clean CSV.
+    /// "| Format-Table A, B -AutoSize" → "| Select-Object A, B"; a bare "| Format-Table -AutoSize" is dropped
+    /// (an upstream Select-Object, if any, already chose the columns).
+    /// </summary>
+    private static string NormalizeForCsv(string pipeline)
+    {
+        var m = Regex.Match(pipeline, @"\|\s*Format-(Table|List)\b(?<rest>.*)$",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+        if (!m.Success) return pipeline;
+
+        var before = pipeline.Substring(0, m.Index).TrimEnd();
+        var rest = Regex.Replace(m.Groups["rest"].Value, @"-AutoSize|-Wrap|-HideTableHeaders|-GroupBy\s+\S+",
+            "", RegexOptions.IgnoreCase).Trim();
+        rest = rest.TrimStart('|').Trim();
+        return (rest.Length > 0 && !rest.StartsWith("-")) ? $"{before} | Select-Object {rest}" : before;
+    }
 
     /// <summary>執行 cmd 指令嘅動作 · An action that runs a cmd.exe command line.</summary>
     public static TweakDefinition Cmd(
