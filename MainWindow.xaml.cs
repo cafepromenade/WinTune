@@ -126,6 +126,17 @@ public sealed partial class MainWindow : Window
             case "rightclick":
                 Navigator.GoToModule?.Invoke("module.contextmenu");
                 break;
+            case "awake":
+                Navigator.GoToModule?.Invoke("module.awake");
+                break;
+            case "colorpicker":
+            case "color":
+                Navigator.GoToModule?.Invoke("module.colorpicker");
+                break;
+            case "envvars":
+            case "env":
+                Navigator.GoToModule?.Invoke("module.envvars");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -286,6 +297,15 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.contextmenu":
                 NavFrame.Navigate(typeof(ContextMenuModule));
+                break;
+            case "module.awake":
+                NavFrame.Navigate(typeof(AwakeModule));
+                break;
+            case "module.colorpicker":
+                NavFrame.Navigate(typeof(ColorPickerModule));
+                break;
+            case "module.envvars":
+                NavFrame.Navigate(typeof(EnvVarsModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

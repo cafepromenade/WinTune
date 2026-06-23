@@ -760,5 +760,36 @@ From a 3-agent discovery sweep (25 items; strongest distilled below).
 - [ ] **Search index governor** · 搜尋索引管治 — pause/rebuild index, scope folders, kill web results (DisableSearchBoxSuggestions/BingSearchEnabled), throttle.
 - [ ] **File Explorer perf tuner** · 檔案總管效能 — separate-process (SeparateProcess DWORD), kill ghost explorer.exe trees, dark-mode-flash mitigation.
 
+## 🧰 PowerToys-in-WinTune · 將 PowerToys 帶入 WinTune (user-requested)
+
+Bring Microsoft PowerToys utilities in-app, natively + bilingually. Some already exist in WinTune
+(PowerRename ≈ Bulk Rename, Keyboard Manager ≈ Keyboard Remapper, Hosts/Registry editors).
+
+### Batch 1 — DONE this iteration · 第一批（今次完成）
+- [x] **Awake** · 保持喚醒 — SetThreadExecutionState (ES_CONTINUOUS|SYSTEM|DISPLAY), indefinite or timed. `--page awake`.
+- [x] **Color Picker** · 螢幕取色 — global WH_MOUSE_LL hook + GetPixel; HEX/RGB/HSL + copy + history. `--page colorpicker`.
+- [x] **Environment Variables** · 環境變數 — User/System get/add/edit/delete (Environment.*Variable). `--page envvars`.
+
+### Next PowerToys batches · 之後嘅批次
+- [ ] **Image Resizer** · 圖片批次縮放 — bulk resize images (Windows.Graphics.Imaging / System.Drawing) with presets + output folder.
+- [ ] **Text Extractor (OCR)** · 螢幕文字擷取 — Windows.Media.Ocr over a selected screen region → copy text.
+- [ ] **Always On Top** · 視窗置頂 — SetWindowPos HWND_TOPMOST on a picked window (extend Window Manager).
+- [ ] **Find My Mouse / crosshairs** · 搵滑鼠／十字準星 — overlay window following the cursor (layered window).
+- [ ] **Screen Ruler** · 螢幕間尺 — measure pixels with an overlay.
+- [ ] **Quick Accent** · 快速重音 — hold-a-key accent picker (low-level keyboard hook).
+- [ ] **Paste as Plain Text** · 純文字貼上 — strip formatting from clipboard (WinRT Clipboard) + hotkey.
+- [ ] **Hosts/Registry/Keyboard/Rename** — already in WinTune (note the equivalence in UI).
+
+## 🛠️ Winaero-Tweaker functions · Winaero 調校功能 (user-requested)
+A large generate+verify catalog batch is being produced (advanced appearance, behaviour, boot/logon,
+desktop/Explorer, context-menu, privacy/network) and will land as a dedicated category. _In progress._
+
+## 📋 Background Clipboard Manager + tray · 背景剪貼簿管理 + 工作列 (user-requested)
+- [ ] **Clipboard history runner** — background monitor (Clipboard.ContentChanged) saving text + images
+  (→ PNG) + copied files/audio to a history store; per-item copy-back, save, and **auto-convert**
+  (images via imaging, audio/video via the bundled ffmpeg) to a chosen format.
+- [ ] **Keep running when closed** — system tray icon (Shell_NotifyIcon) + intercept window close to
+  hide-to-tray instead of exit, so the clipboard runner keeps going. Tray menu: Open / Quit.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
