@@ -104,6 +104,7 @@
                 <NavigationViewItem Content="Apps &amp; Git · 程式與 Git" SelectsOnInvoked="False">
                     <NavigationViewItem.Icon><FontIcon Glyph="&#xE71D;" /></NavigationViewItem.Icon>
                     <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Package Manager · 套件管理" Tag="module.packages"><NavigationViewItem.Icon><FontIcon Glyph="&#xECAA;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="App Uninstaller · 應用程式解除安裝" Tag="module.uninstall"><NavigationViewItem.Icon><FontIcon Glyph="&#xE74D;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Git &amp; GitHub · Git 與 GitHub" Tag="module.git"><NavigationViewItem.Icon><FontIcon Glyph="&#xE8AB;" /></NavigationViewItem.Icon></NavigationViewItem>
                     </NavigationViewItem.MenuItems>

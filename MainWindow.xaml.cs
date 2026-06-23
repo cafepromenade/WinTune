@@ -179,6 +179,11 @@ public sealed partial class MainWindow : Window
             case "clip":
                 Navigator.GoToModule?.Invoke("module.clipboard");
                 break;
+            case "packages":
+            case "winget":
+            case "install":
+                Navigator.GoToModule?.Invoke("module.packages");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -278,6 +283,7 @@ public sealed partial class MainWindow : Window
         "module.colorpicker" => typeof(ColorPickerModule),
         "module.envvars" => typeof(EnvVarsModule),
         "module.clipboard" => typeof(ClipboardModule),
+        "module.packages" => typeof(PackageManagerModule),
         _ => typeof(DashboardPage),
     };
 
@@ -410,6 +416,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.clipboard":
                 NavFrame.Navigate(typeof(ClipboardModule));
+                break;
+            case "module.packages":
+                NavFrame.Navigate(typeof(PackageManagerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
