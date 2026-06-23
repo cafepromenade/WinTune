@@ -130,6 +130,11 @@ public sealed partial class MainWindow : Window
             case "devices":
                 Navigator.GoToModule?.Invoke("module.devices");
                 break;
+            case "vivetool":
+            case "vive":
+            case "featureflags":
+                Navigator.GoToModule?.Invoke("module.vivetool");
+                break;
             case "startup":
                 Navigator.GoToModule?.Invoke("module.startup");
                 break;
@@ -309,6 +314,7 @@ public sealed partial class MainWindow : Window
         "module.services" => typeof(ServicesModule),
         "module.tasks" => typeof(ScheduledTasksModule),
         "module.devices" => typeof(DevicesModule),
+        "module.vivetool" => typeof(ViveToolModule),
         "module.startup" => typeof(StartupModule),
         "module.rename" => typeof(RenameModule),
         "module.bulkops" => typeof(BulkOpsModule),
@@ -402,6 +408,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.devices":
                 NavFrame.Navigate(typeof(DevicesModule));
+                break;
+            case "module.vivetool":
+                NavFrame.Navigate(typeof(ViveToolModule));
                 break;
             case "module.startup":
                 NavFrame.Navigate(typeof(StartupModule));

@@ -30,6 +30,7 @@ public static class ModuleRegistry
         new() { Tag = "module.services", En = "Services", Zh = "服務", Glyph = "", Keywords = "services start stop startup type 服務" },
         new() { Tag = "module.tasks", En = "Scheduled Tasks", Zh = "排程工作", Glyph = "", Keywords = "scheduled task scheduler run 排程" },
         new() { Tag = "module.devices", En = "Devices", Zh = "裝置", Glyph = "", Keywords = "device manager hardware driver 裝置 驅動" },
+        new() { Tag = "module.vivetool", En = "ViVeTool", Zh = "功能旗標", Glyph = ((char)0xE9D5).ToString(), Keywords = "vivetool vive feature flag experiment hidden file explorer tabs new start menu modern context menu snap layouts energy saver click to do 功能 旗標 實驗 隱藏 分頁 開始功能表" },
         new() { Tag = "module.startup", En = "Startup Apps", Zh = "開機程式", Glyph = "", Keywords = "startup autostart logon run 開機 自啟動" },
         new() { Tag = "module.rename", En = "Batch Rename", Zh = "批次改名", Glyph = "", Keywords = "rename bulk powerrename regex 改名 批次" },
         new() { Tag = "module.bulkops", En = "Bulk File Ops", Zh = "批次檔案操作", Glyph = "", Keywords = "bulk file move copy delete attributes 批次 檔案" },
