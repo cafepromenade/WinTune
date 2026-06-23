@@ -158,6 +158,31 @@ public static class Tweak
             ct => ShellRunner.RunPowershell(script, requiresAdmin, ct),
             requiresAdmin, destructive, restart, keywords);
 
+    /// <summary>
+    /// 表格輸出動作 · An action whose PowerShell pipeline is rendered as a native grid.
+    /// 傳入會輸出物件嘅 pipeline（唔使加 Format-Table）· pass a pipeline that emits objects
+    /// (no Format-Table needed); this appends Select/ConvertTo-Csv and the UI draws a table.
+    /// </summary>
+    public static TweakDefinition Table(
+        string id, string enT, string zhT, string enD, string zhD,
+        string enBtn, string zhBtn, string pipeline,
+        bool requiresAdmin = false, RestartScope restart = RestartScope.None, string? keywords = null)
+        => new()
+        {
+            Id = id,
+            Title = new(enT, zhT),
+            Description = new(enD, zhD),
+            Kind = TweakKind.Action,
+            RequiresAdmin = requiresAdmin,
+            Restart = restart,
+            Keywords = Keys(keywords),
+            TabularOutput = true,
+            ActionLabel = new(enBtn, zhBtn),
+            // Silence the progress stream so its CLIXML serialization never pollutes the CSV on stderr.
+            RunAsync = ct => ShellRunner.RunPowershell(
+                $"$ProgressPreference='SilentlyContinue'; {pipeline} | ConvertTo-Csv -NoTypeInformation", requiresAdmin, ct),
+        };
+
     /// <summary>執行 cmd 指令嘅動作 · An action that runs a cmd.exe command line.</summary>
     public static TweakDefinition Cmd(
         string id, string enT, string zhT, string enD, string zhD,

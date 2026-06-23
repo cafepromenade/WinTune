@@ -42,6 +42,9 @@ public sealed class TweakDefinition
     public LocalizedText? ActionLabel { get; init; }
     public Func<CancellationToken, Task<TweakResult>>? RunAsync { get; init; }
 
+    /// <summary>動作輸出係 CSV 表格，UI 用網格顯示 · Action output is CSV; the UI renders it as a sortable grid.</summary>
+    public bool TabularOutput { get; init; }
+
     // ---- Choice behaviour ----
     public IReadOnlyList<TweakChoice>? Choices { get; init; }
     public Func<string?>? GetCurrentChoice { get; init; }

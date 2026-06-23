@@ -92,6 +92,15 @@
                         <Button x:Name="CopyOutBtn" Padding="8,2,8,2" Click="CopyOut_Click" />
                         <Button x:Name="SaveOutBtn" Padding="8,2,8,2" Click="SaveOut_Click" />
                     </StackPanel>
+                    <ScrollViewer
+                        x:Name="TableScroller"
+                        HorizontalScrollBarVisibility="Auto"
+                        HorizontalScrollMode="Auto"
+                        MaxHeight="360"
+                        VerticalScrollBarVisibility="Auto"
+                        Visibility="Collapsed">
+                        <Grid x:Name="TableHost" />
+                    </ScrollViewer>
                     <TextBox
                         x:Name="OutputBox"
                         AcceptsReturn="True"

@@ -1,8 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using WinTune.Models;
 using WinTune.Services;
 
@@ -208,14 +212,30 @@ public sealed partial class TweakCard : UserControl
                 ? MakeRelaunchButton() : null;
             ResultBar.IsOpen = true;
 
-            // Full output in a monospace, scrollable pane — no truncation; with Copy / Save.
+            // Output: a native grid for tabular (CSV) results, else a monospace scrollable pane.
+            // Both keep the raw text in _lastOutput for Copy / Save; no truncation either way.
             if (!string.IsNullOrWhiteSpace(result.Output))
             {
                 _lastOutput = result.Output!;
-                OutputBox.Text = _lastOutput;
-                OutputHeader.Text = Loc.I.Pick($"Output · {_lastOutput.Length} chars", $"輸出 · {_lastOutput.Length} 字");
                 CopyOutBtn.Content = Loc.I.Pick("Copy", "複製");
                 SaveOutBtn.Content = Loc.I.Pick("Save…", "儲存…");
+
+                if (_tweak.TabularOutput && result.Success && TryParseCsv(_lastOutput, out var rows))
+                {
+                    RenderTable(rows);
+                    TableScroller.Visibility = Visibility.Visible;
+                    OutputBox.Visibility = Visibility.Collapsed;
+                    int dataRows = rows.Count - 1;
+                    OutputHeader.Text = Loc.I.Pick($"Table · {dataRows} rows × {rows[0].Length} cols",
+                        $"表格 · {dataRows} 列 × {rows[0].Length} 欄");
+                }
+                else
+                {
+                    OutputBox.Text = _lastOutput;
+                    OutputBox.Visibility = Visibility.Visible;
+                    TableScroller.Visibility = Visibility.Collapsed;
+                    OutputHeader.Text = Loc.I.Pick($"Output · {_lastOutput.Length} chars", $"輸出 · {_lastOutput.Length} 字");
+                }
                 OutputPane.Visibility = Visibility.Visible;
             }
         }
@@ -248,6 +268,91 @@ public sealed partial class TweakCard : UserControl
     }
 
     private string _lastOutput = "";
+
+    /// <summary>RFC-4180 CSV parser (handles quoted fields, embedded commas/quotes/newlines). Needs ≥1 header + ≥1 data row.</summary>
+    private static bool TryParseCsv(string text, out List<string[]> rows)
+    {
+        rows = new List<string[]>();
+        if (string.IsNullOrWhiteSpace(text)) return false;
+        text = text.TrimStart('﻿', '​');
+
+        var result = new List<string[]>();
+        var field = new StringBuilder();
+        var cur = new List<string>();
+        bool inQuotes = false, sawAny = false;
+        void EndField() { cur.Add(field.ToString()); field.Clear(); sawAny = true; }
+        void EndRow() { EndField(); result.Add(cur.ToArray()); cur = new List<string>(); }
+
+        for (int i = 0; i < text.Length; i++)
+        {
+            char ch = text[i];
+            if (inQuotes)
+            {
+                if (ch == '"')
+                {
+                    if (i + 1 < text.Length && text[i + 1] == '"') { field.Append('"'); i++; }
+                    else inQuotes = false;
+                }
+                else field.Append(ch);
+            }
+            else if (ch == '"') inQuotes = true;
+            else if (ch == ',') EndField();
+            else if (ch == '\r') { /* swallow */ }
+            else if (ch == '\n') { if (sawAny || field.Length > 0 || cur.Count > 0) EndRow(); }
+            else field.Append(ch);
+        }
+        if (field.Length > 0 || cur.Count > 0) EndRow();
+
+        if (result.Count < 2 || result[0].Length < 1) return false;
+        // Keep only rows whose column count matches the header — drops any trailing CLIXML/noise lines.
+        int cols = result[0].Length;
+        var kept = new List<string[]> { result[0] };
+        for (int r = 1; r < result.Count; r++)
+            if (result[r].Length == cols) kept.Add(result[r]);
+        if (kept.Count < 2) return false;
+        rows = kept;
+        return true;
+    }
+
+    /// <summary>Draw parsed CSV rows into <see cref="TableHost"/> as a header + separator + data grid.</summary>
+    private void RenderTable(List<string[]> rows)
+    {
+        TableHost.Children.Clear();
+        TableHost.ColumnDefinitions.Clear();
+        TableHost.RowDefinitions.Clear();
+        TableHost.ColumnSpacing = 18;
+        TableHost.RowSpacing = 3;
+
+        int cols = rows[0].Length;
+        for (int c = 0; c < cols; c++)
+            TableHost.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        for (int r = 0; r < rows.Count + 1; r++) // +1 row for the header separator
+            TableHost.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var secondary = (Brush)Application.Current.Resources["TextFillColorSecondaryBrush"];
+        var stroke = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
+
+        for (int c = 0; c < cols; c++)
+        {
+            var head = new TextBlock { Text = rows[0][c], FontWeight = FontWeights.SemiBold, FontSize = 12 };
+            Grid.SetRow(head, 0); Grid.SetColumn(head, c);
+            TableHost.Children.Add(head);
+        }
+        var sep = new Border { Height = 1, Background = stroke, Margin = new Thickness(0, 1, 0, 1) };
+        Grid.SetRow(sep, 1); Grid.SetColumn(sep, 0); Grid.SetColumnSpan(sep, cols);
+        TableHost.Children.Add(sep);
+
+        for (int r = 1; r < rows.Count; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                var val = c < rows[r].Length ? rows[r][c] : "";
+                var cell = new TextBlock { Text = val, FontSize = 12, Foreground = secondary, IsTextSelectionEnabled = true };
+                Grid.SetRow(cell, r + 1); Grid.SetColumn(cell, c);
+                TableHost.Children.Add(cell);
+            }
+        }
+    }
 
     private void CopyOut_Click(object sender, RoutedEventArgs e)
     {

@@ -11,14 +11,14 @@ public static class NetProTweaks
     public static IEnumerable<TweakDefinition> All() => new List<TweakDefinition>
     {
         // --- adapters (20) ---
-        Tweak.Powershell("net.adapters.list", "List network adapters", "列出網絡卡",
+        Tweak.Table("net.adapters.list", "List network adapters", "列出網絡卡",
             "Show all network adapters with status, link speed and interface description.", "顯示所有網絡卡嘅狀態、連線速度同介面描述呀。",
-            "List", "列出", "Get-NetAdapter | Format-Table Name, InterfaceDescription, Status, LinkSpeed, MacAddress -AutoSize",
+            "List", "列出", "Get-NetAdapter | Select-Object Name, InterfaceDescription, Status, LinkSpeed, MacAddress",
             keywords: "netadapter,list,nic,adapter,網絡卡,列出"),
         
-        Tweak.Powershell("net.adapters.statistics", "Adapter statistics", "網絡卡統計",
+        Tweak.Table("net.adapters.statistics", "Adapter statistics", "網絡卡統計",
             "Show sent/received bytes and packet counts for every network adapter.", "顯示每張網絡卡收發嘅位元組同封包數量呀。",
-            "Stats", "統計", "Get-NetAdapterStatistics | Format-Table Name, ReceivedBytes, SentBytes, ReceivedUnicastPackets, SentUnicastPackets -AutoSize",
+            "Stats", "統計", "Get-NetAdapterStatistics | Select-Object Name, ReceivedBytes, SentBytes, ReceivedUnicastPackets, SentUnicastPackets",
             keywords: "statistics,bytes,packets,統計,流量"),
         
         Tweak.Powershell("net.adapters.disable", "Disable an adapter", "停用網絡卡",
@@ -46,14 +46,14 @@ public static class NetProTweaks
             "Show", "顯示", "Get-NetIPConfiguration | Format-List InterfaceAlias, IPv4Address, IPv4DefaultGateway, DNSServer",
             keywords: "ipconfig,address,gateway,dns,設定,地址"),
         
-        Tweak.Powershell("net.adapters.ipaddress", "IP addresses", "IP 地址",
+        Tweak.Table("net.adapters.ipaddress", "IP addresses", "IP 地址",
             "List all IPv4 and IPv6 addresses assigned to every interface.", "列出每個介面分配到嘅所有 IPv4 同 IPv6 地址呀。",
-            "Show", "顯示", "Get-NetIPAddress | Format-Table InterfaceAlias, IPAddress, AddressFamily, PrefixLength, PrefixOrigin -AutoSize",
+            "Show", "顯示", "Get-NetIPAddress | Select-Object InterfaceAlias, IPAddress, AddressFamily, PrefixLength, PrefixOrigin",
             keywords: "ipaddress,ipv4,ipv6,地址"),
         
-        Tweak.Powershell("net.adapters.advanced-props", "Advanced properties", "進階屬性",
+        Tweak.Table("net.adapters.advanced-props", "Advanced properties", "進階屬性",
             "Show advanced driver properties (offload, speed/duplex, jumbo frame, etc).", "顯示進階驅動屬性（卸載、速度雙工、巨型封包等等）呀。",
-            "Show", "顯示", "Get-NetAdapterAdvancedProperty | Format-Table Name, DisplayName, DisplayValue -AutoSize",
+            "Show", "顯示", "Get-NetAdapterAdvancedProperty | Select-Object Name, DisplayName, DisplayValue",
             keywords: "advanced,offload,duplex,jumbo,進階,屬性"),
         
         Tweak.Powershell("net.adapters.set-mtu", "Set adapter MTU", "設定網絡卡 MTU",
@@ -61,14 +61,14 @@ public static class NetProTweaks
             "Set MTU", "設定 MTU", "Set-NetIPInterface -InterfaceAlias 'Ethernet' -NlMtuBytes 1500",
             requiresAdmin: true, keywords: "mtu,frame,size,封包大小"),
         
-        Tweak.Powershell("net.adapters.binding", "Adapter bindings", "網絡卡綁定",
+        Tweak.Table("net.adapters.binding", "Adapter bindings", "網絡卡綁定",
             "Show which protocols and services are bound to each adapter.", "顯示每張網絡卡綁定咗邊啲協定同服務呀。",
-            "Show", "顯示", "Get-NetAdapterBinding | Where-Object Enabled | Format-Table Name, DisplayName, ComponentID -AutoSize",
+            "Show", "顯示", "Get-NetAdapterBinding | Where-Object Enabled | Select-Object Name, DisplayName, ComponentID",
             keywords: "binding,protocol,ipv4,ipv6,綁定,協定"),
         
-        Tweak.Powershell("net.adapters.link-speed", "Link speed", "連線速度",
+        Tweak.Table("net.adapters.link-speed", "Link speed", "連線速度",
             "Show the negotiated link speed of each connected adapter.", "顯示每張已連線網絡卡協商出嚟嘅連線速度呀。",
-            "Show", "顯示", "Get-NetAdapter | Where-Object Status -eq 'Up' | Format-Table Name, LinkSpeed, MediaType, MediaConnectionState -AutoSize",
+            "Show", "顯示", "Get-NetAdapter | Where-Object Status -eq 'Up' | Select-Object Name, LinkSpeed, MediaType, MediaConnectionState",
             keywords: "speed,linkspeed,duplex,速度"),
         
         Tweak.Powershell("net.adapters.stats-detail", "Detailed statistics", "詳細統計",
