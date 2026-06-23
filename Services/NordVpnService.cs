@@ -31,6 +31,21 @@ public static class NordVpnService
 
     public static Task<TweakResult> Disconnect(CancellationToken ct = default) => Run("-d", ct);
 
+    // ---- Meshnet · 網狀網 ----
+    // The Windows NordVPN.exe exposes Meshnet via the "set meshnet" / "meshnet" verbs.
+
+    /// <summary>開／熄 Meshnet · Enable or disable Meshnet.</summary>
+    public static Task<TweakResult> SetMeshnet(bool on, CancellationToken ct = default)
+        => Run($"set meshnet {(on ? "on" : "off")}", ct);
+
+    /// <summary>列出 Meshnet 同伴裝置（原始文字）· List Meshnet peer devices (raw text).</summary>
+    public static Task<TweakResult> MeshnetPeerList(CancellationToken ct = default)
+        => Run("meshnet peer list", ct);
+
+    /// <summary>容許／拒絕一部 Meshnet 機嘅內送流量 · Allow or deny incoming traffic from a Meshnet peer.</summary>
+    public static Task<TweakResult> MeshnetSetIncoming(string peer, bool allow, CancellationToken ct = default)
+        => Run($"meshnet peer incoming {(allow ? "allow" : "deny")} \"{peer}\"", ct);
+
     private static Task<TweakResult> Run(string args, CancellationToken ct)
     {
         var exe = Exe;

@@ -45,6 +45,7 @@ public static class PackageService
         new() { En = "Windows Terminal", Zh = "Windows 終端機", Id = "Microsoft.WindowsTerminal" },
         new() { En = "VLC media player", Zh = "VLC 播放器", Id = "VideoLAN.VLC" },
         new() { En = "Notepad++", Zh = "Notepad++", Id = "Notepad++.Notepad++" },
+        new() { En = "SQL Server Management Studio (SSMS)", Zh = "SQL Server 管理工具（SSMS）", Id = "Microsoft.SQLServerManagementStudio" },
     };
 
     public static async Task<List<PkgResult>> Search(string query, CancellationToken ct = default)
