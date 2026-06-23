@@ -717,5 +717,18 @@ From a verify+discover workflow (iphlpapi P/Invoke adversarially confirmed `corr
 - [ ] **Default-apps lock** · 預設程式鎖定 — snapshot FileExts UserChoice (AssocQueryString) + re-apply to stop Edge reverting.
 - [ ] **File Explorer / context-menu speed-up** · 總管加速 — block slow shell-ext CLSIDs (…\Shell Extensions\Blocked); clear AutomaticDestinations jumplist cache; restart explorer.
 
+## 🌱 Newly discovered — iteration 25 · 第 25 次迭代新發掘
+
+- [x] **In-app Event Viewer** · 應用程式內事件檢視器 — DONE: browse System/Application/Security/Setup logs via Get-WinEvent, level filter (All/Errors/Warnings+/Info), count, text filter, master-detail. **Replaces the `eventvwr.msc` redirect** (`maint.open-event-viewer` is now an Info pointer). `module.events` / `--page events`.
+
+### Genuinely-uncovered tweaks (found by auditing the existing catalog — these specific keys are NOT yet present) · 經審核發現未covered嘅調校
+- [ ] **Remove Copilot app** · 移除 Copilot app — HKCU\Software\Policies\Microsoft\Windows\WindowsAI\RemoveMicrosoftCopilotApp=1 (the Recall DisableAIDataAnalysis IS already in Annoyances; this app-removal key is not).
+- [ ] **Disable Windows consumer features** · 停用消費者功能 — HKLM\SOFTWARE\Policies\Microsoft\Windows\CloudContent\DisableWindowsConsumerFeatures=1 (stops auto-installed promoted apps; admin).
+- [ ] **Do-Not-Disturb master toggle** · 請勿打擾總開關 — HKCU\Software\Microsoft\Windows\CurrentVersion\PushNotifications\ToastEnabled=0/1 (not yet in catalog).
+- [ ] **Mapped-drive reconnect fix** · 網絡磁碟重連 — HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLinkedConnections=1 (admin; reboot).
+- [ ] **Hide Settings homepage** · 隱藏設定主頁 — HKLM\…\Policies\Explorer\SettingsPageVisibility=REG_SZ "hide:home" (removes the ad-card homepage).
+
+_Note: a planned "AI & Ads catalog batch" was dropped after the audit showed Recall, Bing-search, the ContentDeliveryManager ad set, classic context menu, long paths, startup delay and clipboard history are ALREADY in the catalog — no duplication (governing rule d)._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

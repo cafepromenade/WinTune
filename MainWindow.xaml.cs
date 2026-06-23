@@ -112,6 +112,11 @@ public sealed partial class MainWindow : Window
             case "tcp":
                 Navigator.GoToModule?.Invoke("module.connections");
                 break;
+            case "events":
+            case "eventlog":
+            case "eventviewer":
+                Navigator.GoToModule?.Invoke("module.events");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -263,6 +268,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.connections":
                 NavFrame.Navigate(typeof(ConnectionsModule));
+                break;
+            case "module.events":
+                NavFrame.Navigate(typeof(EventViewerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
