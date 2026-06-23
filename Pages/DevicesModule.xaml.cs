@@ -67,6 +67,10 @@ public sealed partial class DevicesModule : Page
         var listed = shown.ToList();
         List.ItemsSource = listed;
         CountText.Text = P($"{listed.Count} / {_all.Count} devices", $"{listed.Count} / {_all.Count} 個裝置");
+        EmptyText.Text = _all.Count == 0
+            ? P("Loading devices… or none found.", "載入緊裝置…或者搵唔到。")
+            : P("No devices match your filter.", "冇裝置符合你嘅篩選。");
+        EmptyText.Visibility = listed.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Filter_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -77,15 +81,25 @@ public sealed partial class DevicesModule : Page
 
     private async void Refresh_Click(object sender, RoutedEventArgs e) => await Reload();
 
-    private static DeviceInfo? Item(object sender) => (sender as FrameworkElement)?.DataContext as DeviceInfo;
-
-    private async void Enable_Click(object sender, RoutedEventArgs e)
-        => await Run(Item(sender), DeviceManager.Enable, P("Enable", "啟用"));
-
-    private async void Disable_Click(object sender, RoutedEventArgs e)
+    private void Actions_Click(object sender, RoutedEventArgs e)
     {
-        var d = Item(sender);
-        if (d is null) return;
+        if (sender is not Button b || b.DataContext is not DeviceInfo dev) return;
+        var mf = new MenuFlyout();
+
+        var enable = new MenuFlyoutItem { Text = "Enable · 啟用", Icon = new FontIcon { Glyph = ((char)0xE73E).ToString() } };
+        enable.Click += async (_, _) => await Run(dev, DeviceManager.Enable, P("Enable", "啟用"));
+        mf.Items.Add(enable);
+
+        var disable = new MenuFlyoutItem { Text = "Disable · 停用", Icon = new FontIcon { Glyph = ((char)0xE711).ToString() } };
+        disable.Click += async (_, _) => await ConfirmDisable(dev);
+        mf.Items.Add(disable);
+
+        mf.ShowAt(b);
+    }
+
+    /// <summary>Disabling a device is destructive (could disable display/disk/keyboard) — always confirm first.</summary>
+    private async Task ConfirmDisable(DeviceInfo d)
+    {
         var dlg = new ContentDialog
         {
             XamlRoot = XamlRoot,
