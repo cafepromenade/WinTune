@@ -37,6 +37,7 @@
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="8">
+            <Grid>
             <ListView x:Name="List" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
@@ -51,16 +52,18 @@
                                 <TextBlock Text="{Binding TaskPath}" FontSize="11" FontFamily="Consolas" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
                             <TextBlock Grid.Column="1" Text="{Binding StateText}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
-                                <Button Click="Run_Click" Padding="8,4,8,4" ToolTipService.ToolTip="Run · 執行"><FontIcon Glyph="&#xE768;" FontSize="12" /></Button>
-                                <Button Click="Stop_Click" Padding="8,4,8,4" ToolTipService.ToolTip="Stop · 停止"><FontIcon Glyph="&#xE71A;" FontSize="12" /></Button>
-                                <Button Click="Enable_Click" Padding="8,4,8,4" ToolTipService.ToolTip="Enable · 啟用"><FontIcon Glyph="&#xE73E;" FontSize="12" /></Button>
-                                <Button Click="Disable_Click" Padding="8,4,8,4" ToolTipService.ToolTip="Disable · 停用"><FontIcon Glyph="&#xE711;" FontSize="12" /></Button>
-                            </StackPanel>
+                            <Button Grid.Column="2" Click="Actions_Click" Padding="12,5,12,5" VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <TextBlock Text="Actions · 操作" FontSize="12" />
+                                    <FontIcon Glyph="&#xE70D;" FontSize="10" />
+                                </StackPanel>
+                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <TextBlock x:Name="EmptyText" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="13" Foreground="{ThemeResource TextFillColorSecondaryBrush}" Visibility="Collapsed" />
+            </Grid>
         </Border>
 
         <InfoBar x:Name="ResultBar" Grid.Row="3" IsClosable="True" IsOpen="False" />

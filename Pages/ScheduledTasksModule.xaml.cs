@@ -66,6 +66,10 @@ public sealed partial class ScheduledTasksModule : Page
         var listed = shown.ToList();
         List.ItemsSource = listed;
         CountText.Text = P($"{listed.Count} / {_all.Count} tasks", $"{listed.Count} / {_all.Count} 個工作");
+        EmptyText.Text = _all.Count == 0
+            ? P("No scheduled tasks found.", "搵唔到排程工作。")
+            : P("No tasks match your filter.", "冇工作符合你嘅篩選。");
+        EmptyText.Visibility = listed.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Filter_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -78,10 +82,22 @@ public sealed partial class ScheduledTasksModule : Page
 
     private static TaskInfo? Item(object sender) => (sender as FrameworkElement)?.DataContext as TaskInfo;
 
-    private async void Run_Click(object sender, RoutedEventArgs e) => await Run(Item(sender), TaskSchedulerManager.Run, P("Run", "執行"));
-    private async void Stop_Click(object sender, RoutedEventArgs e) => await Run(Item(sender), TaskSchedulerManager.Stop, P("Stop", "停止"));
-    private async void Enable_Click(object sender, RoutedEventArgs e) => await Run(Item(sender), TaskSchedulerManager.Enable, P("Enable", "啟用"));
-    private async void Disable_Click(object sender, RoutedEventArgs e) => await Run(Item(sender), TaskSchedulerManager.Disable, P("Disable", "停用"));
+    private void Actions_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button b || b.DataContext is not TaskInfo task) return;
+        var mf = new MenuFlyout();
+        void Add(string en, string zh, string glyph, Func<TaskInfo, System.Threading.CancellationToken, Task<TweakResult>> op)
+        {
+            var it = new MenuFlyoutItem { Text = $"{en} · {zh}", Icon = new FontIcon { Glyph = glyph } };
+            it.Click += async (_, _) => await Run(task, op, P(en, zh));
+            mf.Items.Add(it);
+        }
+        Add("Run", "執行", ((char)0xE768).ToString(), TaskSchedulerManager.Run);
+        Add("Stop", "停止", ((char)0xE71A).ToString(), TaskSchedulerManager.Stop);
+        Add("Enable", "啟用", ((char)0xE73E).ToString(), TaskSchedulerManager.Enable);
+        Add("Disable", "停用", ((char)0xE711).ToString(), TaskSchedulerManager.Disable);
+        mf.ShowAt(b);
+    }
 
     private async Task Run(TaskInfo? task, Func<TaskInfo, System.Threading.CancellationToken, Task<TweakResult>> op, string verb)
     {
