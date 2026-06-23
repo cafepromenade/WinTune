@@ -33,6 +33,16 @@ public sealed partial class MainWindow : Window
 
     private void ApplyStartPage()
     {
+        if (App.StartPage is string sp && sp.StartsWith("search:", StringComparison.OrdinalIgnoreCase))
+        {
+            var query = sp.Substring("search:".Length);
+            NavView.Loaded += (_, _) => DispatcherQueue.TryEnqueue(() =>
+            {
+                NavView.SelectedItem = null;
+                NavFrame.Navigate(typeof(SearchResultsPage), query);
+            });
+            return;
+        }
         switch (App.StartPage)
         {
             case "git":
@@ -151,21 +161,17 @@ public sealed partial class MainWindow : Window
 
     private void BuildCategoryMenu()
     {
-        // 按分組插入分類；切換到 "tools" 分組時加一個標題。
-        // Insert categories grouped; emit a "Tools" header when the group switches.
-        var headers = new Dictionary<string, string>
-        {
-            ["recipes"] = "Recipes · 一鍵流程",
-            ["tools"] = "Tools · 工具",
-        };
-        string? lastGroup = null;
+        // 將分類收納入可摺疊嘅分組，令導覽唔會太逼。
+        // Nest tweak categories under collapsible groups so the pane stays tidy.
         foreach (var cat in Categories.All)
         {
-            if (cat.Group != lastGroup && headers.TryGetValue(cat.Group, out var hdr))
-                NavView.MenuItems.Add(new NavigationViewItemHeader { Content = hdr });
-            lastGroup = cat.Group;
-
-            NavView.MenuItems.Add(new NavigationViewItem
+            var parent = cat.Group switch
+            {
+                "recipes" => RecipesGroup,
+                "tools" => ToolsGroup,
+                _ => TweaksGroup,
+            };
+            parent.MenuItems.Add(new NavigationViewItem
             {
                 Content = $"{cat.Name.En} · {cat.Name.Zh}",
                 Tag = cat.Id,
@@ -178,23 +184,85 @@ public sealed partial class MainWindow : Window
     {
         Navigator.GoToCategory = cat =>
         {
-            var item = NavView.MenuItems
-                .OfType<NavigationViewItem>()
-                .FirstOrDefault(i => (i.Tag as string) == cat.Id);
-            if (item is not null)
-                NavView.SelectedItem = item;
+            var item = FindByTag(cat.Id);
+            if (item is not null) NavView.SelectedItem = item;
         };
 
         Navigator.GoToSettings = () => NavFrame.Navigate(typeof(SettingsPage));
 
         Navigator.GoToModule = key =>
         {
-            var item = NavView.MenuItems
-                .OfType<NavigationViewItem>()
-                .FirstOrDefault(i => (i.Tag as string) == key);
-            if (item is not null)
-                NavView.SelectedItem = item;
+            var item = FindByTag(key);
+            if (item is not null) NavView.SelectedItem = item;
+            else NavFrame.Navigate(MapType(key)); // fall back to direct navigation if not in the pane
         };
+    }
+
+    /// <summary>Resolve a nav item by Tag, searching nested groups recursively (pane + footer).</summary>
+    private NavigationViewItem? FindByTag(string tag)
+        => FindByTag(NavView.MenuItems, tag) ?? FindByTag(NavView.FooterMenuItems, tag);
+
+    private static NavigationViewItem? FindByTag(System.Collections.Generic.IList<object> items, string tag)
+    {
+        foreach (var o in items)
+        {
+            if (o is NavigationViewItem nvi)
+            {
+                if ((nvi.Tag as string) == tag) return nvi;
+                var child = FindByTag(nvi.MenuItems, tag);
+                if (child is not null) return child;
+            }
+        }
+        return null;
+    }
+
+    private static Type MapType(string key) => key switch
+    {
+        "module.git" => typeof(GitHubModule),
+        "module.archives" => typeof(ArchivesModule),
+        "module.media" => typeof(MediaModule),
+        "module.regedit" => typeof(RegistryEditor),
+        "module.services" => typeof(ServicesModule),
+        "module.tasks" => typeof(ScheduledTasksModule),
+        "module.devices" => typeof(DevicesModule),
+        "module.startup" => typeof(StartupModule),
+        "module.rename" => typeof(RenameModule),
+        "module.bulkops" => typeof(BulkOpsModule),
+        "module.duplicates" => typeof(DuplicatesModule),
+        "module.disk" => typeof(DiskAnalyzerModule),
+        "module.drives" => typeof(DrivesModule),
+        "module.uninstall" => typeof(AppUninstallerModule),
+        "module.windows" => typeof(WindowManagerModule),
+        "module.keyboard" => typeof(KeyboardModule),
+        "module.hosts" => typeof(HostsEditorModule),
+        "module.mouse" => typeof(MouseModule),
+        "module.recorder" => typeof(ScreenRecorderModule),
+        "module.monitor" => typeof(SystemMonitorModule),
+        "module.connections" => typeof(ConnectionsModule),
+        "module.events" => typeof(EventViewerModule),
+        "module.mixer" => typeof(VolumeMixerModule),
+        "module.contextmenu" => typeof(ContextMenuModule),
+        "module.awake" => typeof(AwakeModule),
+        "module.colorpicker" => typeof(ColorPickerModule),
+        "module.envvars" => typeof(EnvVarsModule),
+        _ => typeof(DashboardPage),
+    };
+
+    private void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+    {
+        if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput) return;
+        var q = sender.Text ?? "";
+        if (q.Trim().Length == 0) { sender.ItemsSource = null; return; }
+        var sugg = ModuleRegistry.Search(q).Select(m => $"{m.En} · {m.Zh}")
+            .Concat(TweakCatalog.Search(q).Take(6).Select(t => $"{t.Title.En} · {t.Title.Zh}"))
+            .Take(10).ToList();
+        sender.ItemsSource = sugg;
+    }
+
+    private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+    {
+        var q = args.QueryText;
+        if (!string.IsNullOrWhiteSpace(q)) NavFrame.Navigate(typeof(SearchResultsPage), q);
     }
 
     private void TitleBar_PaneToggleRequested(TitleBar sender, object args)

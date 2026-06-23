@@ -37,158 +37,91 @@
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="True"
             SelectionChanged="NavView_SelectionChanged">
+            <NavigationView.AutoSuggestBox>
+                <AutoSuggestBox
+                    x:Name="SearchBox"
+                    QueryIcon="Find"
+                    PlaceholderText="Search everything · 搜尋全部"
+                    QuerySubmitted="SearchBox_QuerySubmitted"
+                    TextChanged="SearchBox_TextChanged" />
+            </NavigationView.AutoSuggestBox>
             <NavigationView.MenuItems>
                 <NavigationViewItemHeader Content="Suite · 套件" />
-                <NavigationViewItem
-                    Content="Dashboard · 概覽"
-                    IsSelected="True"
-                    Tag="dashboard">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE80F;" />
-                    </NavigationViewItem.Icon>
+                <NavigationViewItem Content="Dashboard · 概覽" IsSelected="True" Tag="dashboard">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE80F;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Git &amp; GitHub · Git 與 GitHub" Tag="module.git">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8AB;" />
-                    </NavigationViewItem.Icon>
+
+                <NavigationViewItem Content="Files &amp; Disks · 檔案與磁碟" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE8B7;" /></NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Archives · 壓縮檔" Tag="module.archives"><NavigationViewItem.Icon><FontIcon Glyph="&#xE7B8;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Bulk File Ops · 批次檔案操作" Tag="module.bulkops"><NavigationViewItem.Icon><FontIcon Glyph="&#xE8B7;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Batch Rename · 批次改名" Tag="module.rename"><NavigationViewItem.Icon><FontIcon Glyph="&#xE8AC;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Duplicate Finder · 重複檔案搜尋" Tag="module.duplicates"><NavigationViewItem.Icon><FontIcon Glyph="&#xE8C8;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Disk Analyser · 磁碟分析" Tag="module.disk"><NavigationViewItem.Icon><FontIcon Glyph="&#xEDA2;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Drives · 磁碟機" Tag="module.drives"><NavigationViewItem.Icon><FontIcon Glyph="&#xEDA2;" /></NavigationViewItem.Icon></NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Archives · 壓縮檔" Tag="module.archives">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7B8;" />
-                    </NavigationViewItem.Icon>
+
+                <NavigationViewItem Content="System · 系統" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE770;" /></NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Services · 服務" Tag="module.services"><NavigationViewItem.Icon><FontIcon Glyph="&#xE9F5;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Scheduled Tasks · 排程工作" Tag="module.tasks"><NavigationViewItem.Icon><FontIcon Glyph="&#xE823;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Devices · 裝置" Tag="module.devices"><NavigationViewItem.Icon><FontIcon Glyph="&#xE975;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Registry Editor · 登錄編輯器" Tag="module.regedit"><NavigationViewItem.Icon><FontIcon Glyph="&#xE74C;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Startup Apps · 開機程式" Tag="module.startup"><NavigationViewItem.Icon><FontIcon Glyph="&#xE7B5;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Event Viewer · 事件檢視器" Tag="module.events"><NavigationViewItem.Icon><FontIcon Glyph="&#xE7C3;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="System Monitor · 系統監察" Tag="module.monitor"><NavigationViewItem.Icon><FontIcon Glyph="&#xE9D9;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Connections · 連線" Tag="module.connections"><NavigationViewItem.Icon><FontIcon Glyph="&#xE968;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Environment Variables · 環境變數" Tag="module.envvars"><NavigationViewItem.Icon><FontIcon Glyph="&#xE943;" /></NavigationViewItem.Icon></NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Media · 媒體" Tag="module.media">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE714;" />
-                    </NavigationViewItem.Icon>
+
+                <NavigationViewItem Content="Media &amp; Capture · 媒體與擷取" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE714;" /></NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Media · 媒體" Tag="module.media"><NavigationViewItem.Icon><FontIcon Glyph="&#xE714;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Screen Recorder · 螢幕錄影" Tag="module.recorder"><NavigationViewItem.Icon><FontIcon Glyph="&#xE714;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Volume Mixer · 音量混合器" Tag="module.mixer"><NavigationViewItem.Icon><FontIcon Glyph="&#xE767;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Color Picker · 螢幕取色" Tag="module.colorpicker"><NavigationViewItem.Icon><FontIcon Glyph="&#xE790;" /></NavigationViewItem.Icon></NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Registry Editor · 登錄編輯器" Tag="module.regedit">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE74C;" />
-                    </NavigationViewItem.Icon>
+
+                <NavigationViewItem Content="Tweaks &amp; Input · 調校與輸入" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE771;" /></NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Hosts Editor · hosts 編輯器" Tag="module.hosts"><NavigationViewItem.Icon><FontIcon Glyph="&#xE71B;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Mouse &amp; Pointer · 滑鼠與指標" Tag="module.mouse"><NavigationViewItem.Icon><FontIcon Glyph="&#xE962;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Keyboard Remapper · 鍵盤重新對應" Tag="module.keyboard"><NavigationViewItem.Icon><FontIcon Glyph="&#xE765;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Context Menu · 右鍵選單" Tag="module.contextmenu"><NavigationViewItem.Icon><FontIcon Glyph="&#xEDE3;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Window Manager · 視窗管理" Tag="module.windows"><NavigationViewItem.Icon><FontIcon Glyph="&#xE737;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Awake · 保持喚醒" Tag="module.awake"><NavigationViewItem.Icon><FontIcon Glyph="&#xE708;" /></NavigationViewItem.Icon></NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Services · 服務" Tag="module.services">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE9F5;" />
-                    </NavigationViewItem.Icon>
+
+                <NavigationViewItem Content="Apps &amp; Git · 程式與 Git" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE71D;" /></NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="App Uninstaller · 應用程式解除安裝" Tag="module.uninstall"><NavigationViewItem.Icon><FontIcon Glyph="&#xE74D;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Git &amp; GitHub · Git 與 GitHub" Tag="module.git"><NavigationViewItem.Icon><FontIcon Glyph="&#xE8AB;" /></NavigationViewItem.Icon></NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Scheduled Tasks · 排程工作" Tag="module.tasks">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE823;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Devices · 裝置" Tag="module.devices">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE975;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Startup Apps · 開機程式" Tag="module.startup">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7B5;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Batch Rename · 批次改名" Tag="module.rename">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8AC;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Bulk File Ops · 批次檔案操作" Tag="module.bulkops">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8B7;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Duplicate Finder · 重複檔案搜尋" Tag="module.duplicates">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8C8;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Disk Analyser · 磁碟分析" Tag="module.disk">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDA2;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Drives · 磁碟機" Tag="module.drives">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDA2;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="App Uninstaller · 應用程式解除安裝" Tag="module.uninstall">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE74D;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Window Manager · 視窗管理" Tag="module.windows">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE737;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Keyboard Remapper · 鍵盤重新對應" Tag="module.keyboard">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE765;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Hosts Editor · hosts 編輯器" Tag="module.hosts">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE71B;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Mouse &amp; Pointer · 滑鼠與指標" Tag="module.mouse">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE962;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Screen Recorder · 螢幕錄影" Tag="module.recorder">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE714;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="System Monitor · 系統監察" Tag="module.monitor">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE9D9;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Connections · 連線" Tag="module.connections">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE968;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Event Viewer · 事件檢視器" Tag="module.events">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7C3;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Volume Mixer · 音量混合器" Tag="module.mixer">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE767;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Context Menu · 右鍵選單" Tag="module.contextmenu">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDE3;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Awake · 保持喚醒" Tag="module.awake">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE708;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Color Picker · 螢幕取色" Tag="module.colorpicker">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE790;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem Content="Environment Variables · 環境變數" Tag="module.envvars">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE943;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
+
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
+                <NavigationViewItem x:Name="TweaksGroup" Content="All Tweaks · 全部調校" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE713;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="RecipesGroup" Content="Recipes · 一鍵流程" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE7C1;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Name="ToolsGroup" Content="Tools · 工具" SelectsOnInvoked="False">
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE90F;" /></NavigationViewItem.Icon>
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem Content="About · 關於" Tag="about">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE946;" />
-                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.Icon><FontIcon Glyph="&#xE946;" /></NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
             <Frame x:Name="NavFrame" />
