@@ -390,9 +390,9 @@
   - _Enable history first: HKCU\Software\Microsoft\Clipboard value EnableClipboardHistory (REG_DWORD)=1 (or open ms-settings:clipboard). At runtime use Windows.ApplicationModel.DataTransfer.Clipboard.GetHistoryItemsAsync(); re-copy a chosen entry with SetHistoryItemAsContent; 'paste plain' builds a fresh DataPackage with SetText only to drop rich formats._
 
 ### Battery & Thermal Dashboard · 🆕 new module / 新模組  (2)
-- [ ] **Battery health & wear report** · 睇電池健康同耗損報告
+- [x] **Battery health & wear report** · 睇電池健康同耗損報告 — DONE: new Battery & Thermal module. Live charge/status/runtime via Win32_Battery (EstimatedChargeRemaining/BatteryStatus/EstimatedRunTime); powercfg /batteryreport parsed for DESIGN vs FULL CHARGE CAPACITY → wear %, cycle count, chemistry; powercfg /energy run in-app with error/warning counts. All shown in-app (cards + dialogs), no redirect. Bilingual.
   - _Run powercfg /batteryreport /output report.html and parse DESIGN CAPACITY vs FULL CHARGE CAPACITY to compute wear %; run powercfg /energy for power-draw warnings. Live charge level via the Win32_Battery WMI class (EstimatedChargeRemaining, BatteryStatus)._
-- [ ] **Live CPU/GPU temperature & fan monitor** · 即時睇CPU/GPU溫度同風扇
+- [x] **Live CPU/GPU temperature & fan monitor** · 即時睇CPU/GPU溫度同風扇 — DONE: LibreHardwareMonitorLib (CPU/GPU/motherboard) traversed each second for Temperature/Fan/Load sensors in a live table + hottest-sensor card; falls back to MSAcpi_ThermalZoneTemperature WMI (with an empty-state explainer) when no admin-level driver exposes real sensors.
   - _Wrap the LibreHardwareMonitorLib NuGet: new Computer { IsCpuEnabled = true, IsGpuEnabled = true }.Open(), then traverse Hardware[].Sensors where SensorType is Temperature/Fan/Load. Fallback to the MSAcpi_ThermalZoneTemperature WMI class for a coarse thermal-zone reading without admin drivers._
 
 ### WSL & VM Launcher · 🆕 new module / 新模組  (2)

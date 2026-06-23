@@ -365,6 +365,7 @@ public sealed partial class MainWindow : Window
         "module.recorder" => typeof(ScreenRecorderModule),
         "module.capture" => typeof(CaptureStudioModule),
         "module.monitor" => typeof(SystemMonitorModule),
+        "module.battery" => typeof(BatteryThermalModule),
         "module.connections" => typeof(ConnectionsModule),
         "module.events" => typeof(EventViewerModule),
         "module.mixer" => typeof(VolumeMixerModule),
@@ -498,6 +499,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.monitor":
                 NavFrame.Navigate(typeof(SystemMonitorModule));
+                break;
+            case "module.battery":
+                NavFrame.Navigate(typeof(BatteryThermalModule));
                 break;
             case "module.connections":
                 NavFrame.Navigate(typeof(ConnectionsModule));
