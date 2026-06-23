@@ -117,6 +117,11 @@ public sealed partial class MainWindow : Window
             case "eventviewer":
                 Navigator.GoToModule?.Invoke("module.events");
                 break;
+            case "mixer":
+            case "volume":
+            case "audio":
+                Navigator.GoToModule?.Invoke("module.mixer");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -271,6 +276,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.events":
                 NavFrame.Navigate(typeof(EventViewerModule));
+                break;
+            case "module.mixer":
+                NavFrame.Navigate(typeof(VolumeMixerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

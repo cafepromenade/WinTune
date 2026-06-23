@@ -730,5 +730,19 @@ From a verify+discover workflow (iphlpapi P/Invoke adversarially confirmed `corr
 
 _Note: a planned "AI & Ads catalog batch" was dropped after the audit showed Recall, Bing-search, the ContentDeliveryManager ad set, classic context menu, long paths, startup delay and clipboard history are ALREADY in the catalog — no duplication (governing rule d)._
 
+## 🌱 Newly discovered — iteration 26 · 第 26 次迭代新發掘
+
+From a generate+adversarial-verify workflow (Core Audio COM interop verified `correct=true`) + a discovery sweep (17 items).
+
+- [x] **Per-app Volume Mixer** · 每個 app 音量混合器 — DONE: master volume/mute + every audio session's volume/mute, live, via raw Core Audio (WASAPI) COM — IMMDeviceEnumerator → IAudioSessionManager2 → IAudioSessionControl2 / ISimpleAudioVolume / IAudioEndpointVolume. Adversarially-verified vtable order; runs without AccessViolation. `module.mixer` / `--page mixer`.
+
+### New module/feature candidates · 新模組／功能
+- [ ] **Custom right-click verb manager** · 自訂右鍵指令管理 — add/remove context-menu entries under HKCU\Software\Classes\*\shell\<verb>, …\Directory\shell, …\Directory\Background\shell (command + icon + position).
+- [ ] **Icon & thumbnail cache rebuilder** · 圖示／縮圖快取重建 — ie4uinit.exe -show (quick); full = stop explorer, delete %LocalAppData%\IconCache.db + …\Microsoft\Windows\Explorer\*.db, restart explorer.
+- [ ] **Network repair toolbox** · 網絡修復工具箱 — Winsock reset, int ip reset, flush/release/renew, ARP -d *, each with parsed status (DnsFlushResolverCache for the DNS part).
+- [ ] **USB & power throttle tuner** · USB／電源節流調校 — unhide hidden advanced-power settings (Attributes=2 under HKLM\…\Power\PowerSettings\<sub>\<setting>) then expose USB selective suspend, processor min/max, link-state power.
+- [ ] **Storage reclaimer** · 儲存空間回收 — Delivery Optimization cache (stop DoSvc + clear), DISM WinSxS cleanup, toggle Reserved Storage (Fsutil/registry), all with reclaimable-size readout.
+- [ ] **File-type default fixer (UserChoice hash)** · 檔案類型預設修復 — snapshot/restore FileExts UserChoice with the computed Hash so PDF/browser stop reverting to Edge.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

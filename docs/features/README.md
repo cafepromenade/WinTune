@@ -693,7 +693,7 @@
 - [List running services · 列出運行緊嘅服務](maint.list-running-services.md)
 - [List scheduled tasks · 列出排程工作](maint.list-scheduled-tasks.md)
 - [Open System Information · 開系統資訊工具](maint.msinfo32.md)
-- [Open Event Viewer · 開事件檢視器](maint.open-event-viewer.md)
+- [Event Viewer · 事件檢視器](maint.open-event-viewer.md)
 - [Open System Information · 開系統資訊](maint.open-msinfo.md)
 - [Open Services · 開啟服務管理員](maint.open-services-msc.md)
 - [Open Startup apps settings · 開啟開機應用程式設定](maint.open-startup-apps.md)
