@@ -526,5 +526,14 @@ _Source: Microsoft Learn (PowerRename) + bulkrenameutility.co.uk — confirms no
 - [ ] **Audio recorder (mic)** · 收音錄音
   - _ffmpeg -f dshow -i audio="<mic name>" out.wav (enumerate devices via ffmpeg -list_devices true -f dshow -i dummy). In-app panel._
 
+## 🌱 Newly discovered — iteration 9 · 第 9 次迭代新發掘 (forum pain-points · 論壇痛點)
+
+_Source: windowsnews.ai / windowsforum / makeuseof / howtogeek — "Make Windows 11 less intrusive" 2025._
+- [x] **Debloat & Annoyances category** · 去煩擾分類 — DONE this iteration: ~30 in-app registry/command toggles for the most-complained-about Win11 annoyances (Copilot, Recall, Bing/web search, Search Highlights, lock-screen tips, Start/Explorer/Settings ads, setup nags…). No redirect.
+- [ ] **Disable Recall snapshots** · 停用 Recall 快照
+  - _HKCU\Software\Policies\Microsoft\Windows\WindowsAI -> DWORD DisableAIDataAnalysis = 1 (and the HKLM policy). Stops on-screen snapshotting._
+- [ ] **Stop lock-screen Spotlight tips/ads** · 熄鎖機畫面 Spotlight 提示／廣告
+  - _HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager -> RotatingLockScreenOverlayEnabled = 0, SubscribedContent-338387Enabled = 0._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

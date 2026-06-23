@@ -1,6 +1,6 @@
 # WinTune — Feature Reference · 功能總覽
 
-**1058** features, each with its own page. · **1058** 項功能，每項一頁。
+**1090** features, each with its own page. · **1090** 項功能，每項一頁。
 
 ## Appearance & Personalisation · 外觀與個人化 (14)
 - [Accent colour on Start & taskbar · 開始與工作列顯示主題色](appearance.accent-start-taskbar.md)
@@ -251,6 +251,40 @@
 - [Clear user temp files · 清除使用者暫存檔](cleanup.user-temp.md)
 - [Clear Windows Temp · 清除 Windows 暫存](cleanup.windows-temp.md)
 - [Clear Windows Update cache · 清除 Windows Update 快取](cleanup.windows-update-cache.md)
+
+## Debloat & Annoyances · 去煩擾 (32)
+- [Turn off Bing in Start search · 熄開始搜尋嘅 Bing](annoy.bing-search-off.md)
+- [Turn off Click to Do · 熄 Click to Do](annoy.click-to-do-off.md)
+- [Turn off general content suggestions · 熄一般內容建議](annoy.contentdelivery-master-off.md)
+- [Remap the Copilot key to do nothing · 將 Copilot 鍵改成乜都唔做](annoy.copilot-key-remap.md)
+- [Turn off Windows Copilot · 熄 Windows Copilot](annoy.copilot-off.md)
+- [Turn off Cortana above lock screen · 熄鎖屏上面嘅 Cortana](annoy.cortana-above-lock-off.md)
+- [Turn off Cortana consent in search · 熄搜尋度嘅 Cortana 同意](annoy.cortana-consent-off.md)
+- [Turn off Cortana · 熄 Cortana](annoy.cortana-off.md)
+- [Turn off web results in Search (policy) · 用原則熄搜尋嘅網上結果](annoy.disable-web-search-policy-off.md)
+- [Turn off Edge Collections · 熄 Edge Collections](annoy.edge-collections-off.md)
+- [Turn off Edge Copilot page context · 熄 Edge Copilot 讀取頁面內容](annoy.edge-copilot-page-context-off.md)
+- [Turn off Edge Copilot sidebar · 熄 Edge Copilot 側欄](annoy.edge-copilot-sidebar-off.md)
+- [Turn off Edge shopping assistant · 熄 Edge 購物助手](annoy.edge-shopping-off.md)
+- [Hide File Explorer sync-provider ads · 收埋檔案總管嘅 sync 推廣](annoy.explorer-sync-ads-off.md)
+- [Turn off lock-screen fun facts & tips · 熄鎖機畫面趣聞同貼士](annoy.lockscreen-funfacts-off.md)
+- [Turn off lock-screen Spotlight tips · 熄鎖機畫面 Spotlight 提示](annoy.lockscreen-spotlight-tips-off.md)
+- [Stop silently installing suggested apps · 唔好靜雞雞裝建議 App](annoy.preinstalled-apps-off.md)
+- [Turn off Recall snapshots · 熄 Recall 截圖記錄](annoy.recall-off.md)
+- [Turn off "Get even more out of Windows" nag · 熄「再進一步善用 Windows」嘅纏擾](annoy.scoobe-off.md)
+- [Turn off search box web suggestions · 熄搜尋框嘅網上建議](annoy.search-box-suggestions-off.md)
+- [Turn off Search Highlights · 熄搜尋焦點 (Search Highlights)](annoy.search-highlights-off.md)
+- [Turn off web search in Search · 熄搜尋度嘅網上搜尋](annoy.search-web-off.md)
+- [Hide suggested content in Settings (1) · 收埋設定入面嘅建議內容 (1)](annoy.settings-suggested-393-off.md)
+- [Hide suggested content in Settings (2) · 收埋設定入面嘅建議內容 (2)](annoy.settings-suggested-694-off.md)
+- [Hide suggested content in Settings (3) · 收埋設定入面嘅建議內容 (3)](annoy.settings-suggested-696-off.md)
+- [Turn off tips & suggestions (soft landing) · 熄提示同建議（soft landing）](annoy.softlanding-off.md)
+- [Turn off account notifications in Start · 熄開始選單嘅帳戶通知](annoy.start-account-notifications-off.md)
+- [Reduce Start "recommended" suggestions · 減少開始選單「建議」推介](annoy.start-iris-recommendations-off.md)
+- [Turn off Start menu app suggestions · 熄開始選單嘅 App 建議](annoy.start-suggestions-off.md)
+- [Skip welcome experience after updates · 更新後跳過歡迎畫面](annoy.welcome-experience-off.md)
+- [Disable the Widgets board · 停用小工具面板](annoy.widgets-board-off.md)
+- [Turn off Windows tips notifications · 熄 Windows 貼士通知](annoy.windows-tips-338389-off.md)
 
 ## Developer & Terminal · 開發與終端機 (101)
 - [Base64 encode text · Base64 編碼文字](dev.clis.base64-encode.md)

@@ -124,6 +124,15 @@ public static class Categories
         Glyph = "",
     };
 
+    public static readonly AppCategory Annoyances = new()
+    {
+        Id = "annoyances",
+        Name = new("Debloat & Annoyances", "去煩擾"),
+        Blurb = new("Switch off the most-complained-about Windows 11 nags: Copilot, Recall, Bing search, Search Highlights, lock-screen tips and ads.",
+            "關掉最多人投訴嘅 Windows 11 煩擾：Copilot、Recall、Bing 搜尋、搜尋醒目提示、鎖機畫面提示同廣告。"),
+        Glyph = "",
+    };
+
     public static readonly AppCategory Win11Pro = new()
     {
         Id = "win11pro",
@@ -196,7 +205,7 @@ public static class Categories
     public static readonly AppCategory[] All =
     {
         Appearance, Explorer, Taskbar, Privacy, Performance, Network,
-        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Win11Pro, Info,
+        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Win11Pro, Annoyances, Info,
         RecipesCat,
         DevTerminal, Browser, Vault, NetPro,
     };
