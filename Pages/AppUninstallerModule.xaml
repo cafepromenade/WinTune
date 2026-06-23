@@ -45,6 +45,7 @@
                         <Grid Padding="8,6,8,6" ColumnSpacing="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="76" />
                                 <ColumnDefinition Width="90" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
@@ -52,11 +53,13 @@
                                 <TextBlock Text="{Binding ShortName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
                                 <TextBlock Text="{Binding Name}" FontSize="11" FontFamily="Consolas" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextTrimming="CharacterEllipsis" />
                             </StackPanel>
-                            <TextBlock Grid.Column="1" Text="{Binding Version}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis" />
-                            <Button Grid.Column="2" Click="Uninstall_Click" Padding="10,4,10,4">
+                            <TextBlock Grid.Column="1" Text="{Binding SizeText}" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" />
+                            <TextBlock Grid.Column="2" Text="{Binding Version}" VerticalAlignment="Center" Foreground="{ThemeResource TextFillColorSecondaryBrush}" FontSize="12" TextTrimming="CharacterEllipsis" />
+                            <Button Grid.Column="3" Click="Actions_Click" Padding="10,4,10,4">
                                 <StackPanel Orientation="Horizontal" Spacing="6">
                                     <FontIcon Glyph="&#xE74D;" FontSize="12" />
                                     <TextBlock x:Name="BtnText" Text="Uninstall · 解除安裝" />
+                                    <FontIcon Glyph="&#xE70D;" FontSize="10" />
                                 </StackPanel>
                             </Button>
                         </Grid>

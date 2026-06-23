@@ -50,14 +50,8 @@ public sealed partial class ArchivesModule : Page
         OpsFilter.PlaceholderText = P("Filter operations…", "篩選操作…");
         AdvancedHeader.Text = P($"Advanced operations ({GitOpsCount()})", $"進階操作（{GitOpsCount()}）");
 
-        if (!ArchiveService.IsInstalled)
-        {
-            EngineBar.IsOpen = true;
-            EngineBar.Severity = InfoBarSeverity.Warning;
-            EngineBar.Title = P("7-Zip not found", "搵唔到 7-Zip");
-            EngineBar.Message = P("Install 7-Zip (7-zip.org) to use this module.", "請安裝 7-Zip (7-zip.org) 先用得呢個模組。");
-        }
-        else { EngineBar.IsOpen = false; }
+        EngineGate.Show(EngineBar, ArchiveService.IsInstalled, "7-Zip", "7-Zip", "7zip.7zip",
+            recheck: () => Task.FromResult(ArchiveService.Rescan()));
     }
 
     private int GitOpsCount() => (_ops ??= ArchiveOperations.All().ToList()).Count;

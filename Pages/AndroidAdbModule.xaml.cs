@@ -34,6 +34,7 @@ public sealed partial class AndroidAdbModule : Page
             "用 adb 管理 Android 裝置 — 列出裝置、安裝 APK、執行 shell 指令、攞 logcat、截圖、重啟，或者無線連接。手機要先開 USB 偵錯。");
         ConnectBtn.Content = P("Connect", "連接");
         InstallBtn.Content = P("Install APK", "安裝 APK");
+        MirrorBtn.Content = P("Mirror screen", "投影畫面");
         ShotBtn.Content = P("Screenshot", "截圖");
         LogcatBtn.Content = P("Logcat", "Logcat");
         PackagesBtn.Content = P("Packages", "已裝套件");
@@ -105,6 +106,31 @@ public sealed partial class AndroidAdbModule : Page
         var r = await AdbService.Install(serial, f.Path);
         Busy.IsActive = false;
         Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Install APK", "安裝 APK"), Msg(r));
+    }
+
+    private async void Mirror_Click(object sender, RoutedEventArgs e)
+    {
+        if (!Require(out var serial)) return;
+        Busy.IsActive = true;
+        if (!await AdbService.ScrcpyAvailable())
+        {
+            Notify(InfoBarSeverity.Informational, P("Installing scrcpy…", "安裝緊 scrcpy…"),
+                P("Installing the scrcpy mirroring engine automatically (winget · Genymobile.scrcpy).",
+                  "自動安裝 scrcpy 投影引擎（winget · Genymobile.scrcpy）。"));
+            bool ok = await AdbService.InstallScrcpy();
+            if (!ok || !await AdbService.ScrcpyAvailable())
+            {
+                Busy.IsActive = false;
+                Notify(InfoBarSeverity.Error, P("scrcpy not available", "搵唔到 scrcpy"),
+                    P("Could not install scrcpy automatically. Try again, or install 'Genymobile.scrcpy' from the Package Manager.",
+                      "自動安裝 scrcpy 失敗。請再試，或者喺套件管理模組安裝「Genymobile.scrcpy」。"));
+                return;
+            }
+        }
+        var r = await AdbService.Mirror(serial);
+        Busy.IsActive = false;
+        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Mirror screen", "投影畫面"),
+            r.Success ? P("A scrcpy window should open showing your device.", "scrcpy 視窗應該會打開顯示你部裝置。") : Msg(r));
     }
 
     private async void Shot_Click(object sender, RoutedEventArgs e)

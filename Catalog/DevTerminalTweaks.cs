@@ -117,6 +117,12 @@ public static class DevTerminalTweaks
             keywords: "winget,configure,dsc,組態"),
 
         // --- docker (20) ---
+        Tweak.Action("dev.docker.install", "Install Docker Desktop (one-click)", "一鍵安裝 Docker Desktop",
+            "Install Docker Desktop automatically via winget (Docker.DockerDesktop) — no browser, no redirect. The Docker commands below need this engine; sign out/in or reboot once after first install.",
+            "用 winget 自動安裝 Docker Desktop（Docker.DockerDesktop）— 唔使開瀏覽器、唔使跳轉。下面啲 Docker 指令要靠呢個引擎；首次安裝後登出再登入或者重啟一次。",
+            "Install", "安裝", ct => PackageService.Install("Docker.DockerDesktop", ct),
+            keywords: "docker,install,winget,安裝,容器,引擎"),
+
         Tweak.Cmd("dev.docker.ps", "List running containers", "列出執行緊嘅容器",
             "Show all currently running Docker containers.", "顯示所有而家執行緊嘅 Docker 容器。",
             "List", "列出", "docker ps",

@@ -92,4 +92,21 @@ public static class AdbService
         if (!cap.Success) return cap;
         return await ShellRunner.RunCmd($"adb -s {serial} pull {remote} \"{localPath}\"", false, ct);
     }
+
+    // --- scrcpy 投影 · screen mirroring engine (Genymobile.scrcpy) ---
+
+    /// <summary>scrcpy 喺唔喺度 · Whether scrcpy is on PATH.</summary>
+    public static async Task<bool> ScrcpyAvailable(CancellationToken ct = default)
+    {
+        try { return (await ShellRunner.CapturePowershell("scrcpy --version 2>&1 | Out-String", ct)).Contains("scrcpy", StringComparison.OrdinalIgnoreCase); }
+        catch { return false; }
+    }
+
+    /// <summary>一鍵裝 scrcpy · One-click install scrcpy via winget, then refresh PATH.</summary>
+    public static Task<bool> InstallScrcpy(CancellationToken ct = default)
+        => PackageService.AutoInstall("Genymobile.scrcpy", ct);
+
+    /// <summary>開始投影 · Start mirroring the selected device in a scrcpy window (non-blocking).</summary>
+    public static Task<TweakResult> Mirror(string serial, CancellationToken ct = default)
+        => ShellRunner.RunCmd($"start \"\" scrcpy -s {serial}", false, ct);
 }

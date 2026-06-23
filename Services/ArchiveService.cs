@@ -41,6 +41,14 @@ public static class ArchiveService
         File.Exists(@"C:\Program Files (x86)\7-Zip\7z.exe") ||
         RegistryHelper.KeyExists(RegRoot.HKLM, @"SOFTWARE\7-Zip");
 
+    /// <summary>清快取後重新搵 7z.exe · Forget the cached 7z.exe path and re-resolve
+    /// (call after a fresh winget install so the new binary resolves without an app restart).</summary>
+    public static bool Rescan()
+    {
+        _exe = null;
+        return IsInstalled;
+    }
+
     public static string Archive => AppState.CurrentArchivePath;
     public static string Source => AppState.CurrentSourcePath;
     public static bool HasArchive => !string.IsNullOrWhiteSpace(Archive);

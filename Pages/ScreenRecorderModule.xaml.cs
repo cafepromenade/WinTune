@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinTune.Services;
@@ -37,14 +38,8 @@ public sealed partial class ScreenRecorderModule : Page
         RecordBtn.Content = P("● Record", "● 開始錄影");
         StopBtn.Content = P("■ Stop", "■ 停止");
 
-        if (!MediaService.IsInstalled)
-        {
-            EngineBar.IsOpen = true;
-            EngineBar.Severity = InfoBarSeverity.Warning;
-            EngineBar.Title = P("ffmpeg not found", "搵唔到 ffmpeg");
-            EngineBar.Message = P("Install ffmpeg (winget install Gyan.FFmpeg) to record.", "請安裝 ffmpeg（winget install Gyan.FFmpeg）先錄到。");
-        }
-        else { EngineBar.IsOpen = false; }
+        EngineGate.Show(EngineBar, MediaService.IsInstalled, "ffmpeg", "ffmpeg", "Gyan.FFmpeg",
+            recheck: () => Task.FromResult(MediaService.Rescan()), onInstalled: () => { SyncButtons(); return Task.CompletedTask; });
     }
 
     private void DefaultOutput()

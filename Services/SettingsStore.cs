@@ -34,6 +34,13 @@ public static class SettingsStore
         return new();
     }
 
+    /// <summary>由磁碟重新載入設定（例如還原備份之後）· Reload settings from disk into the in-memory
+    /// cache, e.g. after a full backup import replaces settings.json.</summary>
+    public static void Reload()
+    {
+        lock (Gate) _cache = Load();
+    }
+
     public static string Get(string key, string fallback)
     {
         lock (Gate)

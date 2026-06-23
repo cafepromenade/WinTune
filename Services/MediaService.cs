@@ -44,6 +44,15 @@ public static class MediaService
 
     public static bool IsInstalled => File.Exists(FFmpeg) || !FFmpeg.Contains('\\');
 
+    /// <summary>清快取後重新搵 ffmpeg · Forget the cached ffmpeg/ffprobe paths and re-probe PATH
+    /// (call after a fresh winget install so the new binary resolves without an app restart).</summary>
+    public static bool Rescan()
+    {
+        _ffmpeg = null;
+        _ffprobe = null;
+        return File.Exists(FFmpeg);
+    }
+
     public static string Input => AppState.CurrentMediaInput;
     public static string Output => AppState.CurrentMediaOutput;
     public static bool HasInput => !string.IsNullOrWhiteSpace(Input) && File.Exists(Input);

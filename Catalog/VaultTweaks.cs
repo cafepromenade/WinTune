@@ -112,6 +112,12 @@ public static class VaultTweaks
                 requiresAdmin: true, keywords: "bitlocker,resume,protection,恢復,保護,enable"),
 
         // --- veracrypt (20) ---
+        Tweak.Action("vault.veracrypt.install", "Install VeraCrypt (one-click)", "一鍵安裝 VeraCrypt",
+            "Install VeraCrypt automatically via winget (IDRIX.VeraCrypt) — no browser, no redirect. The VeraCrypt actions below need this engine.",
+            "用 winget 自動安裝 VeraCrypt（IDRIX.VeraCrypt）— 唔使開瀏覽器、唔使跳轉。下面啲 VeraCrypt 操作要靠呢個引擎。",
+            "Install", "安裝", ct => PackageService.Install("IDRIX.VeraCrypt", ct),
+            keywords: "veracrypt,install,winget,安裝,加密,引擎"),
+
         Tweak.Shell("vault.veracrypt.gui", "Launch VeraCrypt", "啟動 VeraCrypt",
             "Open the VeraCrypt main window.", "打開 VeraCrypt 主視窗。",
             "Open", "打開", "%ProgramFiles%\\VeraCrypt\\VeraCrypt.exe", "",

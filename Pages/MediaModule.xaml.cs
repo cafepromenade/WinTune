@@ -45,15 +45,8 @@ public sealed partial class MediaModule : Page
         AdvancedHeader.Text = P($"Advanced operations ({(_ops ??= MediaOperations.All().ToList()).Count})",
             $"進階操作（{(_ops ??= MediaOperations.All().ToList()).Count}）");
 
-        if (!MediaService.IsInstalled)
-        {
-            EngineBar.IsOpen = true;
-            EngineBar.Severity = InfoBarSeverity.Warning;
-            EngineBar.Title = P("ffmpeg not found", "搵唔到 ffmpeg");
-            EngineBar.Message = P("Install ffmpeg (winget install Gyan.FFmpeg) to use this module.",
-                "請安裝 ffmpeg（winget install Gyan.FFmpeg）先用得呢個模組。");
-        }
-        else { EngineBar.IsOpen = false; }
+        EngineGate.Show(EngineBar, MediaService.IsInstalled, "ffmpeg", "ffmpeg", "Gyan.FFmpeg",
+            recheck: () => Task.FromResult(MediaService.Rescan()));
     }
 
     private void RefreshSelection()
