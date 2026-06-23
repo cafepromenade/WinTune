@@ -296,6 +296,11 @@ public sealed partial class MainWindow : Window
             case "controlpanel":
             case "mssettings":
                 Navigator.GoToModule?.Invoke("module.settingshub");
+            case "imaging":
+            case "rpi":
+            case "raspberrypi":
+            case "minecraft":
+                Navigator.GoToModule?.Invoke("module.imaging");
                 break;
             case null:
             case "":
@@ -422,6 +427,7 @@ public sealed partial class MainWindow : Window
         "module.onedrive" => typeof(OneDriveModule),
         "module.timeunit" => typeof(TimeUnitModule),
         "module.settingshub" => typeof(SettingsHubModule),
+        "module.imaging" => typeof(ImagingGameModule),
         _ => typeof(DashboardPage),
     };
 
@@ -605,6 +611,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(TimeUnitModule));
             case "module.settingshub":
                 NavFrame.Navigate(typeof(SettingsHubModule));
+            case "module.imaging":
+                NavFrame.Navigate(typeof(ImagingGameModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

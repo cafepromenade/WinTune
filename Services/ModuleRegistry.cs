@@ -71,6 +71,7 @@ public static class ModuleRegistry
         new() { Tag = "module.onedrive", En = "OneDrive", Zh = "OneDrive", Glyph = ((char)0xE753).ToString(), Keywords = "onedrive files on demand pin dehydrate online only cloud free space storage sense sync 雲端 釘選 脫水 釋放空間 同步 隨選" },
         new() { Tag = "module.timeunit", En = "Time & Unit Tools", Zh = "時間與單位工具", Glyph = ((char)0xE823).ToString(), Keywords = "time zone timezone world clock converter convert unit length mass temperature 時間 時區 世界時鐘 換算 單位" },
         new() { Tag = "module.settingshub", En = "Settings & Control Panel", Zh = "設定與控制台", Glyph = ((char)0xE713).ToString(), Keywords = "settings control panel ms-settings applet cpl launcher open page 設定 控制台 啟動器 面板" },
+        new() { Tag = "module.imaging", En = "Imaging & Game Tools", Zh = "燒錄與遊戲工具", Glyph = ((char)0xE7F4).ToString(), Keywords = "raspberry pi imager sd card flash image write boot ssh wifi minecraft world downloader proxy jar 樹莓派 燒錄 映像 我的世界 下載" },
     };
 
     public static IEnumerable<ModuleInfo> Search(string query)
