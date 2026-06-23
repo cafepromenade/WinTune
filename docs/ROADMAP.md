@@ -406,7 +406,7 @@
   - _P/Invoke Gdi32: read the pixel under the cursor with GetCursorPos + GetPixel(GetDC(IntPtr.Zero), x, y); convert to HEX/RGB/HSL/HSV and copy the chosen format to clipboard. Draw a zoom loupe from a BitBlt of the screen DC around the cursor._
 
 ### Font Manager · 🆕 new module / 新模組  (1)
-- [ ] **Install / preview / uninstall fonts in bulk** · 一次過裝、睇同移除啲字型
+- [x] **Install / preview / uninstall fonts in bulk** · 一次過裝、睇同移除啲字型
   - _Per-user install (no UAC): copy .ttf/.otf to %LOCALAPPDATA%\Microsoft\Windows\Fonts and add a value under HKCU\Software\Microsoft\Windows NT\CurrentVersion\Fonts named '<Face> (TrueType)' = the file path, then broadcast WM_FONTCHANGE. Machine-wide variant: copy to %WINDIR%\Fonts + the HKLM equivalent. Preview by rendering a sample string per face._
 
 ### Hotkey & Macro Runner · 🆕 new module / 新模組  (1)

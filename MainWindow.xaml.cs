@@ -387,6 +387,7 @@ public sealed partial class MainWindow : Window
         "module.native" => typeof(NativeUtilitiesModule),
         "module.powertoys" => typeof(PowerToysExtrasModule),
         "module.wslvm" => typeof(WslVmModule),
+        "module.fonts" => typeof(FontManagerModule),
         _ => typeof(DashboardPage),
     };
 
@@ -553,6 +554,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(PowerToysExtrasModule));
             case "module.wslvm":
                 NavFrame.Navigate(typeof(WslVmModule));
+            case "module.fonts":
+                NavFrame.Navigate(typeof(FontManagerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
