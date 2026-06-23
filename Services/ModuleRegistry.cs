@@ -67,6 +67,7 @@ public static class ModuleRegistry
         new() { Tag = "module.wslvm", En = "WSL & VM Launcher", Zh = "WSL 與 VM 啟動器", Glyph = ((char)0xEC7A).ToString(), Keywords = "wsl linux distro ubuntu debian windows sandbox wsb virtual machine vm hyper-v export import 子系統 沙盒 虛擬機" },
         new() { Tag = "module.fonts", En = "Font Manager", Zh = "字型管理", Glyph = ((char)0xE8D2).ToString(), Keywords = "font fonts install preview uninstall ttf otf typeface typography 字型 字款 安裝 預覽 移除" },
         new() { Tag = "module.onedrive", En = "OneDrive", Zh = "OneDrive", Glyph = ((char)0xE753).ToString(), Keywords = "onedrive files on demand pin dehydrate online only cloud free space storage sense sync 雲端 釘選 脫水 釋放空間 同步 隨選" },
+        new() { Tag = "module.timeunit", En = "Time & Unit Tools", Zh = "時間與單位工具", Glyph = ((char)0xE823).ToString(), Keywords = "time zone timezone world clock converter convert unit length mass temperature 時間 時區 世界時鐘 換算 單位" },
     };
 
     public static IEnumerable<ModuleInfo> Search(string query)

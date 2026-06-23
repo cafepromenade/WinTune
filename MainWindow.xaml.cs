@@ -279,6 +279,11 @@ public sealed partial class MainWindow : Window
                 Navigator.GoToModule?.Invoke("module.wslvm");
             case "onedrive":
                 Navigator.GoToModule?.Invoke("module.onedrive");
+            case "time":
+            case "timezone":
+            case "clock":
+            case "unit":
+                Navigator.GoToModule?.Invoke("module.timeunit");
                 break;
             case null:
             case "":
@@ -401,6 +406,7 @@ public sealed partial class MainWindow : Window
         "module.wslvm" => typeof(WslVmModule),
         "module.fonts" => typeof(FontManagerModule),
         "module.onedrive" => typeof(OneDriveModule),
+        "module.timeunit" => typeof(TimeUnitModule),
         _ => typeof(DashboardPage),
     };
 
@@ -574,6 +580,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(FontManagerModule));
             case "module.onedrive":
                 NavFrame.Navigate(typeof(OneDriveModule));
+            case "module.timeunit":
+                NavFrame.Navigate(typeof(TimeUnitModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
