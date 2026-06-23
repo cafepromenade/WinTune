@@ -225,6 +225,12 @@ public sealed partial class MainWindow : Window
             case "tailscale":
                 Navigator.GoToModule?.Invoke("module.vpn");
                 break;
+            case "powertoys":
+            case "extras":
+            case "ocr":
+            case "imageresizer":
+                Navigator.GoToModule?.Invoke("module.powertoys");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -333,6 +339,7 @@ public sealed partial class MainWindow : Window
         "module.packages" => typeof(PackageManagerModule),
         "module.adb" => typeof(AndroidAdbModule),
         "module.vpn" => typeof(VpnMeshModule),
+        "module.powertoys" => typeof(PowerToysExtrasModule),
         _ => typeof(DashboardPage),
     };
 
@@ -474,6 +481,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.vpn":
                 NavFrame.Navigate(typeof(VpnMeshModule));
+                break;
+            case "module.powertoys":
+                NavFrame.Navigate(typeof(PowerToysExtrasModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
