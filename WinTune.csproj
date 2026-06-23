@@ -59,6 +59,8 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.3.2" />
     <!-- 本地 QR 碼產生（純離線，唔上網）· Local QR-code generation (fully offline, no network). -->
     <PackageReference Include="QRCoder" Version="1.6.0" />
+    <!-- System.Speech: built-in Windows SAPI TTS (read aloud / export WAV) for the Voice module. -->
+    <PackageReference Include="System.Speech" Version="9.0.0" />
   </ItemGroup>
 
   <!--
