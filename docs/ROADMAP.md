@@ -414,7 +414,7 @@
   - _Register chords with user32 RegisterHotKey and pump WM_HOTKEY; map each id to an action: Process.Start an app, run a PowerShell snippet, or replay input via SendInput. Persist bindings to JSON; optionally bundle AutoHotkey v2 (AutoHotkey64.exe script.ahk) for richer key remaps._
 
 ### OneDrive · 🆕 new module / 新模組  (1)
-- [ ] **Pin / Dehydrate OneDrive Files-On-Demand & Set Auto-Free Threshold** · 設定OneDrive檔案隨選同自動釋放空間
+- [x] **Pin / Dehydrate OneDrive Files-On-Demand & Set Auto-Free Threshold** · 設定OneDrive檔案隨選同自動釋放空間
   - _OneDrive.exe /shutdown to pause sync. Per file/folder: 'attrib +U -P <path>' marks online-only (dehydrate via cloud-filter pin state), 'attrib +P -U <path>' pins it always-local. Auto-dehydration age set by DWORD ConfigStorageSenseCloudContentDehydrationThreshold under ...\StorageSense\Parameters\StoragePolicy._
 
 ### Time & Unit Tools · 🆕 new module / 新模組  (1)

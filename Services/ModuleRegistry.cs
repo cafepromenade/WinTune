@@ -54,6 +54,7 @@ public static class ModuleRegistry
         new() { Tag = "module.packages", En = "Package Manager", Zh = "套件管理", Glyph = ((char)0xECAA).ToString(), Keywords = "winget package install uninstall upgrade scoop choco dependencies unigetui 套件 安裝 相依" },
         new() { Tag = "module.adb", En = "Android (ADB)", Zh = "Android（ADB）", Glyph = ((char)0xE8EA).ToString(), Keywords = "android adb apk logcat shell screenshot reboot fastboot scrcpy 手機 安卓" },
         new() { Tag = "module.vpn", En = "VPN & Mesh", Zh = "VPN 與網狀網", Glyph = ((char)0xE945).ToString(), Keywords = "vpn nordvpn tailscale mesh connect exit node ping 連線 網狀網" },
+        new() { Tag = "module.onedrive", En = "OneDrive", Zh = "OneDrive", Glyph = ((char)0xE753).ToString(), Keywords = "onedrive files on demand pin dehydrate online only cloud free space storage sense sync 雲端 釘選 脫水 釋放空間 同步 隨選" },
     };
 
     public static IEnumerable<ModuleInfo> Search(string query)
