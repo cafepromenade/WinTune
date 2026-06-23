@@ -37,6 +37,9 @@ public sealed partial class MainWindow : Window
         // 背景運行：關窗收入系統匣，剪貼簿監察繼續運行。
         // Keep running when closed: close hides to the tray; the clipboard monitor keeps going.
         ClipboardService.Start(DispatcherQueue);
+        // 全域熱鍵泵：開機就跑，收入系統匣都繼續響。
+        // Global hotkey pump: starts now so registered chords fire even while WinTune sits in the tray.
+        HotkeyMacroService.StartHotkeys();
         TrayService.Install(ShowFromTray, QuitFromTray, "WinTune · 視窗調校");
         AppWindow.Closing += OnAppWindowClosing;
     }
@@ -162,6 +165,12 @@ public sealed partial class MainWindow : Window
             case "keyboard":
             case "remap":
                 Navigator.GoToModule?.Invoke("module.keyboard");
+                break;
+            case "hotkeys":
+            case "hotkey":
+            case "macro":
+            case "expander":
+                Navigator.GoToModule?.Invoke("module.hotkeys");
                 break;
             case "hosts":
                 Navigator.GoToModule?.Invoke("module.hosts");
@@ -318,6 +327,7 @@ public sealed partial class MainWindow : Window
         "module.uninstall" => typeof(AppUninstallerModule),
         "module.windows" => typeof(WindowManagerModule),
         "module.keyboard" => typeof(KeyboardModule),
+        "module.hotkeys" => typeof(HotkeyMacroModule),
         "module.hosts" => typeof(HostsEditorModule),
         "module.mouse" => typeof(MouseModule),
         "module.recorder" => typeof(ScreenRecorderModule),
@@ -429,6 +439,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.keyboard":
                 NavFrame.Navigate(typeof(KeyboardModule));
+                break;
+            case "module.hotkeys":
+                NavFrame.Navigate(typeof(HotkeyMacroModule));
                 break;
             case "module.hosts":
                 NavFrame.Navigate(typeof(HostsEditorModule));
