@@ -14,6 +14,14 @@
 - [x] **Encryption & Vault module** · 加密與保險庫模組 — 100 ops (BitLocker/VeraCrypt/EFS/certs/Defender)
 - [x] **Windows 11 Advanced module** · Windows 11 進階模組 — 100 ops (input/storage/perf/Explorer/Settings links)
 - [x] **Network Pro module** · 網絡進階模組 — 100 ops (adapters/IP·DNS/Wi-Fi/firewall/diagnostics)
+- [x] **Recipes (one-click)** · 一鍵流程 — 12 multi-step bundles (cleanup/privacy/gaming/dev/network/perf/…)
+- [x] **Per-feature Markdown docs** · 逐項功能 Markdown 文件 — `--export-docs` writes one .md per feature (997 files)
+- [x] **Settings import/export** · 設定匯入／匯出 — export/import WinTune settings as JSON (Settings page)
+
+## 🎯 Requested big features (queued) · 已點名嘅大功能（排緊隊）
+- [ ] **Settings & Control Panel hub** · 設定與控制台總匯 — bilingual searchable launcher for every `ms-settings:` page + every Control Panel applet (`control /name`, `*.cpl`).
+- [ ] **Interactive Registry Editor** · 互動式登錄編輯器 — bespoke tree browser + value view/edit/add/delete over RegistryHelper, bilingual, with a "known tweaks" overlay.
+- [ ] **Forum pain-points** · 論壇痛點 — features people complain about (from /deepresearch), appended here then built.
 
 ## 🔭 Discovered backlog · 發掘待辦（175 items / 項）
 

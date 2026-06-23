@@ -19,9 +19,25 @@ public partial class App : Application
         InitializeComponent();
     }
 
+    private static string? _exportDocsDir;
+
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
         ParseArgs();
+
+        // 無頭模式：匯出每個功能嘅 Markdown 然後退出 · headless docs export then exit.
+        if (_exportDocsDir is not null)
+        {
+            try
+            {
+                int n = WinTune.Services.DocsExporter.Export(_exportDocsDir);
+                System.IO.File.WriteAllText(System.IO.Path.Combine(_exportDocsDir, "_export_count.txt"), n.ToString());
+            }
+            catch { /* best effort */ }
+            Exit();
+            return;
+        }
+
         Shell = new MainWindow();
         ApplyThemeFromSettings();
         Shell.Activate();
@@ -34,6 +50,8 @@ public partial class App : Application
         {
             if (string.Equals(argv[i], "--page", StringComparison.OrdinalIgnoreCase))
                 StartPage = argv[i + 1].Trim().ToLowerInvariant();
+            else if (string.Equals(argv[i], "--export-docs", StringComparison.OrdinalIgnoreCase))
+                _exportDocsDir = argv[i + 1];
         }
     }
 

@@ -33,6 +33,7 @@ public static class TweakCatalog
         Add(list, Categories.Maintenance, MaintenanceTweaks.All());
         Add(list, Categories.Win11Pro, Win11ProTweaks.All());
         Add(list, Categories.Info, InfoTweaks.All());
+        Add(list, Categories.RecipesCat, Recipes.All());
         Add(list, Categories.DevTerminal, DevTerminalTweaks.All());
         Add(list, Categories.Browser, BrowserTweaks.All());
         Add(list, Categories.Vault, VaultTweaks.All());

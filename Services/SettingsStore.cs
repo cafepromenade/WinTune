@@ -47,13 +47,38 @@ public static class SettingsStore
         lock (Gate)
         {
             _cache[key] = value;
-            try
-            {
-                Directory.CreateDirectory(Dir);
-                File.WriteAllText(FilePath, JsonSerializer.Serialize(_cache,
-                    new JsonSerializerOptions { WriteIndented = true }));
-            }
-            catch { /* best effort */ }
+            SaveLocked();
         }
+    }
+
+    private static void SaveLocked()
+    {
+        try
+        {
+            Directory.CreateDirectory(Dir);
+            File.WriteAllText(FilePath, JsonSerializer.Serialize(_cache,
+                new JsonSerializerOptions { WriteIndented = true }));
+        }
+        catch { /* best effort */ }
+    }
+
+    /// <summary>匯出所有設定到檔案 · Export all settings to a JSON file.</summary>
+    public static void ExportTo(string path)
+    {
+        lock (Gate)
+            File.WriteAllText(path, JsonSerializer.Serialize(_cache, new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    /// <summary>由檔案匯入設定（合併）· Import settings from a JSON file (merge). Returns count imported.</summary>
+    public static int ImportFrom(string path)
+    {
+        var d = JsonSerializer.Deserialize<Dictionary<string, string>>(File.ReadAllText(path));
+        if (d is null) return 0;
+        lock (Gate)
+        {
+            foreach (var kv in d) _cache[kv.Key] = kv.Value;
+            SaveLocked();
+        }
+        return d.Count;
     }
 }

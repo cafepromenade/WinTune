@@ -133,6 +133,16 @@ public static class Categories
         Glyph = "",
     };
 
+    public static readonly AppCategory RecipesCat = new()
+    {
+        Id = "recipes",
+        Name = new("Recipes (one-click)", "一鍵流程"),
+        Blurb = new("Bundled multi-step chores that run with a single button — cleanup, privacy, gaming, dev setup and more.",
+            "將多步驟嘅例行工作夾埋一個掣搞掂 — 清理、私隱、遊戲、開發設定等等。"),
+        Glyph = "",
+        Group = "recipes",
+    };
+
     public static readonly AppCategory DevTerminal = new()
     {
         Id = "devterminal",
@@ -187,6 +197,7 @@ public static class Categories
     {
         Appearance, Explorer, Taskbar, Privacy, Performance, Network,
         Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Win11Pro, Info,
+        RecipesCat,
         DevTerminal, Browser, Vault, NetPro,
     };
 }

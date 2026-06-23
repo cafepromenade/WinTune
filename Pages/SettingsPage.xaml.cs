@@ -38,8 +38,70 @@ public sealed partial class SettingsPage : Page
 
         Root.Children.Add(BuildLanguageCard());
         Root.Children.Add(BuildThemeCard());
+        Root.Children.Add(BuildBackupCard());
         Root.Children.Add(BuildAdminCard());
         Root.Children.Add(BuildAboutCard());
+    }
+
+    private Border BuildBackupCard()
+    {
+        var panel = new StackPanel { Spacing = 10 };
+        panel.Children.Add(Heading(
+            Loc.I.Pick("Import / export settings", "匯入／匯出設定"),
+            Loc.I.Pick("Save WinTune's settings to a file, or load them back.", "將 WinTune 嘅設定存做檔案，或者載返入嚟。")));
+
+        var bar = new InfoBar { IsClosable = true, IsOpen = false };
+        var row = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 8 };
+
+        var export = new Button { Content = Loc.I.Pick("Export…", "匯出…") };
+        export.Click += async (_, _) =>
+        {
+            try
+            {
+                var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "wintune-settings" };
+                picker.FileTypeChoices.Add("JSON", new System.Collections.Generic.List<string> { ".json" });
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
+                var f = await picker.PickSaveFileAsync();
+                if (f is not null)
+                {
+                    SettingsStore.ExportTo(f.Path);
+                    Show(bar, InfoBarSeverity.Success, Loc.I.Pick("Exported.", "已匯出。"), f.Path);
+                }
+            }
+            catch (Exception ex) { Show(bar, InfoBarSeverity.Error, Loc.I.Pick("Export failed", "匯出失敗"), ex.Message); }
+        };
+
+        var import = new Button { Content = Loc.I.Pick("Import…", "匯入…") };
+        import.Click += async (_, _) =>
+        {
+            try
+            {
+                var picker = new Windows.Storage.Pickers.FileOpenPicker();
+                picker.FileTypeFilter.Add(".json");
+                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
+                var f = await picker.PickSingleFileAsync();
+                if (f is not null)
+                {
+                    int n = SettingsStore.ImportFrom(f.Path);
+                    App.ApplyThemeFromSettings();
+                    Show(bar, InfoBarSeverity.Success,
+                        Loc.I.Pick($"Imported {n} setting(s).", $"已匯入 {n} 項設定。"),
+                        Loc.I.Pick("Restart WinTune to fully apply.", "重啟 WinTune 完全生效。"));
+                }
+            }
+            catch (Exception ex) { Show(bar, InfoBarSeverity.Error, Loc.I.Pick("Import failed", "匯入失敗"), ex.Message); }
+        };
+
+        row.Children.Add(export);
+        row.Children.Add(import);
+        panel.Children.Add(row);
+        panel.Children.Add(bar);
+        return Card(panel);
+    }
+
+    private static void Show(InfoBar bar, InfoBarSeverity sev, string title, string msg)
+    {
+        bar.Severity = sev; bar.Title = title; bar.Message = msg; bar.IsOpen = true;
     }
 
     private Border BuildLanguageCard()

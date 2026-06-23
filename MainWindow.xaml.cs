@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -58,11 +59,16 @@ public sealed partial class MainWindow : Window
     {
         // 按分組插入分類；切換到 "tools" 分組時加一個標題。
         // Insert categories grouped; emit a "Tools" header when the group switches.
+        var headers = new Dictionary<string, string>
+        {
+            ["recipes"] = "Recipes · 一鍵流程",
+            ["tools"] = "Tools · 工具",
+        };
         string? lastGroup = null;
         foreach (var cat in Categories.All)
         {
-            if (cat.Group != lastGroup && cat.Group == "tools")
-                NavView.MenuItems.Add(new NavigationViewItemHeader { Content = "Tools · 工具" });
+            if (cat.Group != lastGroup && headers.TryGetValue(cat.Group, out var hdr))
+                NavView.MenuItems.Add(new NavigationViewItemHeader { Content = hdr });
             lastGroup = cat.Group;
 
             NavView.MenuItems.Add(new NavigationViewItem
