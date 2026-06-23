@@ -24,8 +24,29 @@ public static class AppState
 
     public static event EventHandler? RepoChanged;
 
+    private static string _currentArchivePath = string.Empty;
+    private static string _currentSourcePath = string.Empty;
+
+    /// <summary>Archives 模組選中嘅壓縮檔 · The archive file the Archives module operates on.</summary>
+    public static string CurrentArchivePath
+    {
+        get => _currentArchivePath;
+        set { _currentArchivePath = value ?? string.Empty; SettingsStore.Set("arc.archive", _currentArchivePath); ArchiveChanged?.Invoke(null, EventArgs.Empty); }
+    }
+
+    /// <summary>Archives 模組選中嘅來源（要壓縮嘅檔案／資料夾）· The source to compress/add.</summary>
+    public static string CurrentSourcePath
+    {
+        get => _currentSourcePath;
+        set { _currentSourcePath = value ?? string.Empty; SettingsStore.Set("arc.source", _currentSourcePath); ArchiveChanged?.Invoke(null, EventArgs.Empty); }
+    }
+
+    public static event EventHandler? ArchiveChanged;
+
     static AppState()
     {
         _currentRepoPath = SettingsStore.Get("git.repo", string.Empty);
+        _currentArchivePath = SettingsStore.Get("arc.archive", string.Empty);
+        _currentSourcePath = SettingsStore.Get("arc.source", string.Empty);
     }
 }

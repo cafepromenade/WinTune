@@ -8,6 +8,7 @@
 - [x] **Windows 11 control module** · Windows 11 控制模組 — 169 tweaks / 13 categories
 - [x] **Git & GitHub module** · Git 與 GitHub 模組 — repo ops, chunked uploader, 111 git/gh operations
 - [x] **Maintenance & Diagnostics module** · 維護與診斷模組 — 102 real ops (services, disk health, SFC/DISM, drivers, updates, event logs, power reports)
+- [x] **Archives module** · 壓縮檔模組 — 7-Zip create/extract/list/test/benchmark + 100 advanced operations
 
 ## 🔭 Discovered backlog · 發掘待辦（175 items / 項）
 
@@ -432,6 +433,21 @@
   - _HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers -> DWORD TdrDelay = 8 (seconds). admin, reboot._
 - [ ] **Rebuild Windows Search index** · 重建 Windows 搜尋索引
   - _HKLM\SOFTWARE\Microsoft\Windows Search -> DWORD SetupCompletedSuccessfully = 0, then restart the WSearch service (admin)._
+
+## 🌱 Newly discovered — iteration 2 · 第 2 次迭代新發掘 (6)
+
+- [ ] **Compare two folders/archives (hash diff)** · 比較兩個資料夾／壓縮檔（雜湊對比）
+  - _Get-FileHash on each side (or 7z h) then diff the hash lists to find changed/missing files. Pure local, no extra engine._
+- [ ] **Mount / dismount ISO & VHD** · 掛載／卸載 ISO 同 VHD　🆕 Disk Image module
+  - _Mount-DiskImage -ImagePath "x.iso" / Dismount-DiskImage -ImagePath "x.iso"; works for .iso/.vhd/.vhdx natively. Get-DiskImage to query._
+- [ ] **Create ISO from a folder** · 由資料夾整 ISO　🆕 Disk Image module
+  - _Wrap oscdimg.exe (Windows ADK Deployment Tools): oscdimg -m -u2 "C:\src" "C:\out.iso". Detect ADK install; otherwise guide the user._
+- [ ] **Network speed test** · 網絡測速　🆕 Network extras
+  - _Wrap the Ookla Speedtest CLI: winget install Ookla.Speedtest.CLI, then run "speedtest"; fallback to a timed download via Invoke-WebRequest._
+- [ ] **Window snapping zones (FancyZones-style)** · 視窗分區貼齊　🆕 Window Manager module
+  - _Launch/configure PowerToys FancyZones (winget install Microsoft.PowerToys; start the FancyZones editor), or move/resize windows directly via Win32 SetWindowPos._
+- [ ] **Process detail: open handles & loaded DLLs** · 程序詳情：開啟嘅控制代碼同 DLL
+  - _PowerShell: Get-Process -Id <pid> -Module lists loaded modules; tasklist /m for DLLs; wrap Sysinternals handle.exe (winget install Microsoft.Sysinternals.Handle) for open handles._
 
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

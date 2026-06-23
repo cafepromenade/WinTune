@@ -38,6 +38,10 @@ public sealed partial class MainWindow : Window
             case "github":
                 Navigator.GoToModule?.Invoke("module.git");
                 break;
+            case "archives":
+            case "archive":
+                Navigator.GoToModule?.Invoke("module.archives");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -118,6 +122,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.git":
                 NavFrame.Navigate(typeof(GitHubModule));
+                break;
+            case "module.archives":
+                NavFrame.Navigate(typeof(ArchivesModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
