@@ -808,7 +808,8 @@ launching the other app.
 - [ ] **Visual Studio installer panel (export/import .vsconfig)** · VS 安裝器面板 — wrap the VS bootstrapper / winget (`winget install Microsoft.VisualStudio.2022.Community --override "--config <file>"`); export the current install's .vsconfig and re-apply it; list/modify workloads. (Flashing/installer = real engine, in-app UI.)
 
 ### Android (ADB + emulator + flashing)
-- [ ] **Android / ADB console** · Android／ADB 主控台 — wrap adb: list devices (`adb devices -l`), install/uninstall APK (`adb install/uninstall`), push/pull, `adb shell`, live logcat, screencap → save, reboot/bootloader, wireless `adb connect`. Engine: Google.PlatformTools adb.exe (auto-install via deps panel).
+- [x] **Android / ADB console** · Android／ADB 主控台 — DONE (iter 31): wraps adb — devices (`adb devices -l`), install APK, shell, logcat dump, list packages, screencap→pull→show, reboot (system/bootloader/recovery), wireless connect. Detects missing adb → points to Package Manager. `module.adb` / `--page adb`.
+  - [ ] follow-ups: file **push/pull** browser; **scrcpy** screen-mirror (wrap scrcpy.exe, install via winget Genymobile.scrcpy); **fastboot** panel (flash/unlock — pairs with PixelFlasher item); app **APK backup** (`adb shell pm path` + pull); live streaming logcat (tracked process).
 - [ ] **Android emulator control** · Android 模擬器控制 — wrap the Android SDK emulator/avdmanager: list AVDs, create/launch/stop, cold-boot/wipe. (Needs SDK; offer to install via deps.)
 - [ ] **PixelFlasher-style flasher** · Pixel 刷機（PixelFlasher 式）— wrap fastboot + the boot-image patch flow: detect device (`fastboot devices`), unlock check, flash factory image / patched boot.img, sideload OTA. DANGEROUS → heavy guards, dry-run, explicit confirmations. (Reimplement the workflow natively; do not launch PixelFlasher.)
 

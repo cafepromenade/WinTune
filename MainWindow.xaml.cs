@@ -184,6 +184,10 @@ public sealed partial class MainWindow : Window
             case "install":
                 Navigator.GoToModule?.Invoke("module.packages");
                 break;
+            case "adb":
+            case "android":
+                Navigator.GoToModule?.Invoke("module.adb");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -284,6 +288,7 @@ public sealed partial class MainWindow : Window
         "module.envvars" => typeof(EnvVarsModule),
         "module.clipboard" => typeof(ClipboardModule),
         "module.packages" => typeof(PackageManagerModule),
+        "module.adb" => typeof(AndroidAdbModule),
         _ => typeof(DashboardPage),
     };
 
@@ -419,6 +424,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.packages":
                 NavFrame.Navigate(typeof(PackageManagerModule));
+                break;
+            case "module.adb":
+                NavFrame.Navigate(typeof(AndroidAdbModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
