@@ -284,6 +284,10 @@ public sealed partial class MainWindow : Window
             case "clock":
             case "unit":
                 Navigator.GoToModule?.Invoke("module.timeunit");
+            case "settingshub":
+            case "controlpanel":
+            case "mssettings":
+                Navigator.GoToModule?.Invoke("module.settingshub");
                 break;
             case null:
             case "":
@@ -407,6 +411,7 @@ public sealed partial class MainWindow : Window
         "module.fonts" => typeof(FontManagerModule),
         "module.onedrive" => typeof(OneDriveModule),
         "module.timeunit" => typeof(TimeUnitModule),
+        "module.settingshub" => typeof(SettingsHubModule),
         _ => typeof(DashboardPage),
     };
 
@@ -582,6 +587,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(OneDriveModule));
             case "module.timeunit":
                 NavFrame.Navigate(typeof(TimeUnitModule));
+            case "module.settingshub":
+                NavFrame.Navigate(typeof(SettingsHubModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

@@ -81,6 +81,7 @@
                         <NavigationViewItem Content="Native Utilities · 原生工具" Tag="module.native"><NavigationViewItem.Icon><FontIcon Glyph="&#xE950;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Environment Variables · 環境變數" Tag="module.envvars"><NavigationViewItem.Icon><FontIcon Glyph="&#xE943;" /></NavigationViewItem.Icon></NavigationViewItem>
                         <NavigationViewItem Content="Clipboard · 剪貼簿" Tag="module.clipboard"><NavigationViewItem.Icon><FontIcon Glyph="&#xE77F;" /></NavigationViewItem.Icon></NavigationViewItem>
+                        <NavigationViewItem Content="Settings &amp; Control Panel · 設定與控制台" Tag="module.settingshub"><NavigationViewItem.Icon><FontIcon Glyph="&#xE713;" /></NavigationViewItem.Icon></NavigationViewItem>
                     </NavigationViewItem.MenuItems>
                 </NavigationViewItem>
 
