@@ -32,10 +32,6 @@ public sealed partial class ServicesModule : Page
         HeaderTitle.Text = "Services · 服務";
         FilterBox.PlaceholderText = P("Filter services…", "篩選服務…");
         RefreshBtn.Content = P("Refresh", "重新整理");
-        StartupLabel.Text = P("Startup type for selected:", "選中服務嘅啟動類型：");
-        AutoBtn.Content = P("Automatic", "自動");
-        ManualBtn.Content = P("Manual", "手動");
-        DisabledBtn.Content = P("Disabled", "停用");
         if (!AdminHelper.IsElevated)
         {
             ResultBar.Severity = InfoBarSeverity.Informational;
@@ -70,6 +66,8 @@ public sealed partial class ServicesModule : Page
         var listed = shown.ToList();
         List.ItemsSource = listed;
         CountText.Text = P($"{listed.Count} / {_all.Count} services", $"{listed.Count} / {_all.Count} 個服務");
+        EmptyText.Text = _all.Count == 0 ? P("No services found.", "搵唔到服務。") : P("No services match your filter.", "冇服務符合你嘅篩選。");
+        EmptyText.Visibility = listed.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
     }
 
     private void Filter_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -80,25 +78,35 @@ public sealed partial class ServicesModule : Page
 
     private async void Refresh_Click(object sender, RoutedEventArgs e) => await Reload();
 
-    private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void Actions_Click(object sender, RoutedEventArgs e)
     {
-        bool has = List.SelectedItem is ServiceInfo;
-        AutoBtn.IsEnabled = has;
-        ManualBtn.IsEnabled = has;
-        DisabledBtn.IsEnabled = has;
-        if (List.SelectedItem is ServiceInfo s)
-            StartupLabel.Text = P($"Startup for {s.DisplayName}:", $"{s.DisplayName} 嘅啟動類型：");
+        if (sender is not Button b || b.DataContext is not ServiceInfo svc) return;
+        var mf = new MenuFlyout();
+        void Add(string en, string zh, string glyph, Func<string, Task<TweakResult>> op)
+        {
+            var it = new MenuFlyoutItem { Text = $"{en} · {zh}", Icon = new FontIcon { Glyph = glyph } };
+            it.Click += async (_, _) => await Run(svc, op, P(en, zh));
+            mf.Items.Add(it);
+        }
+        Add("Start", "啟動", ((char)0xE768).ToString(), n => ServiceManager.Start(n));
+        Add("Stop", "停止", ((char)0xE71A).ToString(), n => ServiceManager.Stop(n));
+        Add("Restart", "重啟", ((char)0xE72C).ToString(), n => ServiceManager.Restart(n));
+
+        mf.Items.Add(new MenuFlyoutSeparator());
+        var sub = new MenuFlyoutSubItem { Text = P("Startup type", "啟動類型"), Icon = new FontIcon { Glyph = ((char)0xE713).ToString() } };
+        void AddStartup(string en, string zh, string mode)
+        {
+            var it = new MenuFlyoutItem { Text = $"{en} · {zh}" };
+            it.Click += async (_, _) => await Run(svc, n => ServiceManager.SetStartup(n, mode), P($"Set {en}", $"設{zh}"));
+            sub.Items.Add(it);
+        }
+        AddStartup("Automatic", "自動", "Automatic");
+        AddStartup("Manual", "手動", "Manual");
+        AddStartup("Disabled", "停用", "Disabled");
+        mf.Items.Add(sub);
+
+        mf.ShowAt(b);
     }
-
-    private static ServiceInfo? Svc(object sender) => (sender as FrameworkElement)?.DataContext as ServiceInfo;
-
-    private async void Start_Click(object sender, RoutedEventArgs e) => await Run(Svc(sender), n => ServiceManager.Start(n), P("Start", "啟動"));
-    private async void Stop_Click(object sender, RoutedEventArgs e) => await Run(Svc(sender), n => ServiceManager.Stop(n), P("Stop", "停止"));
-    private async void Restart_Click(object sender, RoutedEventArgs e) => await Run(Svc(sender), n => ServiceManager.Restart(n), P("Restart", "重啟"));
-
-    private async void Auto_Click(object sender, RoutedEventArgs e) => await Run(List.SelectedItem as ServiceInfo, n => ServiceManager.SetStartup(n, "Automatic"), P("Set Automatic", "設自動"));
-    private async void Manual_Click(object sender, RoutedEventArgs e) => await Run(List.SelectedItem as ServiceInfo, n => ServiceManager.SetStartup(n, "Manual"), P("Set Manual", "設手動"));
-    private async void Disabled_Click(object sender, RoutedEventArgs e) => await Run(List.SelectedItem as ServiceInfo, n => ServiceManager.SetStartup(n, "Disabled"), P("Set Disabled", "設停用"));
 
     private async Task Run(ServiceInfo? svc, Func<string, Task<TweakResult>> op, string verb)
     {
