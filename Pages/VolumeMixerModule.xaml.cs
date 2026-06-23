@@ -110,7 +110,15 @@ public sealed partial class VolumeMixerModule : Page
         slider.ValueChanged += (_, e) =>
         {
             pct.Text = $"{(int)e.NewValue}%";
-            if (!_suppress) onLevel((float)(e.NewValue / 100.0));
+            if (_suppress) return;
+            onLevel((float)(e.NewValue / 100.0));
+            // Dragging the slider auto-unmutes, like the Windows volume mixer.
+            if (curMuted)
+            {
+                curMuted = false;
+                muteIcon.Glyph = GlyphVol;
+                onMute(false);
+            }
         };
         mid.Children.Add(slider);
         Grid.SetColumn(mid, 1);
