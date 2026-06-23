@@ -133,6 +133,15 @@ public static class Categories
         Glyph = "",
     };
 
+    public static readonly AppCategory Winaero = new()
+    {
+        Id = "winaero",
+        Name = new("Winaero Tweaks", "Winaero 進階調校"),
+        Blurb = new("Advanced Winaero-Tweaker-style tweaks: coloured title bars, snappier menus, classic balloon tips, faster shutdown, lock-screen and boot options and more.",
+            "Winaero Tweaker 風格嘅進階調校：彩色標題列、更快選單、傳統氣球提示、加快關機、鎖機畫面同開機選項等等。"),
+        Glyph = "",
+    };
+
     public static readonly AppCategory Win11Pro = new()
     {
         Id = "win11pro",
@@ -205,7 +214,7 @@ public static class Categories
     public static readonly AppCategory[] All =
     {
         Appearance, Explorer, Taskbar, Privacy, Performance, Network,
-        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Win11Pro, Annoyances, Info,
+        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Win11Pro, Annoyances, Winaero, Info,
         RecipesCat,
         DevTerminal, Browser, Vault, NetPro,
     };
