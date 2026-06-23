@@ -43,6 +43,42 @@ public static class ArchiveService
 
     /// <summary>清快取，等啱啱裝完嘅 7-Zip 即刻搵到 · Clear the cached exe path so a just-installed 7-Zip is re-resolved.</summary>
     public static void Rescan() { _exe = null; }
+    private static string? _unrar;
+
+    /// <summary>
+    /// unrar.exe 嘅完整路徑（7-Zip 修唔到 RAR，要用 RARLAB unrar）。
+    /// Resolved full path to unrar.exe — needed because 7-Zip cannot repair RAR archives,
+    /// only the RARLAB unrar / WinRAR CLI can. Falls back to "unrar.exe" on PATH.
+    /// </summary>
+    public static string UnRar
+    {
+        get
+        {
+            if (_unrar is not null) return _unrar;
+            foreach (var c in new[]
+                     {
+                         Path.Combine(AppContext.BaseDirectory, "unrar.exe"),
+                         Path.Combine(AppContext.BaseDirectory, "Tools", "unrar.exe"),
+                         @"C:\Program Files\WinRAR\unrar.exe",
+                         @"C:\Program Files\WinRAR\UnRAR.exe",
+                         @"C:\Program Files (x86)\WinRAR\unrar.exe",
+                         @"C:\Program Files (x86)\WinRAR\UnRAR.exe",
+                     })
+            {
+                if (File.Exists(c)) { _unrar = c; return _unrar; }
+            }
+            _unrar = "unrar.exe"; // fall back to PATH
+            return _unrar;
+        }
+    }
+
+    public static bool HasUnRar =>
+        File.Exists(Path.Combine(AppContext.BaseDirectory, "unrar.exe")) ||
+        File.Exists(Path.Combine(AppContext.BaseDirectory, "Tools", "unrar.exe")) ||
+        File.Exists(@"C:\Program Files\WinRAR\unrar.exe") ||
+        File.Exists(@"C:\Program Files\WinRAR\UnRAR.exe") ||
+        File.Exists(@"C:\Program Files (x86)\WinRAR\unrar.exe") ||
+        File.Exists(@"C:\Program Files (x86)\WinRAR\UnRAR.exe");
 
     public static string Archive => AppState.CurrentArchivePath;
     public static string Source => AppState.CurrentSourcePath;
@@ -82,6 +118,28 @@ public static class ArchiveService
             : (HasSource ? Path.GetDirectoryName(Source) : null);
 
         return ShellRunner.RunIn(workDir, SevenZip, resolved, elevated: false, ct);
+    }
+
+    /// <summary>
+    /// 用 unrar.exe 跑 RAR 專用指令（7-Zip 修唔到 RAR）。{archive}/{outdir} 會換成實際路徑。
+    /// Run a RAR-only command via unrar.exe ({archive}/{outdir} substituted). 7-Zip cannot
+    /// repair RAR, so RAR repair/keep-broken must go through the RARLAB unrar CLI.
+    /// </summary>
+    public static Task<TweakResult> RunRar(string args, bool needsArchive = true, CancellationToken ct = default)
+    {
+        if (needsArchive && !HasArchive)
+            return Task.FromResult(TweakResult.Fail("No archive selected.", "未揀壓縮檔。"));
+        if (!HasUnRar)
+            return Task.FromResult(TweakResult.Fail(
+                "unrar.exe not found. Install WinRAR or place unrar.exe next to WinTune (7-Zip cannot repair RAR).",
+                "搵唔到 unrar.exe。請安裝 WinRAR 或者將 unrar.exe 放喺 WinTune 旁邊（7-Zip 修唔到 RAR）。"));
+
+        var resolved = args
+            .Replace("{archive}", Quote(Archive))
+            .Replace("{outdir}", Quote(OutDir()));
+
+        var workDir = HasArchive ? Path.GetDirectoryName(Archive) : null;
+        return ShellRunner.RunIn(workDir, UnRar, resolved, elevated: false, ct);
     }
 
     private static string Quote(string p) => string.IsNullOrEmpty(p) ? "" : $"\"{p.TrimEnd('\\')}\"";
