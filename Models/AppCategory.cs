@@ -10,6 +10,9 @@ public sealed class AppCategory
     public required LocalizedText Name { get; init; }
     public required LocalizedText Blurb { get; init; }
 
+    /// <summary>導覽分組 · Nav group ("win11" or "tools").</summary>
+    public string Group { get; init; } = "win11";
+
     /// <summary>Segoe Fluent Icons glyph code, e.g. "".</summary>
     public required string Glyph { get; init; }
 

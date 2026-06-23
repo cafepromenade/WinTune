@@ -139,6 +139,15 @@ public static class Tweak
             ct => ShellRunner.Run(fileName, arguments, requiresAdmin, ct),
             requiresAdmin, destructive, restart, keywords);
 
+    /// <summary>同上，但用預設按鈕「Run · 執行」· Same, with a default "Run · 執行" button.</summary>
+    public static TweakDefinition Shell(
+        string id, string enT, string zhT, string enD, string zhD,
+        string fileName, string arguments,
+        bool requiresAdmin = false, bool destructive = false,
+        RestartScope restart = RestartScope.None, string? keywords = null)
+        => Shell(id, enT, zhT, enD, zhD, "Run", "執行", fileName, arguments,
+            requiresAdmin, destructive, restart, keywords);
+
     /// <summary>執行 PowerShell 嘅動作 · An action that runs a PowerShell snippet.</summary>
     public static TweakDefinition Powershell(
         string id, string enT, string zhT, string enD, string zhD,

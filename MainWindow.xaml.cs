@@ -56,9 +56,15 @@ public sealed partial class MainWindow : Window
 
     private void BuildCategoryMenu()
     {
-        // 喺「概覽」同分隔線後面插入全部分類 · insert all categories after the Dashboard + separator.
+        // 按分組插入分類；切換到 "tools" 分組時加一個標題。
+        // Insert categories grouped; emit a "Tools" header when the group switches.
+        string? lastGroup = null;
         foreach (var cat in Categories.All)
         {
+            if (cat.Group != lastGroup && cat.Group == "tools")
+                NavView.MenuItems.Add(new NavigationViewItemHeader { Content = "Tools · 工具" });
+            lastGroup = cat.Group;
+
             NavView.MenuItems.Add(new NavigationViewItem
             {
                 Content = $"{cat.Name.En} · {cat.Name.Zh}",

@@ -124,6 +124,55 @@ public static class Categories
         Glyph = "",
     };
 
+    public static readonly AppCategory Win11Pro = new()
+    {
+        Id = "win11pro",
+        Name = new("Windows 11 Advanced", "Windows 11 進階"),
+        Blurb = new("Power-user tweaks: input precision, storage, performance, boot, Explorer extras and every Settings deep link.",
+            "進階調校：輸入精準度、儲存、效能、開機、檔案總管進階同所有設定深層連結。"),
+        Glyph = "",
+    };
+
+    public static readonly AppCategory DevTerminal = new()
+    {
+        Id = "devterminal",
+        Name = new("Developer & Terminal", "開發與終端機"),
+        Blurb = new("winget, Docker, Node/Python/.NET, env vars, ports, and the claude/codex/opencode/gh CLIs.",
+            "winget、Docker、Node/Python/.NET、環境變數、連接埠，同 claude/codex/opencode/gh CLI。"),
+        Glyph = "",
+        Group = "tools",
+    };
+
+    public static readonly AppCategory Browser = new()
+    {
+        Id = "browser",
+        Name = new("Browser Control", "瀏覽器控制"),
+        Blurb = new("Launch Chrome/Edge in any mode, open flags/settings, set policies, manage profiles and caches.",
+            "用任何模式啟動 Chrome/Edge、開 flags／設定、設定政策、管理設定檔同快取。"),
+        Glyph = "",
+        Group = "tools",
+    };
+
+    public static readonly AppCategory Vault = new()
+    {
+        Id = "vault",
+        Name = new("Encryption & Vault", "加密與保險庫"),
+        Blurb = new("BitLocker, VeraCrypt, EFS/cipher, certificates and advanced Defender/firewall controls.",
+            "BitLocker、VeraCrypt、EFS/cipher、憑證，同進階 Defender／防火牆控制。"),
+        Glyph = "",
+        Group = "tools",
+    };
+
+    public static readonly AppCategory NetPro = new()
+    {
+        Id = "netpro",
+        Name = new("Network Pro", "網絡進階"),
+        Blurb = new("Adapters, IP/DNS, Wi-Fi profiles, firewall rules and deep network diagnostics.",
+            "網絡卡、IP/DNS、Wi-Fi 設定檔、防火牆規則同深入網絡診斷。"),
+        Glyph = "",
+        Group = "tools",
+    };
+
     public static readonly AppCategory Info = new()
     {
         Id = "info",
@@ -137,6 +186,7 @@ public static class Categories
     public static readonly AppCategory[] All =
     {
         Appearance, Explorer, Taskbar, Privacy, Performance, Network,
-        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Info,
+        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Win11Pro, Info,
+        DevTerminal, Browser, Vault, NetPro,
     };
 }

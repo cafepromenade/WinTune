@@ -9,6 +9,11 @@
 - [x] **Git & GitHub module** · Git 與 GitHub 模組 — repo ops, chunked uploader, 111 git/gh operations
 - [x] **Maintenance & Diagnostics module** · 維護與診斷模組 — 102 real ops (services, disk health, SFC/DISM, drivers, updates, event logs, power reports)
 - [x] **Archives module** · 壓縮檔模組 — 7-Zip create/extract/list/test/benchmark + 100 advanced operations
+- [x] **Developer & Terminal module** · 開發與終端機模組 — 100 ops (winget/docker/runtimes/env·ports/CLIs)
+- [x] **Browser Control module** · 瀏覽器控制模組 — 100 ops (Chrome/Edge launch·flags·policies·profiles)
+- [x] **Encryption & Vault module** · 加密與保險庫模組 — 100 ops (BitLocker/VeraCrypt/EFS/certs/Defender)
+- [x] **Windows 11 Advanced module** · Windows 11 進階模組 — 100 ops (input/storage/perf/Explorer/Settings links)
+- [x] **Network Pro module** · 網絡進階模組 — 100 ops (adapters/IP·DNS/Wi-Fi/firewall/diagnostics)
 
 ## 🔭 Discovered backlog · 發掘待辦（175 items / 項）
 
