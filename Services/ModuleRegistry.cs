@@ -43,6 +43,7 @@ public static class ModuleRegistry
         new() { Tag = "module.mouse", En = "Mouse & Pointer", Zh = "滑鼠與指標", Glyph = "", Keywords = "mouse pointer acceleration speed 滑鼠 指標" },
         new() { Tag = "module.recorder", En = "Screen Recorder", Zh = "螢幕錄影", Glyph = "", Keywords = "record screen capture gdigrab 錄影" },
         new() { Tag = "module.monitor", En = "System Monitor", Zh = "系統監察", Glyph = "", Keywords = "cpu ram memory network task manager priority affinity 監察 工作管理員" },
+        new() { Tag = "module.battery", En = "Battery & Thermal", Zh = "電池與散熱", Glyph = ((char)0xE83E).ToString(), Keywords = "battery thermal temperature wear health cpu gpu fan powercfg batteryreport energy 電池 溫度 散熱 風扇 耗損 健康" },
         new() { Tag = "module.connections", En = "Connections", Zh = "連線", Glyph = "", Keywords = "tcp udp connections netstat tcpview port 連線" },
         new() { Tag = "module.events", En = "Event Viewer", Zh = "事件檢視器", Glyph = "", Keywords = "event log viewer system application 事件 記錄" },
         new() { Tag = "module.mixer", En = "Volume Mixer", Zh = "音量混合器", Glyph = "", Keywords = "volume mixer audio per-app mute 音量 靜音" },

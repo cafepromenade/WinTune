@@ -54,9 +54,11 @@
     <PropertyGroup> above to opt out.
   -->
   <ItemGroup>
+    <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.4" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1839" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.2.0" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.WinApp" Version="0.3.2" />
+    <PackageReference Include="System.Management" Version="9.0.0" />
   </ItemGroup>
 
   <!--
