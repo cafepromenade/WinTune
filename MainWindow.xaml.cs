@@ -225,6 +225,12 @@ public sealed partial class MainWindow : Window
             case "tailscale":
                 Navigator.GoToModule?.Invoke("module.vpn");
                 break;
+            case "time":
+            case "timezone":
+            case "clock":
+            case "unit":
+                Navigator.GoToModule?.Invoke("module.timeunit");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -333,6 +339,7 @@ public sealed partial class MainWindow : Window
         "module.packages" => typeof(PackageManagerModule),
         "module.adb" => typeof(AndroidAdbModule),
         "module.vpn" => typeof(VpnMeshModule),
+        "module.timeunit" => typeof(TimeUnitModule),
         _ => typeof(DashboardPage),
     };
 
@@ -474,6 +481,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.vpn":
                 NavFrame.Navigate(typeof(VpnMeshModule));
+                break;
+            case "module.timeunit":
+                NavFrame.Navigate(typeof(TimeUnitModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
