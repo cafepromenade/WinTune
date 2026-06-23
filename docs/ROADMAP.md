@@ -370,11 +370,11 @@
   - _Get-FileHash -Algorithm SHA256 over each file in the bundle, write a checksums.txt manifest; on restore recompute and compare, and run `git -C <snapshotsDir> fsck --full` to validate the repo objects. PowerShell Get-FileHash + git fsck._
 
 ### Capture Studio · 🆕 new module / 新模組  (3)
-- [ ] **Region screen-record to MP4/GIF** · 錄起螢幕一忽嘅片，轉MP4或者GIF
+- [x] **Region screen-record to MP4/GIF** · 錄起螢幕一忽嘅片，轉MP4或者GIF
   - _Wrap bundled ffmpeg: ffmpeg -f gdigrab -framerate 30 -offset_x X -offset_y Y -video_size WxH -i desktop out.mp4. For GIF use two-pass palette: ffmpeg -i out.mp4 -vf "fps=15,scale=720:-1:flags=lanczos,palettegen" pal.png then ffmpeg -i out.mp4 -i pal.png -filter_complex paletteuse out.gif. Region chosen via a transparent overlay window that supplies the offset/video_size args._
-- [ ] **Instant rectangular snip to clipboard** · 即刻㩒個矩形截圖入剪貼簿
+- [x] **Instant rectangular snip to clipboard** · 即刻㩒個矩形截圖入剪貼簿
   - _Invoke the built-in Snipping Tool clip mode via its registered URL protocol (HKCR\ms-screenclip): Process.Start("ms-screenclip:") or explorer.exe ms-screenclip:. Optionally bind a global hotkey that SendInput-simulates Win+Shift+S. The resulting PNG is read back with Clipboard.GetImage()._
-- [ ] **OCR text from any image or screen region** · 由圖或者螢幕嗰忽認返啲字出嚟
+- [x] **OCR text from any image or screen region** · 由圖或者螢幕嗰忽認返啲字出嚟
   - _WinRT Windows.Media.Ocr.OcrEngine.TryCreateFromUserProfileLanguages(); decode the bitmap with BitmapDecoder, await engine.RecognizeAsync(softwareBitmap), join OcrResult.Lines and copy to clipboard. For Cantonese/Chinese check OcrEngine.AvailableRecognizerLanguages for a zh-Hant/zh-Hans recognizer and prompt to add the language pack if absent._
 
 ### DNS & Hosts Manager · 🆕 new module / 新模組  (2)

@@ -183,6 +183,12 @@ public sealed partial class MainWindow : Window
             case "record":
                 Navigator.GoToModule?.Invoke("module.recorder");
                 break;
+            case "capture":
+            case "snip":
+            case "screenshot":
+            case "ocr":
+                Navigator.GoToModule?.Invoke("module.capture");
+                break;
             case "monitor":
             case "sysmon":
                 Navigator.GoToModule?.Invoke("module.monitor");
@@ -357,6 +363,7 @@ public sealed partial class MainWindow : Window
         "module.hosts" => typeof(HostsEditorModule),
         "module.mouse" => typeof(MouseModule),
         "module.recorder" => typeof(ScreenRecorderModule),
+        "module.capture" => typeof(CaptureStudioModule),
         "module.monitor" => typeof(SystemMonitorModule),
         "module.connections" => typeof(ConnectionsModule),
         "module.events" => typeof(EventViewerModule),
@@ -485,6 +492,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.recorder":
                 NavFrame.Navigate(typeof(ScreenRecorderModule));
+                break;
+            case "module.capture":
+                NavFrame.Navigate(typeof(CaptureStudioModule));
                 break;
             case "module.monitor":
                 NavFrame.Navigate(typeof(SystemMonitorModule));
