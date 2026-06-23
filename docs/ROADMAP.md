@@ -598,5 +598,14 @@ _Source: windowsforum / Microsoft Learn — power users want FancyZones/AquaSnap
 - [ ] **Always-on-top toggle** · 視窗永遠置頂
   - _SetWindowPos(HWND_TOPMOST/HWND_NOTOPMOST) on the selected window. Pin any window above others, in-app._
 
+## 🌱 Newly discovered — iteration 17 · 第 17 次迭代新發掘
+
+_Source: howtogeek / windowsforum — Windows has no built-in key remap; people use SharpKeys or hand-edit the Scancode Map._
+- [x] **In-app Keyboard Remapper (SharpKeys-style)** · App 內鍵盤重新對應 — DONE this iteration: remap or disable keys by building the HKLM Scancode Map binary; shows current maps, add/remove, apply (admin, reboot), clear all. No external tool.
+- [ ] **Mouse button settings** · 滑鼠按鍵設定
+  - _HKCU\Control Panel\Mouse SwapMouseButtons + double-click speed/wheel lines (already partly in Win11Pro); add a dedicated in-app panel with live SystemParametersInfo apply._
+- [ ] **Text expander / snippets** · 文字展開（縮寫片語）
+  - _In-app snippet store + a low-level keyboard hook (SetWindowsHookEx WH_KEYBOARD_LL) to expand typed triggers. Pure C#/Win32, no external tool._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
