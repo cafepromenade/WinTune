@@ -535,5 +535,14 @@ _Source: windowsnews.ai / windowsforum / makeuseof / howtogeek — "Make Windows
 - [ ] **Stop lock-screen Spotlight tips/ads** · 熄鎖機畫面 Spotlight 提示／廣告
   - _HKCU\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager -> RotatingLockScreenOverlayEnabled = 0, SubscribedContent-338387Enabled = 0._
 
+## 🌱 Newly discovered — iteration 10 · 第 10 次迭代新發掘
+
+_Source: howtogeek / neowin / windowsforum — Explorer bulk-ops, organization & dual-pane still barebones._
+- [x] **In-app Bulk File Operations** · App 內批次檔案操作 — DONE this iteration: pick a folder, match by wildcard/regex/extension (recursive), preview, then Copy/Move/Recycle/Flatten/Organize-by-extension. Pure C#, recycle via SHFileOperation (reversible).
+- [ ] **Duplicate file finder** · 重複檔案搜尋
+  - _Pure C#: group files by size then SHA-256 hash to find exact duplicates; preview groups; recycle the extras. No external tool._
+- [ ] **Empty-folder cleaner** · 清空資料夾
+  - _Pure C#: recursively find directories with no files (and no non-empty subdirs); preview; remove. In-app._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

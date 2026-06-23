@@ -66,6 +66,10 @@ public sealed partial class MainWindow : Window
             case "rename":
                 Navigator.GoToModule?.Invoke("module.rename");
                 break;
+            case "bulkops":
+            case "bulk":
+                Navigator.GoToModule?.Invoke("module.bulkops");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -181,6 +185,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.rename":
                 NavFrame.Navigate(typeof(RenameModule));
+                break;
+            case "module.bulkops":
+                NavFrame.Navigate(typeof(BulkOpsModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
