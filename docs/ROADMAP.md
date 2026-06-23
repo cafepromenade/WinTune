@@ -770,14 +770,18 @@ Bring Microsoft PowerToys utilities in-app, natively + bilingually. Some already
 - [x] **Color Picker** · 螢幕取色 — global WH_MOUSE_LL hook + GetPixel; HEX/RGB/HSL + copy + history. `--page colorpicker`.
 - [x] **Environment Variables** · 環境變數 — User/System get/add/edit/delete (Environment.*Variable). `--page envvars`.
 
+### Batch 2 — DONE (feat/powertoys-extras) · 第二批（完成）
+Shipped as a single **PowerToys Extras** module (`module.powertoys` / `--page powertoys`) with a 4-tab pivot:
+- [x] **Image Resizer** · 圖片批次縮放 — bulk resize via Windows.Graphics.Imaging (decode → BitmapTransform scale, aspect kept) with presets (Small/Medium/Large/Phone/Thumbnail) + custom W/H, JPEG quality, filename suffix, output folder, shrink-only. `ImageResizeService`.
+- [x] **Text Extractor (OCR)** · 螢幕文字擷取 — GDI BitBlt capture of the virtual screen → SoftwareBitmap → Windows.Media.Ocr → text shown + auto-copied to clipboard; language picker from installed OCR packs. `TextExtractorService`.
+- [x] **Always On Top** · 視窗置頂 — per-window toggle of SetWindowPos HWND_TOPMOST (reuses WindowManager), tracks pinned set, un-pin-all. `AlwaysOnTopService`.
+- [x] **Paste as Plain Text** · 純文字貼上 — one-shot strip-clipboard + Ctrl+Shift+V global low-level-keyboard-hook hotkey (strip then re-inject Ctrl+V). `PlainTextPasteService`.
+
 ### Next PowerToys batches · 之後嘅批次
-- [ ] **Image Resizer** · 圖片批次縮放 — bulk resize images (Windows.Graphics.Imaging / System.Drawing) with presets + output folder.
-- [ ] **Text Extractor (OCR)** · 螢幕文字擷取 — Windows.Media.Ocr over a selected screen region → copy text.
-- [ ] **Always On Top** · 視窗置頂 — SetWindowPos HWND_TOPMOST on a picked window (extend Window Manager).
 - [ ] **Find My Mouse / crosshairs** · 搵滑鼠／十字準星 — overlay window following the cursor (layered window).
 - [ ] **Screen Ruler** · 螢幕間尺 — measure pixels with an overlay.
 - [ ] **Quick Accent** · 快速重音 — hold-a-key accent picker (low-level keyboard hook).
-- [ ] **Paste as Plain Text** · 純文字貼上 — strip formatting from clipboard (WinRT Clipboard) + hotkey.
+- [ ] **OCR region select** · OCR 區域選取 — extend Text Extractor with a drag-to-select overlay instead of full-screen capture.
 - [ ] **Hosts/Registry/Keyboard/Rename** — already in WinTune (note the equivalence in UI).
 
 ## 🛠️ Winaero-Tweaker functions · Winaero 調校功能 (user-requested)

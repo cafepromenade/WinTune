@@ -253,6 +253,11 @@ public sealed partial class MainWindow : Window
             case "pinvoke":
             case "system32":
                 Navigator.GoToModule?.Invoke("module.native");
+            case "powertoys":
+            case "extras":
+            case "ocr":
+            case "imageresizer":
+                Navigator.GoToModule?.Invoke("module.powertoys");
                 break;
             case null:
             case "":
@@ -368,6 +373,7 @@ public sealed partial class MainWindow : Window
         "module.comms" => typeof(CommunicationsModule),
         "module.configbackup" => typeof(ConfigBackupModule),
         "module.native" => typeof(NativeUtilitiesModule),
+        "module.powertoys" => typeof(PowerToysExtrasModule),
         _ => typeof(DashboardPage),
     };
 
@@ -524,6 +530,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(ConfigBackupModule));
             case "module.native":
                 NavFrame.Navigate(typeof(NativeUtilitiesModule));
+            case "module.powertoys":
+                NavFrame.Navigate(typeof(PowerToysExtrasModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
