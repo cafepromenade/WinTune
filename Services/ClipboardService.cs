@@ -267,6 +267,61 @@ public static class ClipboardService
         catch { _suppress = false; }
     }
 
+    /// <summary>把純文字（剝走任何格式）放返落剪貼簿 · Put plain text (rich formatting stripped) on the clipboard.</summary>
+    public static void CopyPlainText(string text)
+    {
+        try
+        {
+            var dp = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+            dp.SetText(text ?? "");
+            _suppress = true;
+            Clipboard.SetContent(dp);
+            Clipboard.Flush();
+        }
+        catch { _suppress = false; }
+    }
+
+    // ---- QR codes: encode locally with QRCoder, fully offline ----
+
+    /// <summary>產生 QR 碼 PNG bytes（純本地，唔上網）· Generate QR-code PNG bytes locally (no network).
+    /// pixelsPerModule controls the size; larger = sharper / bigger image.</summary>
+    public static byte[] GenerateQrPng(string text, int pixelsPerModule = 20)
+    {
+        if (string.IsNullOrEmpty(text)) throw new InvalidOperationException("empty text");
+        using var gen = new QRCoder.QRCodeGenerator();
+        using var data = gen.CreateQrCode(text, QRCoder.QRCodeGenerator.ECCLevel.Q);
+        var png = new QRCoder.PngByteQRCode(data);
+        return png.GetGraphic(pixelsPerModule);
+    }
+
+    /// <summary>把 text 編成 QR 碼，存做 PNG，回傳檔案路徑 · Encode text as a QR PNG, save it, return the path.</summary>
+    public static string SaveQrPng(string text)
+    {
+        var bytes = GenerateQrPng(text);
+        var outPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), $"WinTune-QR-{Stamp()}.png");
+        File.WriteAllBytes(outPath, bytes);
+        return outPath;
+    }
+
+    /// <summary>產生 QR 碼，存到暫存 PNG 再放上剪貼簿 · Generate the QR, save a temp PNG, then put it on the clipboard.
+    /// Returns the temp PNG path so the caller can preview it.</summary>
+    public static string CopyQrToClipboard(string text)
+    {
+        var bytes = GenerateQrPng(text);
+        var tmp = Path.Combine(Dir, $"qr-{Stamp()}.png");
+        File.WriteAllBytes(tmp, bytes);
+        try
+        {
+            var dp = new DataPackage { RequestedOperation = DataPackageOperation.Copy };
+            dp.SetBitmap(Windows.Storage.Streams.RandomAccessStreamReference.CreateFromUri(new Uri(tmp)));
+            _suppress = true;
+            Clipboard.SetContent(dp);
+            Clipboard.Flush();
+        }
+        catch { _suppress = false; }
+        return tmp;
+    }
+
     public static void Remove(ClipItem item)
     {
         History.Remove(item);
