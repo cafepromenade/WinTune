@@ -192,6 +192,12 @@ public sealed partial class MainWindow : Window
             case "":
             case "dashboard":
                 break;
+            case "about":
+                NavFrame.Navigate(typeof(AboutPage));
+                break;
+            case "settings":
+                NavFrame.Navigate(typeof(SettingsPage));
+                break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == App.StartPage);
                 if (cat is not null)
