@@ -55,9 +55,12 @@ public sealed partial class ArchivesModule : Page
             EngineBar.IsOpen = true;
             EngineBar.Severity = InfoBarSeverity.Warning;
             EngineBar.Title = P("7-Zip not found", "搵唔到 7-Zip");
-            EngineBar.Message = P("Install 7-Zip (7-zip.org) to use this module.", "請安裝 7-Zip (7-zip.org) 先用得呢個模組。");
+            EngineBar.Message = P("Click to install 7-Zip automatically (winget) — no restart needed.", "撳一下自動安裝 7-Zip（winget）— 唔使重開。");
+            EngineBar.ActionButton = EngineBars.AutoInstallButton(
+                "7zip.7zip", "Install 7-Zip automatically", "自動安裝 7-Zip",
+                () => { Render(); return Task.CompletedTask; }, ArchiveService.Rescan);
         }
-        else { EngineBar.IsOpen = false; }
+        else { EngineBar.IsOpen = false; EngineBar.ActionButton = null; }
     }
 
     private int GitOpsCount() => (_ops ??= ArchiveOperations.All().ToList()).Count;

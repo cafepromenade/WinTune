@@ -41,6 +41,9 @@ public static class ArchiveService
         File.Exists(@"C:\Program Files (x86)\7-Zip\7z.exe") ||
         RegistryHelper.KeyExists(RegRoot.HKLM, @"SOFTWARE\7-Zip");
 
+    /// <summary>清快取，等啱啱裝完嘅 7-Zip 即刻搵到 · Clear the cached exe path so a just-installed 7-Zip is re-resolved.</summary>
+    public static void Rescan() { _exe = null; }
+
     public static string Archive => AppState.CurrentArchivePath;
     public static string Source => AppState.CurrentSourcePath;
     public static bool HasArchive => !string.IsNullOrWhiteSpace(Archive);

@@ -45,6 +45,9 @@ public static class PackageService
         new() { En = "Windows Terminal", Zh = "Windows 終端機", Id = "Microsoft.WindowsTerminal" },
         new() { En = "VLC media player", Zh = "VLC 播放器", Id = "VideoLAN.VLC" },
         new() { En = "Notepad++", Zh = "Notepad++", Id = "Notepad++.Notepad++" },
+        new() { En = "Docker Desktop", Zh = "Docker Desktop", Id = "Docker.DockerDesktop" },
+        new() { En = "VeraCrypt (encryption)", Zh = "VeraCrypt（加密）", Id = "IDRIX.VeraCrypt" },
+        new() { En = "scrcpy (Android mirror)", Zh = "scrcpy（Android 投屏）", Id = "Genymobile.scrcpy" },
     };
 
     public static async Task<List<PkgResult>> Search(string query, CancellationToken ct = default)

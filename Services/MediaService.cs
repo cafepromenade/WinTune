@@ -44,6 +44,9 @@ public static class MediaService
 
     public static bool IsInstalled => File.Exists(FFmpeg) || !FFmpeg.Contains('\\');
 
+    /// <summary>清快取，等啱啱裝完嘅 ffmpeg 即刻搵到 · Clear the cached paths so a just-installed ffmpeg is re-resolved.</summary>
+    public static void Rescan() { _ffmpeg = null; _ffprobe = null; }
+
     public static string Input => AppState.CurrentMediaInput;
     public static string Output => AppState.CurrentMediaOutput;
     public static bool HasInput => !string.IsNullOrWhiteSpace(Input) && File.Exists(Input);
