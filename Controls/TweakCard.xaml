@@ -75,6 +75,38 @@
                 x:Name="ResultBar"
                 IsClosable="True"
                 IsOpen="False" />
+
+            <Border
+                x:Name="OutputPane"
+                Margin="0,2,0,0"
+                Padding="10"
+                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Visibility="Collapsed">
+                <StackPanel Spacing="6">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="12" Glyph="&#xE756;" VerticalAlignment="Center" />
+                        <TextBlock x:Name="OutputHeader" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <Button x:Name="CopyOutBtn" Padding="8,2,8,2" Click="CopyOut_Click" />
+                        <Button x:Name="SaveOutBtn" Padding="8,2,8,2" Click="SaveOut_Click" />
+                    </StackPanel>
+                    <TextBox
+                        x:Name="OutputBox"
+                        AcceptsReturn="True"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        FontFamily="Consolas"
+                        FontSize="12"
+                        IsReadOnly="True"
+                        IsSpellCheckEnabled="False"
+                        MaxHeight="320"
+                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        TextWrapping="NoWrap" />
+                </StackPanel>
+            </Border>
         </StackPanel>
     </Border>
 </UserControl>

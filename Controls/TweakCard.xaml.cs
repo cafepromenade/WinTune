@@ -196,20 +196,28 @@ public sealed partial class TweakCard : UserControl
         var label = _actionButton.Content;
         _actionButton.Content = new ProgressRing { IsActive = true, Width = 18, Height = 18 };
         ResultBar.IsOpen = false;
+        OutputPane.Visibility = Visibility.Collapsed;
 
         try
         {
             var result = await _tweak.RunAsync(CancellationToken.None);
             ResultBar.Severity = result.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error;
             ResultBar.Title = result.Success ? Loc.I.Pick("Done", "完成") : Loc.I.Pick("Failed", "失敗");
-
-            var msg = result.Message is null ? string.Empty : $"{result.Message.En}\n{result.Message.Zh}";
-            if (!string.IsNullOrWhiteSpace(result.Output))
-                msg += "\n\n" + Truncate(result.Output!, 800);
-            ResultBar.Message = msg.Trim();
+            ResultBar.Message = result.Message is null ? string.Empty : $"{result.Message.En}\n{result.Message.Zh}";
             ResultBar.ActionButton = (!result.Success && _tweak.RequiresAdmin && !AdminHelper.IsElevated)
                 ? MakeRelaunchButton() : null;
             ResultBar.IsOpen = true;
+
+            // Full output in a monospace, scrollable pane — no truncation; with Copy / Save.
+            if (!string.IsNullOrWhiteSpace(result.Output))
+            {
+                _lastOutput = result.Output!;
+                OutputBox.Text = _lastOutput;
+                OutputHeader.Text = Loc.I.Pick($"Output · {_lastOutput.Length} chars", $"輸出 · {_lastOutput.Length} 字");
+                CopyOutBtn.Content = Loc.I.Pick("Copy", "複製");
+                SaveOutBtn.Content = Loc.I.Pick("Save…", "儲存…");
+                OutputPane.Visibility = Visibility.Visible;
+            }
         }
         catch (Exception ex)
         {
@@ -237,6 +245,32 @@ public sealed partial class TweakCard : UserControl
             DefaultButton = ContentDialogButton.Close,
         };
         return await dlg.ShowAsync() == ContentDialogResult.Primary;
+    }
+
+    private string _lastOutput = "";
+
+    private void CopyOut_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var dp = new Windows.ApplicationModel.DataTransfer.DataPackage();
+            dp.SetText(_lastOutput);
+            Windows.ApplicationModel.DataTransfer.Clipboard.SetContent(dp);
+        }
+        catch { }
+    }
+
+    private async void SaveOut_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "wintune-output" };
+            picker.FileTypeChoices.Add("Text", new System.Collections.Generic.List<string> { ".txt" });
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(WinTune.App.Shell));
+            var f = await picker.PickSaveFileAsync();
+            if (f is not null) await Windows.Storage.FileIO.WriteTextAsync(f, _lastOutput);
+        }
+        catch { }
     }
 
     // ---------------- Info ----------------
