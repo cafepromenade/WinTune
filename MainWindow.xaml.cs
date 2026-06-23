@@ -93,6 +93,9 @@ public sealed partial class MainWindow : Window
             case "remap":
                 Navigator.GoToModule?.Invoke("module.keyboard");
                 break;
+            case "hosts":
+                Navigator.GoToModule?.Invoke("module.hosts");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -229,6 +232,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.keyboard":
                 NavFrame.Navigate(typeof(KeyboardModule));
+                break;
+            case "module.hosts":
+                NavFrame.Navigate(typeof(HostsEditorModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

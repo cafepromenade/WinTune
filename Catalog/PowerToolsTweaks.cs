@@ -78,9 +78,9 @@ public static class PowerToolsTweaks
             "Shut down", "關機", "shutdown /s /t 3",
             destructive: true, keywords: "shutdown,power off,關機"),
 
-        Tweak.Shell("powertools.edit-hosts", "Edit the hosts file", "編輯 hosts 檔案",
-            "Open the hosts file in Notepad (admin to save).", "喺記事本開 hosts 檔案（要管理員先儲存到）。",
-            "Edit", "編輯", "notepad.exe", "C:\\Windows\\System32\\drivers\\etc\\hosts",
-            requiresAdmin: true, keywords: "hosts,notepad,記事本,hosts 檔案"),
+        Tweak.Info("powertools.edit-hosts", "Edit the hosts file", "編輯 hosts 檔案",
+            "Now built in — use the in-app Hosts Editor module (no Notepad needed).",
+            "已經內建 — 用 app 內嘅 hosts 編輯器模組（唔使記事本）。",
+            () => "→ Hosts Editor · hosts 編輯器", "hosts,block,website,封鎖,網站"),
     };
 }

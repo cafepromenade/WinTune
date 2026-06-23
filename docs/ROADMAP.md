@@ -607,5 +607,14 @@ _Source: howtogeek / windowsforum — Windows has no built-in key remap; people 
 - [ ] **Text expander / snippets** · 文字展開（縮寫片語）
   - _In-app snippet store + a low-level keyboard hook (SetWindowsHookEx WH_KEYBOARD_LL) to expand typed triggers. Pure C#/Win32, no external tool._
 
+## 🌱 Newly discovered — iteration 18 · 第 18 次迭代新發掘
+
+_Source: howtogeek / techbout — hosts editing needs admin; block with 0.0.0.0; DoH in browsers bypasses hosts._
+- [x] **In-app Hosts Editor** · App 內 hosts 編輯器 — DONE this iteration: edit C:\Windows\System32\drivers\etc\hosts natively (replaces the Notepad redirect), block-a-domain helper (0.0.0.0), backup, save (admin) + flush DNS. Pure C# file IO, no redirect.
+- [ ] **Import ad-block hosts list** · 匯入廣告封鎖 hosts 清單
+  - _Fetch a known blocklist (e.g. StevenBlack hosts) via HttpClient, merge unique entries into a managed WinTune block section, save. In-app._
+- [ ] **DoH warning + toggle** · DNS over HTTPS 提示同切換
+  - _Note that browser DoH bypasses the hosts file; offer to disable Edge/Chrome DoH via policy (DnsOverHttpsMode=off) so hosts blocking works._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
