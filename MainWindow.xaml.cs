@@ -230,6 +230,17 @@ public sealed partial class MainWindow : Window
             case "tailscale":
                 Navigator.GoToModule?.Invoke("module.vpn");
                 break;
+            case "comms":
+            case "communications":
+            case "mail":
+            case "email":
+            case "outlook":
+            case "teams":
+            case "discord":
+            case "telegram":
+            case "slack":
+                Navigator.GoToModule?.Invoke("module.comms");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -340,6 +351,7 @@ public sealed partial class MainWindow : Window
         "module.adb" => typeof(AndroidAdbModule),
         "module.vpn" => typeof(VpnMeshModule),
         "module.homeassistant" => typeof(HomeAssistantModule),
+        "module.comms" => typeof(CommunicationsModule),
         _ => typeof(DashboardPage),
     };
 
@@ -487,6 +499,8 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.homeassistant":
                 NavFrame.Navigate(typeof(HomeAssistantModule));
+            case "module.comms":
+                NavFrame.Navigate(typeof(CommunicationsModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
