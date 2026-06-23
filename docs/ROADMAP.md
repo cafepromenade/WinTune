@@ -616,5 +616,14 @@ _Source: howtogeek / techbout — hosts editing needs admin; block with 0.0.0.0;
 - [ ] **DoH warning + toggle** · DNS over HTTPS 提示同切換
   - _Note that browser DoH bypasses the hosts file; offer to disable Edge/Chrome DoH via policy (DnsOverHttpsMode=off) so hosts blocking works._
 
+## 🌱 Newly discovered — iteration 19 · 第 19 次迭代新發掘
+
+_Source: howtogeek / windowsforum — "Enhance pointer precision" (accel) is buried; gamers want it off; it doesn't persist after reboot._
+- [x] **In-app Mouse & Pointer settings** · App 內滑鼠與指標設定 — DONE this iteration: native panel that applies LIVE via SystemParametersInfo (swap buttons, pointer speed, disable acceleration, double-click speed, wheel lines, hide-while-typing, snap-to-default). Persists (SPIF_UPDATEINIFILE). Replaces the ms-settings:mousetouchpad redirect.
+- [ ] **Pointer scheme / size & colour** · 指標配置／大細同顏色
+  - _HKCU\Control Panel\Cursors scheme + HKCU\Software\Microsoft\Accessibility\CursorSize / CursorColor (1=white,2=black,3=inverted,4=custom). In-app picker._
+- [ ] **Touchpad settings (precision)** · 觸控板設定（精準觸控板）
+  - _HKCU\Software\Microsoft\Windows\CurrentVersion\PrecisionTouchPad values (sensitivity, tap, scroll direction). In-app panel where a precision touchpad exists._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

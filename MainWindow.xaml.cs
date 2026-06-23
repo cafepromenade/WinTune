@@ -96,6 +96,9 @@ public sealed partial class MainWindow : Window
             case "hosts":
                 Navigator.GoToModule?.Invoke("module.hosts");
                 break;
+            case "mouse":
+                Navigator.GoToModule?.Invoke("module.mouse");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -235,6 +238,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.hosts":
                 NavFrame.Navigate(typeof(HostsEditorModule));
+                break;
+            case "module.mouse":
+                NavFrame.Navigate(typeof(MouseModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

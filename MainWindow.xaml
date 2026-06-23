@@ -132,6 +132,11 @@
                         <FontIcon Glyph="&#xE71B;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Mouse &amp; Pointer · 滑鼠與指標" Tag="module.mouse">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE962;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
