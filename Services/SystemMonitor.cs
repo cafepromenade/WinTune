@@ -12,6 +12,7 @@ public sealed class ProcInfo
     public int Pid { get; init; }
     public string Name { get; init; } = "";
     public long MemoryBytes { get; init; }
+    public double CpuPercent { get; init; }
 }
 
 /// <summary>
@@ -89,21 +90,58 @@ public static class SystemMonitor
         return (down, up);
     }
 
-    public static List<ProcInfo> TopByMemory(int n)
+    // ---- Per-process CPU% (TotalProcessorTime deltas) ----
+    private static Dictionary<int, TimeSpan> _prevProcCpu = new();
+    private static long _prevProcStamp;
+    private static bool _procPrimed;
+
+    /// <summary>Sample all processes; CPU% is the share of one second of total CPU capacity used since
+    /// the last call. Returns the top <paramref name="n"/> sorted by CPU or working set.</summary>
+    public static List<ProcInfo> Sample(int n, bool byCpu)
     {
+        long now = Environment.TickCount64;
+        double elapsedMs = _procPrimed ? Math.Max(1, now - _prevProcStamp) : 0;
+        int cores = Math.Max(1, Environment.ProcessorCount);
+        var cur = new Dictionary<int, TimeSpan>();
         var list = new List<ProcInfo>();
+
         foreach (var p in Process.GetProcesses())
         {
-            try { list.Add(new ProcInfo { Pid = p.Id, Name = p.ProcessName, MemoryBytes = p.WorkingSet64 }); }
+            try
+            {
+                TimeSpan cpu;
+                try { cpu = p.TotalProcessorTime; } catch { cpu = TimeSpan.Zero; }
+                cur[p.Id] = cpu;
+
+                double pct = 0;
+                if (_procPrimed && _prevProcCpu.TryGetValue(p.Id, out var prev))
+                    pct = Math.Clamp((cpu - prev).TotalMilliseconds / (elapsedMs * cores) * 100.0, 0, 100);
+
+                list.Add(new ProcInfo { Pid = p.Id, Name = p.ProcessName, MemoryBytes = p.WorkingSet64, CpuPercent = pct });
+            }
             catch { }
             finally { p.Dispose(); }
         }
-        return list.OrderByDescending(x => x.MemoryBytes).Take(n).ToList();
+
+        _prevProcCpu = cur;
+        _prevProcStamp = now;
+        _procPrimed = true;
+
+        return list
+            .OrderByDescending(x => byCpu ? x.CpuPercent : x.MemoryBytes)
+            .ThenByDescending(x => byCpu ? (double)x.MemoryBytes : x.CpuPercent)
+            .Take(n).ToList();
     }
 
     public static bool Kill(int pid)
     {
         try { using var p = Process.GetProcessById(pid); p.Kill(); return true; }
+        catch { return false; }
+    }
+
+    public static bool SetPriority(int pid, ProcessPriorityClass cls)
+    {
+        try { using var p = Process.GetProcessById(pid); p.PriorityClass = cls; return true; }
         catch { return false; }
     }
 

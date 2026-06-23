@@ -1,6 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using WinTune.Services;
@@ -8,27 +10,42 @@ using WinTune.Services;
 namespace WinTune.Pages;
 
 /// <summary>
-/// 應用程式內系統監察 · In-app system monitor — live CPU/RAM/network and top processes (with end-task).
-/// Pure managed + P/Invoke, updates each second. No redirect. Bilingual.
+/// 應用程式內系統監察 · In-app system monitor — live CPU/RAM/network plus a Process Explorer-style list:
+/// per-process CPU%, sort by CPU or memory, set priority (High→Idle) and end task. No redirect. Bilingual.
 /// </summary>
 public sealed partial class SystemMonitorModule : Page
 {
-    public sealed class ProcRow
+    public sealed class ProcRow : INotifyPropertyChanged
     {
-        public int Pid { get; init; }
-        public string Name { get; init; } = "";
-        public string MemText { get; init; } = "";
+        public int Pid { get; }
+        public string Name { get; }
+        private string _cpu = "", _mem = "";
+        public string CpuText { get => _cpu; private set { if (_cpu != value) { _cpu = value; OnPC(); } } }
+        public string MemText { get => _mem; private set { if (_mem != value) { _mem = value; OnPC(); } } }
+
+        public ProcRow(ProcInfo s) { Pid = s.Pid; Name = s.Name; Apply(s); }
+        public void Apply(ProcInfo s)
+        {
+            CpuText = $"{Math.Round(s.CpuPercent)}%";
+            MemText = SystemMonitor.Bytes(s.MemoryBytes);
+        }
+        public event PropertyChangedEventHandler? PropertyChanged;
+        private void OnPC([CallerMemberName] string? n = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));
     }
 
     private readonly DispatcherTimer _timer = new() { Interval = TimeSpan.FromSeconds(1) };
+    private readonly ObservableCollection<ProcRow> _rows = new();
     private const double CpuTrack = 188, RamTrack = 208;
+    private const int TopN = 14;
+    private bool _byCpu;
 
     public SystemMonitorModule()
     {
         InitializeComponent();
+        ProcList.ItemsSource = _rows;
         _timer.Tick += (_, _) => Tick();
         Loc.I.LanguageChanged += (_, _) => Render();
-        Loaded += (_, _) => { Render(); SystemMonitor.CpuPercent(); SystemMonitor.Network(1); Tick(); _timer.Start(); };
+        Loaded += (_, _) => { Render(); SystemMonitor.CpuPercent(); SystemMonitor.Network(1); SystemMonitor.Sample(TopN, _byCpu); Tick(); _timer.Start(); };
         Unloaded += (_, _) => _timer.Stop();
     }
 
@@ -37,12 +54,28 @@ public sealed partial class SystemMonitorModule : Page
     private void Render()
     {
         HeaderTitle.Text = "System Monitor · 系統監察";
-        HeaderBlurb.Text = P("Live CPU, memory and network, plus the heaviest processes — end any with one click. Updates every second.",
-            "即時 CPU、記憶體同網絡，再加最食資源嘅程序 — 一撳就結束。每秒更新。");
+        HeaderBlurb.Text = P("Live CPU, memory and network, plus the busiest processes — set a priority or end any with one click. Updates every second.",
+            "即時 CPU、記憶體同網絡，再加最忙嘅程序 — 一撳就設定優先權或者結束。每秒更新。");
         CpuLabel.Text = P("CPU", "CPU");
         RamLabel.Text = P("Memory", "記憶體");
         NetLabel.Text = P("Network", "網絡");
         UpLabel.Text = P("Uptime", "運行時間");
+        SortLabel.Text = P("Sort by", "排序");
+        ColName.Text = P("Process", "程序");
+        ColCpu.Text = P("CPU", "CPU");
+        ColMem.Text = P("Memory", "記憶體");
+
+        int sel = SortBox.SelectedIndex < 0 ? 0 : SortBox.SelectedIndex;
+        SortBox.Items.Clear();
+        SortBox.Items.Add(P("Memory", "記憶體"));
+        SortBox.Items.Add(P("CPU", "CPU"));
+        SortBox.SelectedIndex = sel;
+    }
+
+    private void Sort_Changed(object sender, SelectionChangedEventArgs e)
+    {
+        _byCpu = SortBox.SelectedIndex == 1;
+        if (IsLoaded) Tick();
     }
 
     private void Tick()
@@ -62,10 +95,51 @@ public sealed partial class SystemMonitorModule : Page
 
         UpValue.Text = SystemMonitor.Uptime();
 
-        ProcList.ItemsSource = SystemMonitor.TopByMemory(14)
-            .Select(p => new ProcRow { Pid = p.Pid, Name = p.Name, MemText = SystemMonitor.Bytes(p.MemoryBytes) })
-            .ToList();
+        Reconcile(SystemMonitor.Sample(TopN, _byCpu));
     }
+
+    /// <summary>Update the bound collection in place so open menus and item containers survive the refresh.</summary>
+    private void Reconcile(System.Collections.Generic.List<ProcInfo> sample)
+    {
+        var present = new System.Collections.Generic.HashSet<int>();
+        foreach (var s in sample) present.Add(s.Pid);
+        for (int i = _rows.Count - 1; i >= 0; i--)
+            if (!present.Contains(_rows[i].Pid)) _rows.RemoveAt(i);
+
+        for (int i = 0; i < sample.Count; i++)
+        {
+            var s = sample[i];
+            int idx = -1;
+            for (int j = i; j < _rows.Count; j++)
+                if (_rows[j].Pid == s.Pid) { idx = j; break; }
+
+            if (idx == -1) { _rows.Insert(i, new ProcRow(s)); }
+            else { _rows[idx].Apply(s); if (idx != i) _rows.Move(idx, i); }
+        }
+        while (_rows.Count > sample.Count) _rows.RemoveAt(_rows.Count - 1);
+    }
+
+    private void Priority_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button b || b.DataContext is not ProcRow row) return;
+        var mf = new MenuFlyout();
+        foreach (var (label, cls) in Priorities())
+        {
+            var item = new MenuFlyoutItem { Text = label };
+            item.Click += (_, _) => SystemMonitor.SetPriority(row.Pid, cls);
+            mf.Items.Add(item);
+        }
+        mf.ShowAt(b);
+    }
+
+    private (string, ProcessPriorityClass)[] Priorities() => new[]
+    {
+        (P("High", "高"), ProcessPriorityClass.High),
+        (P("Above normal", "高於正常"), ProcessPriorityClass.AboveNormal),
+        (P("Normal", "正常"), ProcessPriorityClass.Normal),
+        (P("Below normal", "低於正常"), ProcessPriorityClass.BelowNormal),
+        (P("Idle (low)", "閒置（低）"), ProcessPriorityClass.Idle),
+    };
 
     private void Kill_Click(object sender, RoutedEventArgs e)
     {

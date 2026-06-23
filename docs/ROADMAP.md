@@ -643,5 +643,16 @@ _Source: neowin / xda / windowscentral — power users replace Task Manager with
 - [ ] **CPU temperature** · CPU 溫度
   - _Get-CimInstance -Namespace root/wmi MSAcpi_ThermalZoneTemperature (where exposed); or note that most consumer boards need a vendor driver (OpenHardwareMonitor). Show when available._
 
+## 🌱 Newly discovered — iteration 22 · 第 22 次迭代新發掘
+
+_Source: bitsum / xda / whatsoftware — Task Manager forgets priority on restart; Process Lasso persists per-process priority, CPU affinity and Win11 Efficiency Mode._
+- [x] **Per-process CPU% + set priority** · 每個程序 CPU% 同設定優先權 — DONE this iteration: live CPU% per process (TotalProcessorTime deltas ÷ cores), sort by CPU or memory, and a per-row priority menu (High→Idle via ProcessPriorityClass). Extends System Monitor; in-app, no redirect.
+- [ ] **CPU affinity per process** · 每個程序 CPU 親和性
+  - _Process.ProcessorAffinity bitmask — pick which cores a process may use. In-app checkbox grid of cores._
+- [ ] **Efficiency Mode (EcoQoS) toggle** · 效率模式（EcoQoS）切換
+  - _SetProcessInformation(ProcessPowerThrottling, PROCESS_POWER_THROTTLING_EXECUTION_SPEED) + set priority to Idle — the same thing Task Manager's "Efficiency mode" does. Per-process toggle._
+- [ ] **Persistent priority rules** · 持久優先權規則
+  - _Save {exe name → priority} to config; a lightweight watcher re-applies on launch (Process Lasso style). Needs the existing settings-save plumbing._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
