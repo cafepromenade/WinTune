@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Win32;
 
 namespace WinTune.Services;
@@ -110,5 +111,40 @@ public static class RegistryHelper
         {
             return false;
         }
+    }
+
+    // ---- enumeration for the in-app Registry Editor ----
+    public static string[] GetSubKeyNames(RegRoot root, string path)
+    {
+        try
+        {
+            using var bk = BaseKey(root);
+            using var key = string.IsNullOrEmpty(path) ? bk : bk.OpenSubKey(path);
+            return key?.GetSubKeyNames() ?? Array.Empty<string>();
+        }
+        catch { return Array.Empty<string>(); }
+    }
+
+    public static bool HasSubKeys(RegRoot root, string path) => GetSubKeyNames(root, path).Length > 0;
+
+    public static List<(string name, RegistryValueKind kind, object? data)> GetValues(RegRoot root, string path)
+    {
+        var list = new List<(string, RegistryValueKind, object?)>();
+        try
+        {
+            using var bk = BaseKey(root);
+            using var key = string.IsNullOrEmpty(path) ? bk : bk.OpenSubKey(path);
+            if (key is null) return list;
+            foreach (var n in key.GetValueNames())
+            {
+                RegistryValueKind kind;
+                try { kind = key.GetValueKind(n); } catch { kind = RegistryValueKind.Unknown; }
+                object? data;
+                try { data = key.GetValue(n, null, RegistryValueOptions.DoNotExpandEnvironmentNames); } catch { data = null; }
+                list.Add((n, kind, data));
+            }
+        }
+        catch { /* unreadable key */ }
+        return list;
     }
 }

@@ -20,7 +20,13 @@
 
 ## 🎯 Requested big features (queued) · 已點名嘅大功能（排緊隊）
 - [ ] **Settings & Control Panel hub** · 設定與控制台總匯 — bilingual searchable launcher for every `ms-settings:` page + every Control Panel applet (`control /name`, `*.cpl`).
-- [ ] **Interactive Registry Editor** · 互動式登錄編輯器 — bespoke tree browser + value view/edit/add/delete over RegistryHelper, bilingual, with a "known tweaks" overlay.
+- [x] **Interactive Registry Editor** · 互動式登錄編輯器 — bespoke in-app tree browser + value view/add/edit/delete over RegistryHelper, bilingual. (no regedit.exe redirect)
+
+> **Design rule (user directive):** everything must run **purely in-app, NOT as redirects** to external
+> Windows UI. Replace "Open X.msc / start ms-settings: / launch editor" features with native in-app
+> equivalents (in-app services manager, device list, scheduled-tasks list, settings toggles, etc.).
+> **設計守則（使用者指示）：** 所有嘢要**純粹喺 app 內**做，唔好跳去外部 Windows 介面。將「開 X.msc／
+> start ms-settings:／叫出編輯器」嘅功能，換成 app 內嘅原生等價物。
 - [ ] **Forum pain-points** · 論壇痛點 — features people complain about (from /deepresearch), appended here then built.
 
 ## 🔭 Discovered backlog · 發掘待辦（175 items / 項）
