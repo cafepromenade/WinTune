@@ -79,8 +79,10 @@ jobs:
         run: |
           $ver = "v1.0.${{ github.run_number }}"
           $notes = "Automated build from commit ${{ github.sha }}.`n由 commit ${{ github.sha }} 自動建置。`n`n- WinTune-Setup.exe — installer / 安裝程式`n- WinTune-portable-x64-*.zip — portable / 免安裝可攜版"
-          gh release create $ver `
-            "installer\out\WinTune-Setup.exe" `
-            (Get-ChildItem "WinTune-portable-x64-*.zip" | Select-Object -First 1 -ExpandProperty FullName) `
-            --title "WinTune $ver" `
-            --notes $notes
+          $setup = Get-ChildItem -Recurse -Filter WinTune-Setup.exe | Select-Object -First 1 -ExpandProperty FullName
+          $zip   = Get-ChildItem -Recurse -Filter "WinTune-portable-x64-*.zip" | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $setup) { throw "WinTune-Setup.exe not found" }
+          if (-not $zip)   { throw "portable zip not found" }
+          Write-Host "setup = $setup"
+          Write-Host "zip   = $zip"
+          gh release create $ver $setup $zip --title "WinTune $ver" --notes $notes
