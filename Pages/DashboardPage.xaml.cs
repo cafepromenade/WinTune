@@ -27,23 +27,18 @@ public sealed partial class DashboardPage : Page
     private void Render()
     {
         HeroTitle.Text = "WinTune · 視窗調校";
-        HeroSubtitle.Text = Loc.I.Pick(
-            "An all-in-one, fully bilingual control center that really tunes Windows 11.",
-            "全方位、全雙語嘅控制中心，真係會幫你調校 Windows 11。");
-        CountBadge.Text = Loc.I.Pick(
-            $"{TweakCatalog.Count} features across {Categories.All.Length} categories",
-            $"{TweakCatalog.Count} 項功能，分 {Categories.All.Length} 個分類");
+        HeroSubtitle.Text = "An all-in-one, fully bilingual control center that really tunes Windows 11.\n全方位、全雙語嘅控制中心，真係會幫你調校 Windows 11。";
+        CountBadge.Text = $"{TweakCatalog.Count} features · {Categories.All.Length} categories  ·  {TweakCatalog.Count} 項功能 · {Categories.All.Length} 個分類";
 
         RenderAdminBar();
         RenderModuleTiles();
         RenderStats();
         RenderCategoryTiles();
 
-        ModulesHeader.Text = Loc.I.Pick("Suite modules", "套件模組");
-        StatsHeader.Text = Loc.I.Pick("System at a glance", "系統一覽");
-        BrowseHeader.Text = Loc.I.Pick("Browse categories", "瀏覽分類");
-        SearchBox.PlaceholderText = Loc.I.Pick(
-            "Search all features (English or 粵語)…", "搜尋全部功能（英文或粵語）…");
+        ModulesHeader.Text = "Suite modules · 套件模組";
+        StatsHeader.Text = "System at a glance · 系統一覽";
+        BrowseHeader.Text = "Browse categories · 瀏覽分類";
+        SearchBox.PlaceholderText = "Search all features · 搜尋全部功能 (EN / 粵語)…";
     }
 
     private void RenderAdminBar()
@@ -51,19 +46,15 @@ public sealed partial class DashboardPage : Page
         if (AdminHelper.IsElevated)
         {
             AdminBar.Severity = InfoBarSeverity.Success;
-            AdminBar.Title = Loc.I.Pick("Administrator", "管理員");
-            AdminBar.Message = Loc.I.Pick(
-                "Running elevated — every tweak is available.",
-                "正以管理員身分運行 — 全部調校都用得。");
+            AdminBar.Title = "Administrator · 管理員";
+            AdminBar.Message = "Running elevated — every tweak is available.\n正以管理員身分運行 — 全部調校都用得。";
             AdminBar.ActionButton = null;
         }
         else
         {
             AdminBar.Severity = InfoBarSeverity.Warning;
-            AdminBar.Title = Loc.I.Pick("Standard user", "標準使用者");
-            AdminBar.Message = Loc.I.Pick(
-                "Some system-wide tweaks need administrator rights.",
-                "部分全系統調校需要管理員權限。");
+            AdminBar.Title = "Standard user · 標準使用者";
+            AdminBar.Message = "Some system-wide tweaks need administrator rights.\n部分全系統調校需要管理員權限。";
             var relaunch = new Button { Content = "Relaunch as admin · 以管理員身分重新啟動" };
             relaunch.Click += (_, _) =>
             {

@@ -21,8 +21,12 @@ public sealed partial class MainWindow : Window
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         AppWindow.SetIcon("Assets/AppIcon.ico");
 
-        // 全螢幕 kiosk 模式 · Full-screen kiosk presentation.
-        AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+        // 視窗模式（預設，約 82% 螢幕）＋ F11 切換全螢幕，會記住。
+        // Windowed by default (~82% of the screen); F11 toggles full screen and the choice is remembered.
+        ApplyWindowMode(SettingsStore.Get("fullscreen", "False") == "True");
+        var f11 = new Microsoft.UI.Xaml.Input.KeyboardAccelerator { Key = Windows.System.VirtualKey.F11 };
+        f11.Invoked += (_, e) => { ToggleFullScreen(); e.Handled = true; };
+        RootGrid.KeyboardAccelerators.Add(f11);
 
         BuildCategoryMenu();
         WireNavigator();
@@ -57,6 +61,34 @@ public sealed partial class MainWindow : Window
         _reallyQuit = true;
         TrayService.Remove();
         Application.Current.Exit();
+    }
+
+    private void ApplyWindowMode(bool fullscreen)
+    {
+        if (fullscreen)
+        {
+            AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
+            return;
+        }
+        AppWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+        try
+        {
+            var area = DisplayArea.GetFromWindowId(AppWindow.Id, DisplayAreaFallback.Primary);
+            int w = (int)(area.WorkArea.Width * 0.82);
+            int h = (int)(area.WorkArea.Height * 0.86);
+            AppWindow.Resize(new Windows.Graphics.SizeInt32(w, h));
+            AppWindow.Move(new Windows.Graphics.PointInt32(
+                area.WorkArea.X + (area.WorkArea.Width - w) / 2,
+                area.WorkArea.Y + (area.WorkArea.Height - h) / 2));
+        }
+        catch { }
+    }
+
+    private void ToggleFullScreen()
+    {
+        bool full = AppWindow.Presenter.Kind == AppWindowPresenterKind.FullScreen;
+        ApplyWindowMode(!full);
+        SettingsStore.Set("fullscreen", (!full).ToString());
     }
 
     private void ApplyStartPage()

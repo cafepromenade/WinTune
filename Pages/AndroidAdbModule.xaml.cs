@@ -52,9 +52,20 @@ public sealed partial class AndroidAdbModule : Page
         {
             EngineBar.Severity = InfoBarSeverity.Warning;
             EngineBar.Title = P("adb not found", "搵唔到 adb");
-            EngineBar.Message = P("Install \"Android Platform Tools (adb)\" from the Package Manager, then reopen this page.",
-                "喺套件管理安裝「Android 平台工具（adb）」，再重新開呢一頁。");
+            EngineBar.Message = P("Click to install it automatically (Google Platform Tools via winget) — no restart needed.",
+                "撳一下自動安裝（用 winget 裝 Google Platform Tools）— 唔使重啟。");
+            var btn = new Button { Content = P("Install adb automatically", "自動安裝 adb") };
+            btn.Click += async (_, _) =>
+            {
+                btn.IsEnabled = false;
+                btn.Content = P("Installing…", "安裝緊…");
+                await PackageService.AutoInstall("Google.PlatformTools");
+                await CheckEngine();
+                if (await AdbService.IsAvailable()) await RefreshDevices();
+            };
+            EngineBar.ActionButton = btn;
         }
+        else EngineBar.ActionButton = null;
     }
 
     private async Task RefreshDevices()

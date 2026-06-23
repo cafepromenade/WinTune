@@ -76,10 +76,11 @@ public sealed partial class VpnMeshModule : Page
             NordEngineBar.IsOpen = true;
             NordEngineBar.Severity = InfoBarSeverity.Warning;
             NordEngineBar.Title = P("NordVPN not found", "搵唔到 NordVPN");
-            NordEngineBar.Message = P("Install NordVPN (search it in the Package Manager), sign in once, then use these controls.",
-                "安裝 NordVPN（喺套件管理搜尋），登入一次，再用呢度嘅控制。");
+            NordEngineBar.Message = P("Click to install NordVPN automatically (winget), then sign in once.",
+                "撳一下自動安裝 NordVPN（winget），再登入一次。");
+            NordEngineBar.ActionButton = AutoInstallButton("NordVPN.NordVPN", "Install NordVPN automatically", "自動安裝 NordVPN");
         }
-        else NordEngineBar.IsOpen = false;
+        else { NordEngineBar.IsOpen = false; NordEngineBar.ActionButton = null; }
 
         _tsAvailable = await TailscaleService.IsAvailable();
         if (!_tsAvailable)
@@ -87,10 +88,24 @@ public sealed partial class VpnMeshModule : Page
             TsEngineBar.IsOpen = true;
             TsEngineBar.Severity = InfoBarSeverity.Warning;
             TsEngineBar.Title = P("Tailscale not found", "搵唔到 Tailscale");
-            TsEngineBar.Message = P("Install Tailscale (search it in the Package Manager), sign in once, then use these controls.",
-                "安裝 Tailscale（喺套件管理搜尋），登入一次，再用呢度嘅控制。");
+            TsEngineBar.Message = P("Click to install Tailscale automatically (winget), then sign in once.",
+                "撳一下自動安裝 Tailscale（winget），再登入一次。");
+            TsEngineBar.ActionButton = AutoInstallButton("tailscale.tailscale", "Install Tailscale automatically", "自動安裝 Tailscale");
         }
-        else TsEngineBar.IsOpen = false;
+        else { TsEngineBar.IsOpen = false; TsEngineBar.ActionButton = null; }
+    }
+
+    private Button AutoInstallButton(string wingetId, string en, string zh)
+    {
+        var btn = new Button { Content = P(en, zh) };
+        btn.Click += async (_, _) =>
+        {
+            btn.IsEnabled = false;
+            btn.Content = P("Installing…", "安裝緊…");
+            await PackageService.AutoInstall(wingetId);
+            await CheckEngines();
+        };
+        return btn;
     }
 
     // ---- NordVPN ----

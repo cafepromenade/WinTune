@@ -826,6 +826,27 @@ launching the other app.
 - [x] **NordVPN + Tailscale GUIs** · NordVPN + Tailscale 介面 — DONE: VPN & Mesh module wraps NordVPN.exe CLI (connect/quick/by-country/by-group, disconnect) + tailscale CLI (up/down/status/ip/ping + parsed device list from status --json). `module.vpn`/`--page vpn`/`nordvpn`/`tailscale`. Detect-missing → Package Manager hint.
   - [ ] follow-ups: Tailscale **exit-node** picker (`tailscale set --exit-node`), Tailscale Funnel/Serve, NordVPN **Meshnet**, generic **Windows VPN manager** (Get/Add-VpnConnection + rasdial for any IKEv2/L2TP/OpenVPN profile), **WireGuard** config import.
 
+## 🖥️ GUI / UX & automation requests (iter 33, rapid user batch)
+
+### Done this iteration
+- [x] **Windowed mode + F11** · 視窗模式 + F11 — launches windowed (~82% screen, centred); F11 toggles full screen; choice saved to SettingsStore "fullscreen". Fixes the "content shifted right" look (MaxWidth gap on a 1920 kiosk).
+- [x] **Touchless auto-install of missing engines** · 一鍵自動安裝缺少引擎 — `PackageService.AutoInstall(id)` runs `winget install --silent` then **refreshes the process PATH** so the CLI works immediately (no restart). Wired into the ADB and VPN engine-bars (one-click "Install … automatically"). Verified: adb (Google.PlatformTools) installed + PATH picked it up live.
+
+### Already exists (point the user here)
+- Dark/Light/System **theme that saves** → Settings → App theme (App.SetTheme + SettingsStore "theme"). ✓
+- **Import/export settings** → Settings → Import/export (SettingsStore Export/Import JSON). ✓
+- **Real-time applied-state detection** → catalog RegToggle tweaks read the live registry value via GetIsOn; toggles already reflect current state. ✓
+
+### Queued GUI/UX (build next, one per iter)
+- [ ] **Extend auto-install to ALL engines** · 全部引擎自動安裝 — ffmpeg, 7zip, Docker.DockerDesktop, IDRIX.VeraCrypt, Genymobile.scrcpy; every EngineBar/"Launch X" gets a one-click/auto install. Replace remaining "Launch VeraCrypt"-style REDIRECTS (rule a).
+- [ ] **App Uninstaller: icons + size + smart full uninstall** · 圖示＋大細＋徹底解除安裝 — show each app's icon (Get-AppxPackage logo / shell icon) + install size (Get-AppxPackage … | InstalledLocation size); "deep uninstall" that also clears leftovers (%LocalAppData%\Packages\<pkg>, registry).
+- [ ] **Human-readable + settable outputs** · 可讀＋可設定 — parse raw PowerShell tables (e.g. Network Pro Get-NetAdapter) into native lists with per-row actions (enable/disable adapter, etc.) instead of monospace dumps. Sweep the catalog "Show …" actions.
+- [ ] **Recipes redesign** · 流程重整 — card layout + "view more" details + per-recipe icon/image + an **undo** for each recipe (define reverse steps) + show real-time applied state of each step.
+- [ ] **Env Vars page friendlier** · 環境變數更易用 — split long PATH into per-entry rows (add/remove/reorder), multi-line value editor.
+- [ ] **Custom program modifier** · 自訂程式 — install custom software with custom args, run an exe, trigger from GitHub Actions artifact/release links; one place to define & run.
+- [ ] **Full export/import of EVERYTHING** · 全部匯出匯入 — not just settings: applied tweaks, recipes, custom programs, package list, configs — one bundle.
+- [ ] **Config sync via a self-hosted Docker server** · 用自架 Docker 伺服器即時同步 — host a small sync service (Docker) so multiple PCs real-time-sync all settings/configs; "save config to another GitHub repo" + releases as an alternative backend. (Docker required → auto-install Docker.DockerDesktop.)
+
 ### Program-wide goals
 - [ ] **1000-feature goal** · 1000 功能目標 — keep the loop discovering REAL features (no padding). Current: ~30 modules + 1140 catalog tweaks/ops + 17 recipes. Track the real total in About.
 - [ ] **Docs + wiki + CLI reference** · 文件 + wiki + CLI 參考 — generate docs/CLI.md (every `--page <id>`, `--category`, `--export-docs`, `--page search:<q>`), a GitHub wiki, and keep README + per-feature docs current.

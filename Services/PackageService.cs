@@ -81,6 +81,27 @@ public static class PackageService
     public static Task<TweakResult> Install(string id, CancellationToken ct = default)
         => ShellRunner.RunCmd($"winget install --id {id} -e --silent --accept-source-agreements --accept-package-agreements --disable-interactivity", false, ct);
 
+    /// <summary>Touchless install of a known engine by winget id, then refresh this process's PATH so the
+    /// freshly-installed CLI works immediately (no app restart). Returns true on success.</summary>
+    public static async Task<bool> AutoInstall(string id, CancellationToken ct = default)
+    {
+        var r = await Install(id, ct);
+        if (r.Success) RefreshProcessPath();
+        return r.Success;
+    }
+
+    /// <summary>Re-read PATH from the registry into this process so newly-installed tools resolve at once.</summary>
+    public static void RefreshProcessPath()
+    {
+        try
+        {
+            var m = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine) ?? "";
+            var u = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.User) ?? "";
+            Environment.SetEnvironmentVariable("PATH", string.Join(";", new[] { m, u }));
+        }
+        catch { }
+    }
+
     public static Task<TweakResult> Uninstall(string id, CancellationToken ct = default)
         => ShellRunner.RunCmd($"winget uninstall --id {id} -e --silent --disable-interactivity", false, ct);
 
