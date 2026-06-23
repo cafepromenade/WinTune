@@ -28,6 +28,8 @@ public static class DocsExporter
             all.Add((t, "Git & GitHub · Git 與 GitHub"));
         foreach (var t in ArchiveOperations.All())
             all.Add((t, "Archives · 壓縮檔"));
+        foreach (var t in MediaOperations.All())
+            all.Add((t, "Media · 媒體"));
 
         foreach (var (t, module) in all)
             File.WriteAllText(Path.Combine(dir, Sanitize(t.Id) + ".md"), BuildMd(t, module), Utf8);

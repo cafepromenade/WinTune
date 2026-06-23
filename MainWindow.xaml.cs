@@ -43,6 +43,9 @@ public sealed partial class MainWindow : Window
             case "archive":
                 Navigator.GoToModule?.Invoke("module.archives");
                 break;
+            case "media":
+                Navigator.GoToModule?.Invoke("module.media");
+                break;
             case "regedit":
             case "registry":
                 Navigator.GoToModule?.Invoke("module.regedit");
@@ -157,6 +160,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.archives":
                 NavFrame.Navigate(typeof(ArchivesModule));
+                break;
+            case "module.media":
+                NavFrame.Navigate(typeof(MediaModule));
                 break;
             case "module.regedit":
                 NavFrame.Navigate(typeof(RegistryEditor));

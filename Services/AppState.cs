@@ -43,10 +43,31 @@ public static class AppState
 
     public static event EventHandler? ArchiveChanged;
 
+    private static string _mediaInput = string.Empty;
+    private static string _mediaOutput = string.Empty;
+
+    /// <summary>Media 模組選中嘅輸入檔 · The media module's selected input file.</summary>
+    public static string CurrentMediaInput
+    {
+        get => _mediaInput;
+        set { _mediaInput = value ?? string.Empty; SettingsStore.Set("media.in", _mediaInput); MediaChanged?.Invoke(null, EventArgs.Empty); }
+    }
+
+    /// <summary>Media 模組選中嘅輸出檔 · The media module's selected output file.</summary>
+    public static string CurrentMediaOutput
+    {
+        get => _mediaOutput;
+        set { _mediaOutput = value ?? string.Empty; SettingsStore.Set("media.out", _mediaOutput); MediaChanged?.Invoke(null, EventArgs.Empty); }
+    }
+
+    public static event EventHandler? MediaChanged;
+
     static AppState()
     {
         _currentRepoPath = SettingsStore.Get("git.repo", string.Empty);
         _currentArchivePath = SettingsStore.Get("arc.archive", string.Empty);
         _currentSourcePath = SettingsStore.Get("arc.source", string.Empty);
+        _mediaInput = SettingsStore.Get("media.in", string.Empty);
+        _mediaOutput = SettingsStore.Get("media.out", string.Empty);
     }
 }

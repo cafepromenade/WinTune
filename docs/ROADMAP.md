@@ -518,5 +518,13 @@ _Source: Microsoft Learn (PowerRename) + bulkrenameutility.co.uk — confirms no
 - [ ] **Bulk file operations** · 批次檔案操作　🆕 in-app module
   - _Move/copy files matching a wildcard/regex, flatten nested folders, delete-by-pattern (with confirm). Pure C# File/Directory APIs, in-app preview._
 
+## 🌱 Newly discovered — iteration 8 · 第 8 次迭代新發掘
+
+- [x] **In-app Media module (ffmpeg)** · App 內媒體模組 — DONE this iteration: input/output pickers, quick convert/extract/GIF/compress/mute/info + 60 advanced ffmpeg/ffprobe ops, native bilingual, no redirect.
+- [ ] **In-app screen recorder** · App 內螢幕錄影
+  - _ffmpeg -f gdigrab -framerate 30 -i desktop -c:v libx264 -preset ultrafast out.mp4; start as a tracked background process, stop by sending 'q' / killing. Add to the Media module._
+- [ ] **Audio recorder (mic)** · 收音錄音
+  - _ffmpeg -f dshow -i audio="<mic name>" out.wav (enumerate devices via ffmpeg -list_devices true -f dshow -i dummy). In-app panel._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
