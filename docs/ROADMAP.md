@@ -847,6 +847,12 @@ launching the other app.
 - [ ] **Full export/import of EVERYTHING** · 全部匯出匯入 — not just settings: applied tweaks, recipes, custom programs, package list, configs — one bundle.
 - [ ] **Config sync via a self-hosted Docker server** · 用自架 Docker 伺服器即時同步 — host a small sync service (Docker) so multiple PCs real-time-sync all settings/configs; "save config to another GitHub repo" + releases as an alternative backend. (Docker required → auto-install Docker.DockerDesktop.)
 
+### Clipboard git history + opencode (iter 34)
+- [x] **Clipboard = local git repo** · 剪貼簿 = 本地 git repo — `%LocalAppData%\WinTune\clipboard` is `git init`'d; commits on every entry/remove; **Clear all only adds a commit (never touches .git) so the full history stays recoverable via git log**.
+- [x] **opencode AI commit messages** · opencode AI commit 訊息 — best-effort `opencode run …` (background, CreateNoWindow) writes the commit message from the copied content, falling back to a descriptive message; **auto-installs nodejs (winget) + opencode (npm) once if absent**.
+- [ ] **Export/import must include the clipboard git repo** · 匯出匯入要包埋剪貼簿 git repo — bundle %LocalAppData%\WinTune\clipboard (incl .git) into the full export/import.
+- [ ] **Clone UniGetUI from GitHub, port every line via ultracode** · 由 GitHub clone UniGetUI、用 ultracode 逐行移植 — user wants the full UniGetUI source ported in. HUGE multi-iteration; use a fan-out workflow per file/area. (Note: still prefer native reimplementation over window-embedding per rule a.)
+
 ### Program-wide goals
 - [ ] **1000-feature goal** · 1000 功能目標 — keep the loop discovering REAL features (no padding). Current: ~30 modules + 1140 catalog tweaks/ops + 17 recipes. Track the real total in About.
 - [ ] **Docs + wiki + CLI reference** · 文件 + wiki + CLI 參考 — generate docs/CLI.md (every `--page <id>`, `--category`, `--export-docs`, `--page search:<q>`), a GitHub wiki, and keep README + per-feature docs current.

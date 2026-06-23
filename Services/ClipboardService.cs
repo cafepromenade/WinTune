@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -66,7 +67,127 @@ public static class ClipboardService
         _started = true;
         _dq = dq;
         Load();
+        GitInit();
         try { Clipboard.ContentChanged += OnContentChanged; } catch { }
+    }
+
+    // ---- local git history: commit every entry/edit; "Clear all" keeps the git log ----
+    private static readonly object _gitGate = new();
+
+    private static void GitInit()
+    {
+        try
+        {
+            if (!Directory.Exists(Path.Combine(Dir, ".git")))
+            {
+                RunGit("init -q");
+                File.WriteAllText(Path.Combine(Dir, ".gitattributes"), "*.png binary\n");
+                GitCommit("init clipboard history");
+            }
+        }
+        catch { }
+    }
+
+    /// <summary>Commit the current history (background, serialized). Past commits are never rewritten,
+    /// so "Clear all" only adds a commit — the full history stays recoverable via git log.</summary>
+    private static void GitCommitAsync(string message) => Task.Run(() => GitCommit(message));
+
+    private static void GitCommit(string message)
+    {
+        lock (_gitGate)
+        {
+            try
+            {
+                RunGit("add -A");
+                var msg = AiCommitMessage(message);
+                RunGit($"-c user.name=WinTune -c user.email=clipboard@wintune.local commit -q --allow-empty -m \"{msg.Replace("\"", "'")}\"");
+            }
+            catch { }
+        }
+    }
+
+    // ---- opencode: AI-written commit messages (background, no window); auto-install opencode + nodejs if absent ----
+    private static bool _ocChecked, _ocOk, _installTried;
+
+    private static string AiCommitMessage(string fallback)
+    {
+        try
+        {
+            if (!_ocChecked)
+            {
+                _ocChecked = true;
+                _ocOk = RunCapture("opencode", "--version", 6000).Trim().Length > 0;
+            }
+            if (!_ocOk)
+            {
+                if (!_installTried) { _installTried = true; Task.Run(EnsureOpenCode); }  // fully automatic, one-shot
+                return fallback;
+            }
+            var hint = History.FirstOrDefault()?.Preview ?? fallback;
+            if (hint.Length > 300) hint = hint.Substring(0, 300);
+            hint = hint.Replace("\"", "'").Replace('\r', ' ').Replace('\n', ' ');
+            var outp = RunCapture("opencode", $"run \"In 8 words or fewer write a git commit message summarising this copied clipboard content: {hint}\"", 25000);
+            var line = outp.Split('\n').Select(s => s.Trim()).FirstOrDefault(s => s.Length > 0) ?? "";
+            return line.Length is > 0 and <= 120 ? line : fallback;
+        }
+        catch { return fallback; }
+    }
+
+    private static void EnsureOpenCode()
+    {
+        try
+        {
+            if (RunCapture("node", "--version", 6000).Trim().Length == 0)
+                RunCapture("winget", "install --id OpenJS.NodeJS.LTS -e --silent --accept-source-agreements --accept-package-agreements --disable-interactivity", 600000);
+            PackageService.RefreshProcessPath();
+            RunCapture("cmd.exe", "/c npm install -g opencode-ai", 600000);
+            PackageService.RefreshProcessPath();
+            _ocChecked = false; // re-detect on the next commit
+        }
+        catch { }
+    }
+
+    private static string RunCapture(string file, string args, int timeoutMs)
+    {
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = file,
+                Arguments = args,
+                WorkingDirectory = Dir,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            using var p = Process.Start(psi);
+            if (p is null) return "";
+            string outp = p.StandardOutput.ReadToEnd();
+            p.WaitForExit(timeoutMs);
+            return outp;
+        }
+        catch { return ""; }
+    }
+
+    private static void RunGit(string args)
+    {
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = args,
+                WorkingDirectory = Dir,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+            };
+            using var p = Process.Start(psi);
+            p?.WaitForExit(8000);
+        }
+        catch { }
     }
 
     private static void OnContentChanged(object? sender, object e)
@@ -125,6 +246,7 @@ public static class ClipboardService
             TryDeleteImage(drop);
         }
         Save();
+        GitCommitAsync($"capture {item.Kind} {item.Time}");
         Changed?.Invoke();
     }
 
@@ -150,6 +272,7 @@ public static class ClipboardService
         History.Remove(item);
         TryDeleteImage(item);
         Save();
+        GitCommitAsync("remove item");
         Changed?.Invoke();
     }
 
@@ -158,6 +281,8 @@ public static class ClipboardService
         foreach (var i in History) TryDeleteImage(i);
         History.Clear();
         Save();
+        // Commit the cleared state — this does NOT touch .git, so every past entry stays in the git log.
+        GitCommitAsync("clear all (history preserved in git log)");
         Changed?.Invoke();
     }
 
