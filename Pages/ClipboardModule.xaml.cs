@@ -21,6 +21,8 @@ public sealed partial class ClipboardModule : Page
     private static readonly string GlyphFiles = ((char)0xE8B7).ToString();
     private static readonly string GlyphCopy = ((char)0xE8C8).ToString();
     private static readonly string GlyphDelete = ((char)0xE74D).ToString();
+    private static readonly string GlyphQr = ((char)0xED14).ToString();      // QR code glyph
+    private static readonly string GlyphPlain = ((char)0xE8E9).ToString();   // "paste as plain" (Font)
 
     private static readonly string[] MediaExt =
         { ".mp3", ".wav", ".flac", ".m4a", ".aac", ".ogg", ".opus", ".wma",
@@ -40,8 +42,8 @@ public sealed partial class ClipboardModule : Page
     private void Render()
     {
         HeaderTitle.Text = "Clipboard · 剪貼簿";
-        HeaderBlurb.Text = P("Everything you copy — text, images and files — kept here automatically. Click to copy back, or convert images and media to another format.",
-            "你複製過嘅嘢 — 文字、圖片同檔案 — 自動留喺度。撳一下複製返，或者將圖片同媒體轉做另一種格式。");
+        HeaderBlurb.Text = P("Everything you copy — text, images and files — kept here automatically. Click to copy back, paste as plain text, make a QR code, or convert images and media to another format.",
+            "你複製過嘅嘢 — 文字、圖片同檔案 — 自動留喺度。撳一下複製返、貼為純文字、整 QR 碼，或者將圖片同媒體轉做另一種格式。");
         ClearText.Text = P("Clear all", "清除全部");
         BgBar.Title = P("Running in the background", "喺背景運行緊");
         BgBar.Message = P("The monitor keeps capturing even when the window is closed to the tray. Right-click the tray icon to Quit.",
@@ -101,6 +103,24 @@ public sealed partial class ClipboardModule : Page
         ToolTipService.SetToolTip(copyBtn, P("Copy back", "複製返"));
         copyBtn.Click += (_, _) => { ClipboardService.CopyBack(item); Notify(InfoBarSeverity.Success, P("Copied to clipboard", "已複製到剪貼簿"), ""); };
         actions.Children.Add(copyBtn);
+
+        // Text & file items get "paste as plain text" + "make QR" (encode the text/paths locally).
+        if (item.Kind == ClipKind.Text || item.Kind == ClipKind.Files)
+        {
+            var plain = new Button { Padding = new Thickness(8, 3, 8, 3), Content = new FontIcon { Glyph = GlyphPlain, FontSize = 12 } };
+            ToolTipService.SetToolTip(plain, P("Paste as plain text", "貼為純文字"));
+            plain.Click += (_, _) =>
+            {
+                ClipboardService.CopyPlainText(QrPayload(item));
+                Notify(InfoBarSeverity.Success, P("Copied as plain text", "已複製做純文字"), P("Formatting stripped — paste anywhere.", "已剝走格式 — 隨處貼上。"));
+            };
+            actions.Children.Add(plain);
+
+            var qr = new Button { Padding = new Thickness(8, 3, 8, 3), Content = new FontIcon { Glyph = GlyphQr, FontSize = 12 } };
+            ToolTipService.SetToolTip(qr, P("Make QR code", "整 QR 碼"));
+            qr.Click += async (_, _) => await ShowQrDialog(QrPayload(item));
+            actions.Children.Add(qr);
+        }
 
         if (item.Kind == ClipKind.Image)
         {
@@ -165,6 +185,86 @@ public sealed partial class ClipboardModule : Page
     private static FrameworkElement Col(FrameworkElement el, int col) { Grid.SetColumn(el, col); return el; }
 
     private void Clear_Click(object sender, RoutedEventArgs e) => ClipboardService.Clear();
+
+    /// <summary>The text payload to encode/copy for a given item (text body, or newline-joined file paths).</summary>
+    private static string QrPayload(ClipItem item) => item.Kind switch
+    {
+        ClipKind.Text => item.Text,
+        ClipKind.Files => string.Join(Environment.NewLine, item.Files),
+        _ => "",
+    };
+
+    /// <summary>Generate a QR code locally and show it in a dialog with Save-PNG / Copy-to-clipboard. No network.</summary>
+    private async System.Threading.Tasks.Task ShowQrDialog(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            Notify(InfoBarSeverity.Warning, P("Nothing to encode", "冇嘢可以編碼"), "");
+            return;
+        }
+        // QR (alphanumeric/byte) tops out around ~2.9 KB; guard so we give a friendly message.
+        if (text.Length > 2900)
+        {
+            Notify(InfoBarSeverity.Warning, P("Too much text for a QR code", "文字太多，整唔到 QR 碼"),
+                P("QR codes hold roughly 2,900 characters. Shorten the text and try again.", "QR 碼大約只能放 2,900 個字元。請縮短文字再試。"));
+            return;
+        }
+
+        byte[] png;
+        try { png = ClipboardService.GenerateQrPng(text); }
+        catch (Exception ex) { Notify(InfoBarSeverity.Error, P("Could not make QR code", "整唔到 QR 碼"), ex.Message); return; }
+
+        var image = new Image { Stretch = Stretch.Uniform, MaxHeight = 320, MaxWidth = 320 };
+        var bmp = new BitmapImage();
+        using (var ms = new MemoryStream(png))
+        using (var ras = ms.AsRandomAccessStream())
+            await bmp.SetSourceAsync(ras);
+        image.Source = bmp;
+
+        var caption = new TextBlock
+        {
+            Text = text.Length > 120 ? text.Substring(0, 120) + "…" : text,
+            FontFamily = new FontFamily("Consolas"),
+            FontSize = 12,
+            TextWrapping = TextWrapping.Wrap,
+            MaxLines = 3,
+            TextTrimming = TextTrimming.CharacterEllipsis,
+            HorizontalAlignment = HorizontalAlignment.Center,
+            Foreground = (Brush)Application.Current.Resources["TextFillColorSecondaryBrush"],
+            Margin = new Thickness(0, 10, 0, 0),
+        };
+
+        var panel = new StackPanel { Spacing = 6, HorizontalAlignment = HorizontalAlignment.Center };
+        panel.Children.Add(image);
+        panel.Children.Add(caption);
+
+        var dialog = new ContentDialog
+        {
+            XamlRoot = this.XamlRoot,
+            Title = P("QR code · QR 碼", "QR 碼 · QR code"),
+            Content = panel,
+            PrimaryButtonText = P("Save PNG…", "儲存 PNG…"),
+            SecondaryButtonText = P("Copy image", "複製圖片"),
+            CloseButtonText = P("Close", "關閉"),
+            DefaultButton = ContentDialogButton.Primary,
+        };
+
+        // Keep the dialog open after the action so the user can do both Save and Copy.
+        dialog.PrimaryButtonClick += (_, args) =>
+        {
+            args.Cancel = true;
+            try { var p = ClipboardService.SaveQrPng(text); Notify(InfoBarSeverity.Success, P("Saved", "已儲存"), p); }
+            catch (Exception ex) { Notify(InfoBarSeverity.Error, P("Failed", "失敗"), ex.Message); }
+        };
+        dialog.SecondaryButtonClick += (_, args) =>
+        {
+            args.Cancel = true;
+            try { ClipboardService.CopyQrToClipboard(text); Notify(InfoBarSeverity.Success, P("QR copied to clipboard", "QR 碼已複製到剪貼簿"), ""); }
+            catch (Exception ex) { Notify(InfoBarSeverity.Error, P("Failed", "失敗"), ex.Message); }
+        };
+
+        await dialog.ShowAsync();
+    }
 
     private void Notify(InfoBarSeverity sev, string title, string msg)
     {
