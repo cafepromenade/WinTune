@@ -744,5 +744,21 @@ From a generate+adversarial-verify workflow (Core Audio COM interop verified `co
 - [ ] **Storage reclaimer** · 儲存空間回收 — Delivery Optimization cache (stop DoSvc + clear), DISM WinSxS cleanup, toggle Reserved Storage (Fsutil/registry), all with reclaimable-size readout.
 - [ ] **File-type default fixer (UserChoice hash)** · 檔案類型預設修復 — snapshot/restore FileExts UserChoice with the computed Hash so PDF/browser stop reverting to Edge.
 
+## 🌱 Newly discovered — iteration 27 · 第 27 次迭代新發掘
+
+From a 3-agent discovery sweep (25 items; strongest distilled below).
+
+- [x] **Context Menu Editor** · 右鍵選單編輯器 — DONE: add/list/remove custom right-click verbs across All files / Folders / Folder-background / Drives, per-user (HKCU\Software\Classes\<scope>\shell), with Browse picker, Shift-only, icon, and PowerShell/Command-Prompt-here presets. `module.contextmenu` / `--page contextmenu`.
+
+### Strong new module candidates (recurring 2025-26 pain) · 強烈建議嘅新模組
+- [ ] **Print Spooler & queue rescue** · 列印佇列救援 — stop Spooler (ServiceController) → purge %SystemRoot%\System32\spool\PRINTERS → restart; per-job delete via System.Printing.PrintQueue.Purge(); toggle printer offline. (Top everyday support topic; clean managed engine; clearly absent.)
+- [ ] **Disk space reclaimer** · 磁碟空間回收 — DISM /Online /Cleanup-Image /AnalyzeComponentStore → /StartComponentCleanup [/ResetBase guarded]; Storage Sense cadence (HKCU\…\StorageSense\Parameters\StoragePolicy); report reclaimable bytes. (We have an analyser but no reclaim engine.)
+- [ ] **Network & DNS doctor** · 網絡／DNS 醫生 — DnsFlushResolverCache + release/renew (iphlpapi) + winsock/int-ip reset + adapter disable/enable (Win32_NetworkAdapter), one guided "Repair connection".
+- [ ] **Sleep/Wake & Power doctor** · 睡眠／喚醒醫生 — powercfg -devicequery wake_armed / -lastwake / -waketimers; Fast Startup HiberbootEnabled=0; unlock Ultimate Performance (duplicatescheme e9a42b02… + PowerSetActiveScheme). (Maint has 2 raw actions; this is the parsed module.)
+- [ ] **Startup-delay eliminator + true autostart manager** · 開機延遲 + 完整自啟動 — StartupDelayInMSec=0; aggregate Run/RunOnce + StartupApproved blob + shell:startup folders + logon tasks into one enable/disable manager.
+- [ ] **Shell recovery ("Fix taskbar & Start")** · Shell 修復 — delete HKCU\…\IrisService cache, re-register shell XAML packages (PackageManager.RegisterPackageAsync), restart explorer. (Wave of no-taskbar boots after 2025 updates.)
+- [ ] **Search index governor** · 搜尋索引管治 — pause/rebuild index, scope folders, kill web results (DisableSearchBoxSuggestions/BingSearchEnabled), throttle.
+- [ ] **File Explorer perf tuner** · 檔案總管效能 — separate-process (SeparateProcess DWORD), kill ghost explorer.exe trees, dark-mode-flash mitigation.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

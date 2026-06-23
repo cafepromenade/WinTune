@@ -122,6 +122,10 @@ public sealed partial class MainWindow : Window
             case "audio":
                 Navigator.GoToModule?.Invoke("module.mixer");
                 break;
+            case "contextmenu":
+            case "rightclick":
+                Navigator.GoToModule?.Invoke("module.contextmenu");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -279,6 +283,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.mixer":
                 NavFrame.Navigate(typeof(VolumeMixerModule));
+                break;
+            case "module.contextmenu":
+                NavFrame.Navigate(typeof(ContextMenuModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

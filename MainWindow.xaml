@@ -162,6 +162,11 @@
                         <FontIcon Glyph="&#xE767;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Context Menu · 右鍵選單" Tag="module.contextmenu">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEDE3;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
