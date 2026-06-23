@@ -8,6 +8,36 @@ namespace WinTune.Catalog;
 
 public static class VaultTweaks
 {
+    /// <summary>
+    /// 執行時用嘅 ASR 規則 GUID → 人類可讀名稱對照（喺 PowerShell 解析，唔硬編喺 UI）。
+    /// Runtime GUID → human-readable name map for Attack Surface Reduction rules,
+    /// resolved inside PowerShell so the catalog never hardcodes names in the UI.
+    /// Source: Microsoft "Attack surface reduction rules reference".
+    /// </summary>
+    private const string AsrNameMapPs = @"
+$AsrNames = @{
+  '56a863a9-875e-4185-98a7-b882c64b5ce5' = 'Block abuse of exploited vulnerable signed drivers';
+  '7674ba52-37eb-4a4f-a9a1-f0f9a1619a2c' = 'Block Adobe Reader from creating child processes';
+  'd4f940ab-401b-4efc-aadc-ad5f3c50688a' = 'Block all Office applications from creating child processes';
+  '9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2' = 'Block credential stealing from LSASS';
+  'be9ba2d9-53ea-4cdc-84e5-9b1eeee46550' = 'Block executable content from email client and webmail';
+  '01443614-cd74-433a-b99e-2ecdc07bfc25' = 'Block executable files unless they meet prevalence/age/trusted criteria';
+  '5beb7efe-fd9a-4556-801d-275e5ffc04cc' = 'Block execution of potentially obfuscated scripts';
+  'd3e037e1-3eb8-44c8-a917-57927947596d' = 'Block JavaScript or VBScript from launching downloaded executable content';
+  '3b576869-a4ec-4529-8536-b80a7769e899' = 'Block Office applications from creating executable content';
+  '75668c1f-73b5-4cf0-bb93-3ecf5cb7cc84' = 'Block Office applications from injecting code into other processes';
+  '26190899-1602-49e8-8b27-eb1d0a1ce869' = 'Block Office communication application from creating child processes';
+  'e6db77e5-3df2-4cf1-b95a-636979351e5b' = 'Block persistence through WMI event subscription';
+  'd1e49aac-8f56-4280-b9ba-993a6d77406c' = 'Block process creations originating from PSExec and WMI commands';
+  '33ddedf1-c6e0-47cb-833e-de6133960387' = 'Block rebooting machine in Safe Mode';
+  'b2b3f03d-6a65-4f7b-a9c7-1c7ef74a9ba4' = 'Block untrusted and unsigned processes that run from USB';
+  'c0033c00-d16d-4114-a5a0-dc9b3a7d2ceb' = 'Block use of copied or impersonated system tools';
+  'a8f5898e-1dc8-49a9-9878-85004b8a61e6' = 'Block Webshell creation for Servers';
+  '92e97fa1-2edf-4476-bdd6-9dd0b4dddc7b' = 'Block Win32 API calls from Office macros';
+  'c1db55ab-c21a-4637-bb3f-a12568109d35' = 'Use advanced protection against ransomware'
+};
+";
+
     public static IEnumerable<TweakDefinition> All() => new List<TweakDefinition>
     {
         // --- bitlocker (20) ---
@@ -111,6 +141,21 @@ public static class VaultTweaks
                 "Resume", "恢復", "manage-bde -protectors -enable C:",
                 requiresAdmin: true, keywords: "bitlocker,resume,protection,恢復,保護,enable"),
 
+            Tweak.Cmd("vault.bitlocker.force-recovery", "Force recovery on next boot", "下次開機逼出還原畫面",
+                "Force C: into BitLocker recovery so the very next boot demands the 48-digit recovery key (useful before firmware/TPM changes). DANGEROUS: you cannot boot without the recovery key. Change the letter as needed.", "強制 C: 進入 BitLocker 還原狀態，下次開機就要打 48 位還原密碼先開到機（改韌體或 TPM 之前好用）。危險：冇還原密碼就開唔到機。需要時自行改字母。",
+                "Force recovery", "逼出還原", "manage-bde -forcerecovery C:",
+                requiresAdmin: true, destructive: true, keywords: "bitlocker,forcerecovery,recovery,還原,逼出,manage-bde,危險"),
+
+            Tweak.Cmd("vault.bitlocker.repair-bde", "Repair a damaged drive (repair-bde)", "修復爛咗嘅磁碟 (repair-bde)",
+                "Reconstruct and decrypt salvageable data from a corrupted BitLocker volume to a SEPARATE empty target, using the 48-digit recovery password. The target is overwritten, so it must be a different, empty drive/image. Edit the input volume, output target and recovery password first.", "用 48 位還原密碼，將損壞嘅 BitLocker 磁碟區可救嘅資料重建並解密到另一個空白目標。目標會被覆寫，所以一定要係另一隻空白磁碟／映像。先改輸入磁碟區、輸出目標同還原密碼。",
+                "Repair", "修復", "repair-bde D: E:\\Recovered.img -rp 000000-000000-000000-000000-000000-000000-000000-000000",
+                requiresAdmin: true, destructive: true, keywords: "bitlocker,repair-bde,repair,修復,recovery,還原,damaged,損壞"),
+
+            Tweak.Cmd("vault.bitlocker.change-password", "Change volume password", "更改磁碟區密碼",
+                "Change the BitLocker password protector on drive D: (you will be prompted for the current and new password). Change the letter as needed.", "更改 D: 磁碟嘅 BitLocker 密碼保護器（會叫你打現有同新密碼）。需要時自行改字母。",
+                "Change", "更改", "manage-bde -changepassword D:",
+                requiresAdmin: true, keywords: "bitlocker,changepassword,password,密碼,更改,manage-bde"),
+
         // --- veracrypt (20) ---
         Tweak.Shell("vault.veracrypt.gui", "Launch VeraCrypt", "啟動 VeraCrypt",
             "Open the VeraCrypt main window.", "打開 VeraCrypt 主視窗。",
@@ -211,6 +256,21 @@ public static class VaultTweaks
             "Open the bundled VeraCrypt User Guide PDF documentation.", "打開隨附嘅 VeraCrypt 使用者指南 PDF 文件。",
             "Open docs", "打開文件", "%ProgramFiles%\\VeraCrypt\\VeraCrypt User Guide.pdf", "",
             keywords: "veracrypt,docs,文件,documentation,guide"),
+
+        Tweak.Shell("vault.veracrypt.mount-keyfile-pim", "Mount with keyfile + PIM", "用鎖匙檔加 PIM 掛載",
+            "Mount a VeraCrypt container to drive X using a keyfile and a PIM, quietly and silently. Edit the volume path, drive letter, keyfile path and PIM number first.", "用鎖匙檔同 PIM 靜默掛載一個 VeraCrypt 容器到 X 磁碟機。先改容器路徑、磁碟機代號、鎖匙檔路徑同 PIM 數值。",
+            "Mount", "掛載", "%ProgramFiles%\\VeraCrypt\\VeraCrypt.exe", "/v \"C:\\path\\to\\volume.hc\" /l X /k \"C:\\path\\to\\keyfile\" /pim 0 /q /silent",
+            keywords: "veracrypt,keyfile,pim,鎖匙檔,掛載,mount,silent"),
+
+        Tweak.Shell("vault.veracrypt.backup-header-gui", "Backup volume header (VeraCrypt)", "備份磁碟區檔頭（VeraCrypt）",
+            "Open VeraCrypt so you can use Tools > Backup Volume Header — VeraCrypt's official, GUI-only way to save a volume header backup (both primary and embedded backup headers).", "打開 VeraCrypt，用工具 > 備份磁碟區檔頭 — 呢個係 VeraCrypt 官方、淨係喺圖形介面先做到嘅檔頭備份方法（連主檔頭同內嵌備份檔頭）。",
+            "Open", "打開", "%ProgramFiles%\\VeraCrypt\\VeraCrypt.exe", "",
+            keywords: "veracrypt,backup,header,檔頭,備份,tools,工具"),
+
+        Tweak.Powershell("vault.veracrypt.backup-header-raw", "Snapshot raw header (first 131072 bytes)", "快照原始檔頭（首 131072 位元組）",
+            "CLI fallback: copy the first 131072 bytes of a VeraCrypt container to a .hdrbak file next to it. This captures the embedded primary header as a RAW copy — it is NOT VeraCrypt's official backup-header format. Edit the volume path first.", "命令列備援：將 VeraCrypt 容器嘅首 131072 位元組複製去旁邊嘅 .hdrbak 檔。呢個係抓內嵌主檔頭嘅原始複本 — 唔係 VeraCrypt 官方嘅備份檔頭格式。先改容器路徑。",
+            "Snapshot", "快照", "$src='C:\\path\\to\\volume.hc'; if (-not (Test-Path $src)) { Write-Host 'Volume not found. Edit the path in this op.'; return }; $dst=$src + '.hdrbak'; $fs=[IO.File]::OpenRead($src); try { $buf=New-Object byte[] 131072; $read=$fs.Read($buf,0,131072); [IO.File]::WriteAllBytes($dst,$buf[0..($read-1)]); Write-Host (\"Wrote raw header snapshot ($read bytes) to: \" + $dst); Write-Host 'NOTE: raw copy only, not VeraCrypt official backup-header format.' } finally { $fs.Dispose() }",
+            keywords: "veracrypt,header,raw,131072,檔頭,快照,backup,備份"),
 
         // --- efs (20) ---
         Tweak.Cmd("vault.efs.show-file-encryption", "Show file encryption state", "顯示檔案加密狀態",
@@ -507,6 +567,46 @@ public static class VaultTweaks
             "Show version", "睇版本", "Get-MpComputerStatus | Select-Object AMEngineVersion,AMProductVersion,AntivirusSignatureVersion,NISSignatureVersion,AntivirusSignatureLastUpdated | Format-List",
             requiresAdmin: true, keywords: "defender,version,engine,版本"),
         
+        Tweak.Powershell("vault.defender.asr-list", "List ASR rules (with names)", "列出 ASR 規則（連名）",
+            "List every configured Attack Surface Reduction rule with its human-readable name and current action (Enabled / AuditMode / Disabled / Warn). Names are resolved at runtime from the GUID, so unknown rules still show their GUID.", "列出每條已設定嘅攻擊面收窄（ASR）規則，連人類可讀名稱同目前動作（啟用／稽核／停用／警告）。名稱喺執行時由 GUID 解析，未知規則都會顯示 GUID。",
+            "List", "列出", AsrNameMapPs + @"
+$p = Get-MpPreference; $ids = $p.AttackSurfaceReductionRules_Ids; $acts = $p.AttackSurfaceReductionRules_Actions;
+$actionNames = @{0='Disabled';1='Enabled';2='AuditMode';6='Warn'};
+if (-not $ids -or $ids.Count -eq 0) { Write-Host 'No ASR rules are configured on this machine.'; return }
+$rows = for ($i=0; $i -lt $ids.Count; $i++) {
+  $g = [string]$ids[$i]; $a = [int]$acts[$i];
+  [pscustomobject]@{ Rule = $(if ($AsrNames.ContainsKey($g.ToLower())) { $AsrNames[$g.ToLower()] } else { '(unknown rule)' }); Action = $(if ($actionNames.ContainsKey($a)) { $actionNames[$a] } else { ""Action$a"" }); Guid = $g }
+}
+$rows | Format-Table -AutoSize -Wrap",
+            requiresAdmin: true, keywords: "defender,asr,attack surface reduction,規則,收窄,rules,guid"),
+
+        Tweak.Powershell("vault.defender.asr-lsass-enable", "ASR: block LSASS theft (Enabled)", "ASR：封鎖 LSASS 竊取（啟用）",
+            "Enable the Attack Surface Reduction rule that blocks credential stealing from the Windows local security authority (lsass.exe). Set to Enabled (block).", "啟用「封鎖由 Windows 本機安全性授權（lsass.exe）竊取憑證」嘅攻擊面收窄規則，設為「啟用」（封鎖）。",
+            "Enable", "啟用", "Add-MpPreference -AttackSurfaceReductionRules_Ids 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2 -AttackSurfaceReductionRules_Actions Enabled; Write-Host 'ASR rule 9e6c4e1f... (Block credential stealing from LSASS) set to Enabled.'",
+            requiresAdmin: true, keywords: "defender,asr,lsass,credential,憑證,封鎖,enabled"),
+
+        Tweak.Powershell("vault.defender.asr-lsass-audit", "ASR: block LSASS theft (Audit)", "ASR：封鎖 LSASS 竊取（稽核）",
+            "Set the LSASS credential-theft ASR rule to AuditMode so it only logs what it would block, without enforcing.", "將 LSASS 憑證竊取嘅 ASR 規則設為「稽核模式」，淨係記錄會封鎖咩，唔真係執行封鎖。",
+            "Audit", "稽核", "Add-MpPreference -AttackSurfaceReductionRules_Ids 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2 -AttackSurfaceReductionRules_Actions AuditMode; Write-Host 'ASR rule 9e6c4e1f... set to AuditMode.'",
+            requiresAdmin: true, keywords: "defender,asr,lsass,audit,稽核,模式"),
+
+        Tweak.Powershell("vault.defender.asr-lsass-warn", "ASR: block LSASS theft (Warn)", "ASR：封鎖 LSASS 竊取（警告）",
+            "Set the LSASS credential-theft ASR rule to Warn so the user is prompted and can allow the action.", "將 LSASS 憑證竊取嘅 ASR 規則設為「警告」，會提示使用者，佢可以選擇允許。",
+            "Warn", "警告", "Add-MpPreference -AttackSurfaceReductionRules_Ids 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2 -AttackSurfaceReductionRules_Actions Warn; Write-Host 'ASR rule 9e6c4e1f... set to Warn.'",
+            requiresAdmin: true, keywords: "defender,asr,lsass,warn,警告"),
+
+        Tweak.Powershell("vault.defender.asr-lsass-disable", "ASR: block LSASS theft (Disabled)", "ASR：封鎖 LSASS 竊取（停用）",
+            "Disable the LSASS credential-theft ASR rule so it no longer blocks, audits or warns.", "停用 LSASS 憑證竊取嘅 ASR 規則，唔再封鎖、稽核或者警告。",
+            "Disable", "停用", "Add-MpPreference -AttackSurfaceReductionRules_Ids 9e6c4e1f-7d60-472f-ba1a-a39ef669e4b2 -AttackSurfaceReductionRules_Actions Disabled; Write-Host 'ASR rule 9e6c4e1f... set to Disabled.'",
+            requiresAdmin: true, keywords: "defender,asr,lsass,disable,停用"),
+
+        Tweak.Powershell("vault.defender.asr-all-audit", "ASR: all rules to Audit mode", "ASR：全部規則設稽核",
+            "Set every well-known Attack Surface Reduction rule to AuditMode at once — a safe way to see what ASR would block on this machine before enforcing.", "一次過將所有常見攻擊面收窄規則設為稽核模式 — 喺真正執行之前，安全咁睇下 ASR 喺呢部機會封鎖咩。",
+            "Audit all", "全部稽核", AsrNameMapPs + @"
+foreach ($g in $AsrNames.Keys) { Add-MpPreference -AttackSurfaceReductionRules_Ids $g -AttackSurfaceReductionRules_Actions AuditMode }
+Write-Host (""Set "" + $AsrNames.Count + "" ASR rules to AuditMode. Use 'List ASR rules' to review."")",
+            requiresAdmin: true, keywords: "defender,asr,audit,all,全部,稽核,規則"),
+
         Tweak.RegChoice("vault.defender.cloud-level-policy", "Cloud protection level (policy)", "雲端保護等級 (政策)",
             "Set the Microsoft Defender cloud-delivered protection blocking aggressiveness level via policy.", "用群組原則設定 Microsoft Defender 雲端保護嘅封鎖積極程度。",
             RegRoot.HKLM, @"SOFTWARE\Policies\Microsoft\Windows Defender\Spynet", "CloudBlockLevel", RegistryValueKind.DWord,
