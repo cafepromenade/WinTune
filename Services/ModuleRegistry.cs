@@ -57,6 +57,7 @@ public static class ModuleRegistry
         new() { Tag = "module.vpn", En = "VPN & Mesh", Zh = "VPN 與網狀網", Glyph = ((char)0xE945).ToString(), Keywords = "vpn nordvpn tailscale mesh connect exit node ping 連線 網狀網" },
         new() { Tag = "module.homeassistant", En = "Home Assistant", Zh = "家居助理", Glyph = ((char)0xE80F).ToString(), Keywords = "home assistant ha smart home rest api template scene script light climate thermostat camera notify intent calendar 智能家居 家居助理" },
         new() { Tag = "module.comms", En = "Communications", Zh = "通訊", Glyph = ((char)0xE8BD).ToString(), Keywords = "communications mail email outlook mailto draft attach teams meeting call discord telegram slack phone link tel sms deep link 通訊 信件 電郵 草稿 會議 電話" },
+        new() { Tag = "module.configbackup", En = "Config & Backup", Zh = "設定與備份", Glyph = ((char)0xE8F7).ToString(), Keywords = "config backup snapshot restore export import bundle zip git schedule mirror reg winget integrity 設定 備份 快照 還原 匯出 匯入 排程 鏡像" },
     };
 
     public static IEnumerable<ModuleInfo> Search(string query)

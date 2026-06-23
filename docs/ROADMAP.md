@@ -340,33 +340,33 @@
   - _winget install --id Google.Chrome -e --silent / winget install --id Microsoft.Edge -e ; winget upgrade --id Google.Chrome -e --silent . Alternates Mozilla.Firefox, Brave.Brave. Real winget package identifiers._
 
 ### Config & Backup · 🆕 new module / 新模組  (14)
-- [ ] **Export all suite settings to a portable bundle** · 匯出成個套件嘅設定做一個檔案
+- [x] **Export all suite settings to a portable bundle** · 匯出成個套件嘅設定做一個檔案
   - _Serialize WinTune's own settings store (the app's settings JSON/INI under %LOCALAPPDATA%\WinTune) plus a manifest into a single .zip via System.IO.Compression.ZipFile.CreateFromDirectory; bundle includes a version stamp so import can validate. File IO + ZipFile._
-- [ ] **Import a settings bundle and re-apply tweaks** · 匯入設定檔案，再套返晒啲調整
+- [x] **Import a settings bundle and re-apply tweaks** · 匯入設定檔案，再套返晒啲調整
   - _ZipFile.ExtractToDirectory of the exported .zip into a temp dir, validate manifest version, then replay each tweak through the existing Windows-11 module apply pipeline. File IO + ZipFile._
-- [ ] **Init local git snapshot repo for config history** · 起一個本地 git 倉庫，儲低設定歷史
+- [x] **Init local git snapshot repo for config history** · 起一個本地 git 倉庫，儲低設定歷史
   - _git init in %LOCALAPPDATA%\WinTune\snapshots; on each snapshot write the current settings export into the working tree, then `git add -A` and `git commit -m "<timestamp>"`. Real git CLI._
-- [ ] **Browse snapshot history (log)** · 睇返啲快照歷史 (log)
+- [x] **Browse snapshot history (log)** · 睇返啲快照歷史 (log)
   - _git -C <snapshotsDir> log --pretty=format:%H%x09%ad%x09%s --date=iso, parse the tab-separated output into a list view. Real git CLI._
-- [ ] **Restore settings to an earlier snapshot** · 還原返去之前一個快照
+- [x] **Restore settings to an earlier snapshot** · 還原返去之前一個快照
   - _git -C <snapshotsDir> restore --source=<commit> . (or `git checkout <commit> -- .`) to repopulate the working tree, then re-run import/apply. Non-destructive: stash the current state first with `git stash`. Real git CLI._
-- [ ] **Diff current config against a snapshot** · 比較而家同舊快照嘅設定差異
+- [x] **Diff current config against a snapshot** · 比較而家同舊快照嘅設定差異
   - _git -C <snapshotsDir> diff <commit> -- settings.json (text settings serialized deterministically so diffs are meaningful). Real git CLI._
-- [ ] **Schedule automatic daily backup** · 排好每日自動備份
+- [x] **Schedule automatic daily backup** · 排好每日自動備份
   - _Register a Task Scheduler task via schtasks /Create /SC DAILY /TN "WinTune Backup" /TR "<WinTune.exe> --snapshot" /ST 03:00 /RL LIMITED (reuses the suite's existing no-UAC scheduled-task pattern). Real schtasks CLI._
-- [ ] **Export tweaked registry keys to a .reg file** · 匯出改過嘅登錄機碼做 .reg 檔
+- [x] **Export tweaked registry keys to a .reg file** · 匯出改過嘅登錄機碼做 .reg 檔
   - _For each key the Windows-11 module is known to touch, run reg export "<HKCU\...\key>" "<out>.reg" /y and concatenate into one human-reviewable, re-importable backup. Real reg.exe._
-- [ ] **Capture installed-app list with winget export** · 用 winget 匯出而家裝咗嘅程式清單
+- [x] **Capture installed-app list with winget export** · 用 winget 匯出而家裝咗嘅程式清單
   - _winget export -o apps.json --include-versions --accept-source-agreements; store the JSON in the snapshot so a rebuild can `winget import apps.json`. Real winget CLI (flags confirmed in winget v1.28)._
-- [ ] **Back up taskbar pins and Start layout files** · 備份工作列嘅固定捷徑同開始選單排版
+- [x] **Back up taskbar pins and Start layout files** · 備份工作列嘅固定捷徑同開始選單排版
   - _reg export HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband for the reliable taskbar part, plus a raw file copy of %LOCALAPPDATA%\Packages\Microsoft.Windows.StartMenuExperienceHost_cw5n1h2txyewy\LocalState\start2.bin (Win11 filename). NOTE: copying start2.bin back is best-effort only — Microsoft removed supported Start-layout import on Win11, so restore is not guaranteed across builds/machines; store it for reference and re-pin if needed. File copy + reg export._
-- [ ] **Mirror backups to a folder or network share** · 將備份鏡像去一個資料夾或者網絡共享
+- [x] **Mirror backups to a folder or network share** · 將備份鏡像去一個資料夾或者網絡共享
   - _robocopy "<snapshotsDir>" "<destOrUNC>" /MIR /R:2 /W:2 /NP /LOG:<log> for resilient incremental mirroring to an external drive or \\server\share. Real robocopy._
-- [ ] **Package a snapshot as a single git bundle file** · 將一個快照打包成單一個 git bundle 檔
+- [x] **Package a snapshot as a single git bundle file** · 將一個快照打包成單一個 git bundle 檔
   - _git -C <snapshotsDir> bundle create wintune-config.bundle --all to produce one transportable file containing full history; restore elsewhere with `git clone wintune-config.bundle`. Real git CLI._
-- [ ] **Prune snapshot history to reclaim space** · 清走舊快照，慳返啲空間
+- [x] **Prune snapshot history to reclaim space** · 清走舊快照，慳返啲空間
   - _Drop refs older than a chosen date, then git -C <snapshotsDir> reflog expire --expire=now --all && git gc --prune=now --aggressive to compact the repo. Real git CLI._
-- [ ] **Verify backup integrity with hashes** · 用雜湊驗一驗備份冇壞
+- [x] **Verify backup integrity with hashes** · 用雜湊驗一驗備份冇壞
   - _Get-FileHash -Algorithm SHA256 over each file in the bundle, write a checksums.txt manifest; on restore recompute and compare, and run `git -C <snapshotsDir> fsck --full` to validate the repo objects. PowerShell Get-FileHash + git fsck._
 
 ### Capture Studio · 🆕 new module / 新模組  (3)

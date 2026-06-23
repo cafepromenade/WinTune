@@ -240,6 +240,10 @@ public sealed partial class MainWindow : Window
             case "telegram":
             case "slack":
                 Navigator.GoToModule?.Invoke("module.comms");
+            case "configbackup":
+            case "backup":
+            case "config":
+                Navigator.GoToModule?.Invoke("module.configbackup");
                 break;
             case null:
             case "":
@@ -352,6 +356,7 @@ public sealed partial class MainWindow : Window
         "module.vpn" => typeof(VpnMeshModule),
         "module.homeassistant" => typeof(HomeAssistantModule),
         "module.comms" => typeof(CommunicationsModule),
+        "module.configbackup" => typeof(ConfigBackupModule),
         _ => typeof(DashboardPage),
     };
 
@@ -501,6 +506,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(HomeAssistantModule));
             case "module.comms":
                 NavFrame.Navigate(typeof(CommunicationsModule));
+            case "module.configbackup":
+                NavFrame.Navigate(typeof(ConfigBackupModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
