@@ -47,6 +47,9 @@ public sealed partial class MainWindow : Window
             case "registry":
                 Navigator.GoToModule?.Invoke("module.regedit");
                 break;
+            case "services":
+                Navigator.GoToModule?.Invoke("module.services");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -144,6 +147,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.regedit":
                 NavFrame.Navigate(typeof(RegistryEditor));
+                break;
+            case "module.services":
+                NavFrame.Navigate(typeof(ServicesModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

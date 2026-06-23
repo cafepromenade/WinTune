@@ -468,5 +468,18 @@
 - [ ] **Process detail: open handles & loaded DLLs** · 程序詳情：開啟嘅控制代碼同 DLL
   - _PowerShell: Get-Process -Id <pid> -Module lists loaded modules; tasklist /m for DLLs; wrap Sysinternals handle.exe (winget install Microsoft.Sysinternals.Handle) for open handles._
 
+## 🌱 Newly discovered — iteration 3 · 第 3 次迭代新發掘 (forum pain-points · 論壇痛點)
+
+_Source: xda-developers "Your Windows 11 complaints have solutions" + r/Windows11 threads._
+- [ ] **Turn off Windows Copilot** · 熄 Windows Copilot
+  - _HKCU\Software\Policies\Microsoft\Windows\WindowsCopilot -> DWORD TurnOffWindowsCopilot = 1. Removes Copilot integration people find intrusive._
+- [ ] **Disable Bing & web results in Start search** · 熄開始搜尋嘅 Bing／網頁結果
+  - _HKCU\Software\Policies\Microsoft\Windows\Explorer -> DWORD DisableSearchBoxSuggestions = 1; and HKCU\Software\Microsoft\Windows\CurrentVersion\Search -> DWORD BingSearchEnabled = 0. Makes search app-focused & instant (top complaint)._
+- [ ] **Disable Search Highlights** · 熄搜尋醒目提示
+  - _HKCU\Software\Microsoft\Windows\CurrentVersion\SearchSettings -> DWORD IsDynamicSearchBoxEnabled = 0. Removes the rotating doodles/ads in the search box._
+- [ ] **Remove "Ask Copilot" / extra entries from right-click** · 右鍵移除「Ask Copilot」等項目
+  - _Restore the compact-menu CLSID block (already have classic-menu toggle) + TurnOffWindowsCopilot; per-app verbs (Clipchamp/Notepad) are blocked via their CLSID under HKCU\Software\Classes\...\shell. Build as in-app toggles._
+- [x] **In-app Services Manager** · App 內服務管理員　(replaces services.msc redirect) — DONE: live list of 315 services, search, start/stop/restart + set startup type, native bilingual, no redirect.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
