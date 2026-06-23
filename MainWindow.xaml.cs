@@ -74,6 +74,10 @@ public sealed partial class MainWindow : Window
             case "dupes":
                 Navigator.GoToModule?.Invoke("module.duplicates");
                 break;
+            case "disk":
+            case "diskanalyzer":
+                Navigator.GoToModule?.Invoke("module.disk");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -195,6 +199,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.duplicates":
                 NavFrame.Navigate(typeof(DuplicatesModule));
+                break;
+            case "module.disk":
+                NavFrame.Navigate(typeof(DiskAnalyzerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

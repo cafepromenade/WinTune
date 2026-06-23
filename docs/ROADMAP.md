@@ -553,5 +553,14 @@ _Source: Microsoft Community Hub — Windows has NO built-in duplicate finder; 3
 - [ ] **Folder size analyser** · 資料夾大細分析
   - _Pure C#: compute total size per immediate subfolder (recursive sum), show a sorted bar list to spot what's eating disk. In-app._
 
+## 🌱 Newly discovered — iteration 12 · 第 12 次迭代新發掘
+
+_Source: windirstat.net — Windows' built-in storage breakdown is limited; users reach for WinDirStat/TreeSize._
+- [x] **In-app Disk Analyser** · App 內磁碟分析 — DONE this iteration: per-folder recursive size with %-bars + drill-in, and a "largest files" mode. Pure C#, off-UI-thread scan, recycle action. Covers the queued largest-files + folder-size items.
+- [ ] **Drive overview** · 磁碟機總覽
+  - _DriveInfo.GetDrives(): show each drive's used/free/total with a bar. Quick entry point into the analyser. Pure C#._
+- [ ] **Treemap visualisation** · 樹狀圖視覺化
+  - _Render folder sizes as nested rectangles (squarified treemap) on a Canvas for an at-a-glance view, like WinDirStat. Pure C# drawing._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
