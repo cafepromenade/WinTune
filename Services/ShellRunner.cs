@@ -122,4 +122,17 @@ public static class ShellRunner
         return Capture("powershell.exe",
             $"-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand {encoded}", ct);
     }
+
+    /// <summary>執行 PowerShell 並抽返純 JSON（去除雜訊／BOM）· Run PowerShell and return just the JSON.</summary>
+    public static async Task<string> CapturePowershellJson(string script, CancellationToken ct = default)
+    {
+        var raw = await CapturePowershell(script, ct);
+        if (string.IsNullOrEmpty(raw)) return "[]";
+        raw = raw.Trim().TrimStart('﻿');
+        int a = raw.IndexOf('['), b = raw.LastIndexOf(']');
+        if (a >= 0 && b > a) return raw.Substring(a, b - a + 1);
+        int c = raw.IndexOf('{'), d = raw.LastIndexOf('}');
+        if (c >= 0 && d > c) return raw.Substring(c, d - c + 1);
+        return "[]";
+    }
 }

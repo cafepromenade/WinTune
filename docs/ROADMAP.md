@@ -481,5 +481,14 @@ _Source: xda-developers "Your Windows 11 complaints have solutions" + r/Windows1
   - _Restore the compact-menu CLSID block (already have classic-menu toggle) + TurnOffWindowsCopilot; per-app verbs (Clipchamp/Notepad) are blocked via their CLSID under HKCU\Software\Classes\...\shell. Build as in-app toggles._
 - [x] **In-app Services Manager** · App 內服務管理員　(replaces services.msc redirect) — DONE: live list of 315 services, search, start/stop/restart + set startup type, native bilingual, no redirect.
 
+## 🌱 Newly discovered — iteration 4 · 第 4 次迭代新發掘 (forum pain-points · 論壇痛點)
+
+_Source: windowsforum.com + thewindowsclub telemetry/Task-Scheduler threads._
+- [x] **In-app Scheduled-Tasks Manager** · App 內排程工作管理員　(replaces taskschd.msc) — DONE this iteration: Get-ScheduledTask list, run/stop/enable/disable, native bilingual, no redirect.
+- [ ] **Disable telemetry scheduled tasks (one-click)** · 一鍵停用遙測排程工作
+  - _Disable-ScheduledTask for \Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser, \...\ProgramDataUpdater, \Autochk\Proxy (UsbCeip), \Customer Experience Improvement Program\Consolidator + UsbCeip. Add as a Recipe + individual toggles in the Tasks manager._
+- [ ] **Disable Compatibility Appraiser via registry too** · 用登錄檔停埋相容性評估
+  - _HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\... and the task; pair with the task disable for completeness._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

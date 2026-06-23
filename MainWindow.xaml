@@ -67,6 +67,11 @@
                         <FontIcon Glyph="&#xE9F5;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Scheduled Tasks · 排程工作" Tag="module.tasks">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE823;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
