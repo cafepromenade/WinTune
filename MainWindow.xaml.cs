@@ -81,6 +81,10 @@ public sealed partial class MainWindow : Window
             case "drives":
                 Navigator.GoToModule?.Invoke("module.drives");
                 break;
+            case "uninstall":
+            case "apps":
+                Navigator.GoToModule?.Invoke("module.uninstall");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -208,6 +212,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.drives":
                 NavFrame.Navigate(typeof(DrivesModule));
+                break;
+            case "module.uninstall":
+                NavFrame.Navigate(typeof(AppUninstallerModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

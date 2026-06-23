@@ -580,5 +580,14 @@ _Source: windowsforum (Win11Debloat) / howtogeek — users want ONE-CLICK, rever
 - [ ] **App uninstaller (in-app list)** · 應用程式解除安裝（app 內清單）
   - _Get-AppxPackage / winget list for a native bilingual uninstall list with checkboxes; remove via Remove-AppxPackage / winget uninstall. In-app, no Settings redirect._
 
+## 🌱 Newly discovered — iteration 15 · 第 15 次迭代新發掘
+
+_Source: windowsforum / howtogeek / pdq — debloat by removing Store/UWP apps; DON'T remove frameworks (VCLibs/.NET.Native)._
+- [x] **In-app App Uninstaller (Store/UWP)** · App 內應用程式解除安裝 — DONE this iteration: Get-AppxPackage list (frameworks excluded), search, per-row silent uninstall via Remove-AppxPackage. No Settings redirect.
+- [ ] **Remove provisioned apps (all users)** · 移除佈建應用程式（所有用戶）
+  - _Get-AppxProvisionedPackage -Online | Remove-AppxProvisionedPackage (admin) so debloated apps don't return for new profiles. Add as an admin toggle/recipe._
+- [ ] **Reinstall all default Store apps** · 重新安裝所有預設商店應用程式
+  - _Recovery: Get-AppxPackage -AllUsers | Foreach Add-AppxPackage -Register "...AppXManifest.xml". A "restore apps" safety action._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

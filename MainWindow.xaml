@@ -112,6 +112,11 @@
                         <FontIcon Glyph="&#xEDA2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="App Uninstaller · 應用程式解除安裝" Tag="module.uninstall">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE74D;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
