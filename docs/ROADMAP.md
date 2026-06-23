@@ -509,5 +509,14 @@ _Source: windowscentral "Top 10 open-source Windows 11 apps recommended by Reddi
 - [ ] **Show boot time / last boot duration** · 顯示開機時間
   - _Get-WinEvent -LogName 'Microsoft-Windows-Diagnostics-Performance/Operational' -Id 100 for boot duration (ms); surface in System Info / Startup module._
 
+## 🌱 Newly discovered — iteration 7 · 第 7 次迭代新發掘
+
+_Source: Microsoft Learn (PowerRename) + bulkrenameutility.co.uk — confirms no native Explorer bulk-rename._
+- [x] **In-app Batch Rename** · App 內批次改名　(PowerRename-style, pure C#) — DONE this iteration: pick a folder, find/replace with regex + live preview + conflict detection, apply. No external tool.
+- [ ] **Batch rename: case transforms & auto-number** · 批次改名：大小寫轉換同自動編號
+  - _Extend the rename engine: UPPER/lower/Title case, prepend/append text, sequential numbering ({n} token). Pure C# (System.IO + Regex)._
+- [ ] **Bulk file operations** · 批次檔案操作　🆕 in-app module
+  - _Move/copy files matching a wildcard/regex, flatten nested folders, delete-by-pattern (with confirm). Pure C# File/Directory APIs, in-app preview._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

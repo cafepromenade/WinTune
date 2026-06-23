@@ -60,6 +60,9 @@ public sealed partial class MainWindow : Window
             case "startup":
                 Navigator.GoToModule?.Invoke("module.startup");
                 break;
+            case "rename":
+                Navigator.GoToModule?.Invoke("module.rename");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -169,6 +172,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.startup":
                 NavFrame.Navigate(typeof(StartupModule));
+                break;
+            case "module.rename":
+                NavFrame.Navigate(typeof(RenameModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
