@@ -195,7 +195,6 @@ public sealed partial class MainWindow : Window
             case "capture":
             case "snip":
             case "screenshot":
-            case "ocr":
                 Navigator.GoToModule?.Invoke("module.capture");
                 break;
             case "monitor":
@@ -268,39 +267,48 @@ public sealed partial class MainWindow : Window
             case "telegram":
             case "slack":
                 Navigator.GoToModule?.Invoke("module.comms");
+                break;
             case "configbackup":
             case "backup":
             case "config":
                 Navigator.GoToModule?.Invoke("module.configbackup");
+                break;
             case "native":
             case "pinvoke":
             case "system32":
                 Navigator.GoToModule?.Invoke("module.native");
+                break;
             case "powertoys":
             case "extras":
             case "ocr":
             case "imageresizer":
                 Navigator.GoToModule?.Invoke("module.powertoys");
+                break;
             case "wsl":
             case "vm":
             case "sandbox":
                 Navigator.GoToModule?.Invoke("module.wslvm");
+                break;
             case "onedrive":
                 Navigator.GoToModule?.Invoke("module.onedrive");
+                break;
             case "time":
             case "timezone":
             case "clock":
             case "unit":
                 Navigator.GoToModule?.Invoke("module.timeunit");
+                break;
             case "settingshub":
             case "controlpanel":
             case "mssettings":
                 Navigator.GoToModule?.Invoke("module.settingshub");
+                break;
             case "imaging":
             case "rpi":
             case "raspberrypi":
             case "minecraft":
                 Navigator.GoToModule?.Invoke("module.imaging");
+                break;
             case "voice":
             case "tts":
             case "speak":
@@ -598,26 +606,37 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.homeassistant":
                 NavFrame.Navigate(typeof(HomeAssistantModule));
+                break;
             case "module.comms":
                 NavFrame.Navigate(typeof(CommunicationsModule));
+                break;
             case "module.configbackup":
                 NavFrame.Navigate(typeof(ConfigBackupModule));
+                break;
             case "module.native":
                 NavFrame.Navigate(typeof(NativeUtilitiesModule));
+                break;
             case "module.powertoys":
                 NavFrame.Navigate(typeof(PowerToysExtrasModule));
+                break;
             case "module.wslvm":
                 NavFrame.Navigate(typeof(WslVmModule));
+                break;
             case "module.fonts":
                 NavFrame.Navigate(typeof(FontManagerModule));
+                break;
             case "module.onedrive":
                 NavFrame.Navigate(typeof(OneDriveModule));
+                break;
             case "module.timeunit":
                 NavFrame.Navigate(typeof(TimeUnitModule));
+                break;
             case "module.settingshub":
                 NavFrame.Navigate(typeof(SettingsHubModule));
+                break;
             case "module.imaging":
                 NavFrame.Navigate(typeof(ImagingGameModule));
+                break;
             case "module.voice":
                 NavFrame.Navigate(typeof(VoiceModule));
                 break;
