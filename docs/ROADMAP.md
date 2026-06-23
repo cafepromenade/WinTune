@@ -280,33 +280,33 @@
   - _7z.exe a archive.7z <files> -mtc=on -mta=on -mtm=on -ssp — -mtc/-mta/-mtm store Created/Accessed/Modified times in the .7z; verified switch -ssp stops Windows from updating the source files' Last-Access-Time while 7-Zip reads them. Add -sni to also store NT security info._
 
 ### Communications · 🆕 new module / 新模組  (14)
-- [ ] **Compose Outlook draft (no auto-send)** · 整封 Outlook 草稿（唔會自動寄）
+- [x] **Compose Outlook draft (no auto-send)** · 整封 Outlook 草稿（唔會自動寄）
   - _Launch classic Outlook with new-message switches: "%ProgramFiles%\Microsoft Office\root\Office16\OUTLOOK.EXE" /c ipm.note /m "someone@example.com?subject=...&cc=...&body=...". /c ipm.note forces a new mail item; /m carries an RFC 6068 mailto query. Resolve the exact OUTLOOK.EXE path at runtime (Office16 path varies by install/bitness; new Outlook has no /c switch). Opens a draft only, never sends._
-- [ ] **Open mailto: compose in default mail app** · 用預設信件 App 開 mailto: 寫信
+- [x] **Open mailto: compose in default mail app** · 用預設信件 App 開 mailto: 寫信
   - _Start-Process "mailto:someone@example.com?subject=...&body=..." routes through whatever owns the mailto protocol (new Outlook, Thunderbird, web). RFC 6068 keys: subject, cc, bcc, body (URL-encoded). Honors the registered mailto UserChoice handler instead of hardcoding Outlook._
-- [ ] **Attach files to a new mail (drag-pick)** · 揀檔案落新郵件做附件
+- [x] **Attach files to a new mail (drag-pick)** · 揀檔案落新郵件做附件
   - _Classic Outlook: OUTLOOK.EXE /a "C:\path\file.pdf" opens a fresh message with that file staged as an attachment; combine with /m to pre-address. /a accepts one file path; loop-launch or zip first for multiple. No send. Classic Outlook only._
-- [ ] **Jump to an Outlook folder on launch** · 跳去指定 Outlook 資料夾
+- [x] **Jump to an Outlook folder on launch** · 跳去指定 Outlook 資料夾
   - _Classic Outlook: OUTLOOK.EXE /select outlook:Calendar (also outlook:Inbox, outlook:Contacts, outlook:Tasks, outlook:Notes, outlook:Drafts). The /select switch with an outlook: namespace path opens that store folder on launch._
-- [ ] **Open a Discord channel / server** · 直接開個 Discord 頻道或者 server
+- [x] **Open a Discord channel / server** · 直接開個 Discord 頻道或者 server
   - _Start-Process "discord://-/channels/<guildId>/<channelId>" (omit channelId to land on the last viewed channel; use discord://-/channels/@me for DMs home). The installed handler is Discord.exe --url -- "%1" (verified in HKCU\Software\Classes\discord\shell\open\command), so the OS resolves the discord:// URL. IDs are user-supplied; no login._
-- [ ] **Open an existing Discord DM thread** · 開返個 Discord 私訊對話
+- [x] **Open an existing Discord DM thread** · 開返個 Discord 私訊對話
   - _Start-Process "discord://-/channels/@me/<dmChannelId>" opens an existing DM channel by its numeric channel id (the @me route is the documented DM namespace mirrored from the web app). User-supplied id only; no credential entry. (Profile-by-userId and settings/<pane> deep links are NOT exposed by the discord:// scheme and were dropped.)_
-- [ ] **Start a Teams 1:1 / group chat** · 開個 Teams 一對一或者群組傾偈
+- [x] **Start a Teams 1:1 / group chat** · 開個 Teams 一對一或者群組傾偈
   - _Start-Process "https://teams.microsoft.com/l/chat/0/0?users=joe@contoso.com,bob@contoso.com&topicName=...&message=..." — the official Teams deep-link form (the https l/chat URL launches the desktop client via the registered ms-teams/msteams handler and falls back to web). users is a comma list of UPNs; message pre-fills, does not auto-send._
-- [ ] **Schedule a new Teams meeting** · 排個新嘅 Teams 會議
+- [x] **Schedule a new Teams meeting** · 排個新嘅 Teams 會議
   - _Start-Process "https://teams.microsoft.com/l/meeting/new?subject=...&attendees=user1@x.com,user2@x.com&startTime=<ISO8601>&endTime=<ISO8601>&content=...". Official deep link; opens the meeting-scheduling form pre-filled, user clicks Send. No auto-send._
-- [ ] **Open a Teams call deep link** · 撳一下打 Teams 電話
+- [x] **Open a Teams call deep link** · 撳一下打 Teams 電話
   - _Start-Process "https://teams.microsoft.com/l/call/0/0?users=joe@contoso.com" — documented Teams l/call deep link; opens the desktop client and starts a call to the given UPN(s). Replaces the unsupported Graph presence-write item, which needs OAuth credentials the suite never enters._
-- [ ] **Share a URL/text to Telegram** · 分享條 link 去 Telegram
+- [x] **Share a URL/text to Telegram** · 分享條 link 去 Telegram
   - _Start-Process "tg://msg_url?url=<urlencoded>&text=<urlencoded>" opens Telegram Desktop's chat-picker with the URL+text staged in the compose box (documented at core.telegram.org/api/links). User picks the chat and sends. Plain text-only share: tg://msg?text=<urlencoded>._
-- [ ] **Open a Telegram chat by username** · 開個 Telegram 傾偈
+- [x] **Open a Telegram chat by username** · 開個 Telegram 傾偈
   - _Start-Process "tg://resolve?domain=<username>" opens that public chat/channel; add &post=<id> to jump to a specific channel post. Documented tg:// links only (the &videochat/&voicechat join params are not public and were dropped). Username only; no login._
-- [ ] **Open a Slack channel / DM** · 開個 Slack 頻道或者私訊
+- [x] **Open a Slack channel / DM** · 開個 Slack 頻道或者私訊
   - _Start-Process "slack://channel?team=<TXXXX>&id=<CXXXX>" opens that channel in the Slack desktop client; slack://user?team=<TXXXX>&id=<UXXXX> opens a DM, and slack://open?team=<TXXXX> just focuses the workspace. Documented slack:// deep links; team/channel/user IDs are user-supplied; no login._
-- [ ] **Call / text via Phone Link** · 用 Phone Link 打電話或者傳 SMS
+- [x] **Call / text via Phone Link** · 用 Phone Link 打電話或者傳 SMS
   - _Start-Process "tel:+18005551234" and Start-Process "sms:+18005551234?body=<urlencoded>" route through the registered tel:/sms: handler (Phone Link / Your Phone when a phone is paired). RFC 3966 tel and the sms: body query; opens the dialer/compose, never auto-dials or auto-sends._
-- [ ] **Pick the default mail / protocol handler** · 揀邊個做預設信件 App
+- [x] **Pick the default mail / protocol handler** · 揀邊個做預設信件 App
   - _Start-Process "ms-settings:defaultapps" opens the Default apps Settings page so the user reassigns mailto and the discord/tg/msteams/slack scheme handlers. Windows 10+ blocks programmatic UserChoice writes, so the suite deep-links the page for the user to confirm rather than forcing a handler._
 
 ### Browser Control · 🆕 new module / 新模組  (14)
