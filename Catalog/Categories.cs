@@ -106,6 +106,15 @@ public static class Categories
         Glyph = "",
     };
 
+    public static readonly AppCategory Launcher = new()
+    {
+        Id = "launcher",
+        Name = new("Launcher & Elevation", "啟動器與提權"),
+        Blurb = new("Create a no-UAC elevated launcher via Task Scheduler, and run the suite as admin.",
+            "用工作排程器整一個免 UAC 提權啟動器，以管理員身分運行套件。"),
+        Glyph = "",
+    };
+
     public static readonly AppCategory Info = new()
     {
         Id = "info",
@@ -119,6 +128,6 @@ public static class Categories
     public static readonly AppCategory[] All =
     {
         Appearance, Explorer, Taskbar, Privacy, Performance, Network,
-        Cleanup, Security, System, Apps, PowerTools, Info,
+        Cleanup, Security, System, Apps, PowerTools, Launcher, Info,
     };
 }

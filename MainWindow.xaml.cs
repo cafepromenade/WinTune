@@ -19,12 +19,35 @@ public sealed partial class MainWindow : Window
         SetTitleBar(AppTitleBar);
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         AppWindow.SetIcon("Assets/AppIcon.ico");
-        AppWindow.Resize(new Windows.Graphics.SizeInt32(1180, 820));
+
+        // 全螢幕 kiosk 模式 · Full-screen kiosk presentation.
+        AppWindow.SetPresenter(AppWindowPresenterKind.FullScreen);
 
         BuildCategoryMenu();
         WireNavigator();
 
         NavFrame.Navigate(typeof(DashboardPage));
+        ApplyStartPage();
+    }
+
+    private void ApplyStartPage()
+    {
+        switch (App.StartPage)
+        {
+            case "git":
+            case "github":
+                Navigator.GoToModule?.Invoke("module.git");
+                break;
+            case null:
+            case "":
+            case "dashboard":
+                break;
+            default:
+                var cat = Categories.All.FirstOrDefault(c => c.Id == App.StartPage);
+                if (cat is not null)
+                    Navigator.GoToCategory?.Invoke(cat);
+                break;
+        }
     }
 
     private void BuildCategoryMenu()
@@ -53,6 +76,15 @@ public sealed partial class MainWindow : Window
         };
 
         Navigator.GoToSettings = () => NavFrame.Navigate(typeof(SettingsPage));
+
+        Navigator.GoToModule = key =>
+        {
+            var item = NavView.MenuItems
+                .OfType<NavigationViewItem>()
+                .FirstOrDefault(i => (i.Tag as string) == key);
+            if (item is not null)
+                NavView.SelectedItem = item;
+        };
     }
 
     private void TitleBar_PaneToggleRequested(TitleBar sender, object args)
@@ -83,6 +115,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "about":
                 NavFrame.Navigate(typeof(AboutPage));
+                break;
+            case "module.git":
+                NavFrame.Navigate(typeof(GitHubModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

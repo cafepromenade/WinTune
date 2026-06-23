@@ -38,6 +38,7 @@
             IsSettingsVisible="True"
             SelectionChanged="NavView_SelectionChanged">
             <NavigationView.MenuItems>
+                <NavigationViewItemHeader Content="Suite · 套件" />
                 <NavigationViewItem
                     Content="Dashboard · 概覽"
                     IsSelected="True"
@@ -46,7 +47,12 @@
                         <FontIcon Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItemSeparator />
+                <NavigationViewItem Content="Git &amp; GitHub · Git 與 GitHub" Tag="module.git">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8AB;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>
                 <NavigationViewItem Content="About · 關於" Tag="about">

@@ -18,8 +18,15 @@ public static class ShellRunner
     /// 執行一個程序並擷取輸出 · Run a process and capture stdout/stderr.
     /// elevated=true 會經 UAC（無法擷取輸出）· elevated runs via UAC (no captured output).
     /// </summary>
-    public static async Task<TweakResult> Run(string fileName, string arguments, bool elevated = false,
+    public static Task<TweakResult> Run(string fileName, string arguments, bool elevated = false,
         CancellationToken ct = default)
+        => RunIn(null, fileName, arguments, elevated, ct);
+
+    /// <summary>
+    /// 喺指定資料夾執行程序 · Run a process with an explicit working directory (used by the Git module).
+    /// </summary>
+    public static async Task<TweakResult> RunIn(string? workingDirectory, string fileName, string arguments,
+        bool elevated = false, CancellationToken ct = default)
     {
         try
         {
@@ -34,6 +41,7 @@ public static class ShellRunner
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
                 };
+                if (!string.IsNullOrEmpty(workingDirectory)) psi.WorkingDirectory = workingDirectory;
                 using var ep = Process.Start(psi);
                 if (ep is null) return TweakResult.Fail("Failed to start process.", "無法啟動程序。");
                 await ep.WaitForExitAsync(ct);
@@ -53,6 +61,7 @@ public static class ShellRunner
                 StandardOutputEncoding = Encoding.UTF8,
                 StandardErrorEncoding = Encoding.UTF8,
             };
+            if (!string.IsNullOrEmpty(workingDirectory)) info.WorkingDirectory = workingDirectory;
 
             using var p = Process.Start(info);
             if (p is null) return TweakResult.Fail("Failed to start process.", "無法啟動程序。");

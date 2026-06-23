@@ -10,6 +10,11 @@
     <PublishProfile Condition="Exists('Properties\PublishProfiles\win-$(Platform).pubxml')">win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <WinUISDKReferences>false</WinUISDKReferences>
+    <!-- 自包含 WinApp 執行階段，令獨立 exe（同排程啟動器）唔使另外安裝 runtime 都行得。
+         Self-contained Windows App SDK runtime so the standalone exe (and the scheduled-task
+         launcher that runs it) works without a separately installed runtime. -->
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <WindowsPackageType>None</WindowsPackageType>
     <EnableMsixTooling>true</EnableMsixTooling>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

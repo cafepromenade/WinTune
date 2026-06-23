@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="WinTune.Pages.GitHubModule"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <ScrollViewer Padding="24,16,24,24" VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="1100" Spacing="14">
+
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <FontIcon FontSize="24" Glyph="&#xE8AB;" VerticalAlignment="Center" />
+                <TextBlock x:Name="HeaderTitle" Style="{StaticResource TitleTextBlockStyle}" />
+            </StackPanel>
+            <TextBlock
+                x:Name="HeaderBlurb"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                TextWrapping="Wrap" />
+
+            <!-- Repository selector -->
+            <Border
+                Padding="16,14,16,14"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel Spacing="10">
+                    <TextBlock x:Name="RepoLabel" FontWeight="SemiBold" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="RepoPathBox" Grid.Column="0" IsReadOnly="True" />
+                        <Button x:Name="BrowseBtn" Grid.Column="1" Click="Browse_Click" />
+                        <Button x:Name="TerminalBtn" Grid.Column="2" Click="Terminal_Click" />
+                    </Grid>
+                    <TextBlock
+                        x:Name="RepoStatus"
+                        FontSize="13"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Quick actions -->
+            <StackPanel
+                x:Name="QuickActions"
+                Orientation="Horizontal"
+                Spacing="8" />
+
+            <!-- Commit -->
+            <Border
+                Padding="16,14,16,14"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel Spacing="10">
+                    <TextBlock x:Name="CommitLabel" FontWeight="SemiBold" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="CommitMessageBox" Grid.Column="0" />
+                        <Button x:Name="CommitBtn" Grid.Column="1" Click="Commit_Click" Style="{StaticResource AccentButtonStyle}" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Chunked uploader (marquee feature) -->
+            <Border
+                Padding="16,14,16,14"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel Spacing="10">
+                    <TextBlock x:Name="ChunkLabel" FontWeight="SemiBold" />
+                    <TextBlock
+                        x:Name="ChunkBlurb"
+                        FontSize="13"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        TextWrapping="Wrap" />
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <NumberBox
+                            x:Name="ChunkSizeBox"
+                            Grid.Column="0"
+                            MinWidth="140"
+                            Maximum="9000"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Inline"
+                            Value="25" />
+                        <TextBox x:Name="ChunkMessageBox" Grid.Column="1" />
+                        <Button x:Name="ChunkUploadBtn" Grid.Column="2" Click="ChunkUpload_Click" Style="{StaticResource AccentButtonStyle}" />
+                    </Grid>
+                    <Border
+                        x:Name="ChunkLogBorder"
+                        Padding="12"
+                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                        CornerRadius="6"
+                        Visibility="Collapsed">
+                        <ScrollViewer MaxHeight="180" VerticalScrollBarVisibility="Auto">
+                            <TextBlock
+                                x:Name="ChunkLog"
+                                FontFamily="Consolas"
+                                FontSize="12"
+                                IsTextSelectionEnabled="True"
+                                TextWrapping="Wrap" />
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+            </Border>
+
+            <!-- Advanced operations (111 generated git/gh ops) -->
+            <TextBlock x:Name="AdvancedHeader" Style="{StaticResource SubtitleTextBlockStyle}" />
+            <AutoSuggestBox
+                x:Name="OpsFilter"
+                MaxWidth="420"
+                HorizontalAlignment="Left"
+                QueryIcon="Find"
+                TextChanged="OpsFilter_TextChanged" />
+            <StackPanel x:Name="OpsPanel" />
+        </StackPanel>
+    </ScrollViewer>
+</Page>

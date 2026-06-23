@@ -2,10 +2,29 @@
 
 # WinTune · 視窗調校
 
-**An all-in-one, fully bilingual control center that really tunes Windows 11.**
-**一個全方位、全程雙語、真係會幫你調校 Windows 11 嘅控制中心。**
+**A fully bilingual Windows convenience suite — a kiosk-style control center that really changes Windows 11.**
+**一個全程雙語嘅 Windows 便利套件 — kiosk 全螢幕控制中心，真係會改到 Windows 11。**
 
-`164 features` · `12 categories` · `WinUI 3` · `.NET` · `English + 粵語`
+`169 Windows 11 tweaks` · `111 Git ops` · `kiosk full-screen` · `no-UAC launcher` · `WinUI 3` · `English + 粵語`
+
+</div>
+
+> **Now a multi-module suite.** WinTune is growing from a Windows 11 tweaker into a full convenience
+> suite. Each "module" is a real, working tool. Built and expanded continuously.
+> **而家係一個多模組套件。** WinTune 由 Windows 11 調校工具，逐步變成一個完整嘅便利套件，
+> 每個「模組」都係真正用得嘅工具，會持續擴充。
+
+## 🧩 Suite modules · 套件模組
+
+| Module · 模組 | What's inside · 內容 |
+|---|---|
+| **Windows 11 control · Windows 11 控制** | 169 real tweaks across 13 categories (registry, power, privacy, cleanup, security, the no-UAC launcher…). <br> 13 個分類、169 項真實調校（登錄檔、電源、私隱、清理、安全、免 UAC 啟動器…）。 |
+| **Git & GitHub · Git 與 GitHub** | Repo picker, stage/commit/branch/sync, the **chunked uploader** (N-MB-per-commit, push one at a time), and **111** advanced git/gh operations. <br> 儲存庫選擇、暫存／提交／分支／同步、**分批上載**（每個 commit N-MB、逐個 push）、同 **111** 個進階 git/gh 操作。 |
+
+<div align="center">
+
+![Dashboard](docs/screenshot-dashboard.png)
+![Git module](docs/screenshot-git.png)
 
 </div>
 

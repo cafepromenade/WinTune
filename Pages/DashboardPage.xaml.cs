@@ -35,9 +35,11 @@ public sealed partial class DashboardPage : Page
             $"{TweakCatalog.Count} 項功能，分 {Categories.All.Length} 個分類");
 
         RenderAdminBar();
+        RenderModuleTiles();
         RenderStats();
         RenderCategoryTiles();
 
+        ModulesHeader.Text = Loc.I.Pick("Suite modules", "套件模組");
         StatsHeader.Text = Loc.I.Pick("System at a glance", "系統一覽");
         BrowseHeader.Text = Loc.I.Pick("Browse categories", "瀏覽分類");
         SearchBox.PlaceholderText = Loc.I.Pick(
@@ -114,6 +116,43 @@ public sealed partial class DashboardPage : Page
         grid.Children.Add(label);
         grid.Children.Add(val);
         StatsPanel.Children.Add(grid);
+    }
+
+    private void RenderModuleTiles()
+    {
+        var tiles = new List<UIElement>
+        {
+            ModuleTile("", "Git & GitHub", "Git 與 GitHub",
+                Loc.I.Pick("Repos, commits, chunked upload, GitHub CLI", "儲存庫、提交、分批上載、GitHub CLI"),
+                () => Navigator.GoToModule?.Invoke("module.git")),
+            ModuleTile("", "Windows 11 control", "Windows 11 控制",
+                Loc.I.Pick($"{Categories.All.Length - 1} tweak categories below", $"下面有 {Categories.All.Length - 1} 個調校分類"),
+                () => Navigator.GoToCategory?.Invoke(Categories.Appearance)),
+        };
+
+        ModuleRepeater.Layout = new UniformGridLayout { MinItemWidth = 320, MinItemHeight = 76, MinRowSpacing = 4, MinColumnSpacing = 4 };
+        ModuleRepeater.ItemsSource = tiles;
+    }
+
+    private Button ModuleTile(string glyph, string titleEn, string titleZh, string sub, Action onClick)
+    {
+        var content = new StackPanel { Orientation = Orientation.Horizontal, Spacing = 12 };
+        content.Children.Add(new FontIcon { Glyph = glyph, FontSize = 24, VerticalAlignment = VerticalAlignment.Center });
+        var texts = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+        texts.Children.Add(new TextBlock { Text = $"{titleEn} · {titleZh}", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold, TextWrapping = TextWrapping.Wrap });
+        texts.Children.Add(new TextBlock { Text = sub, FontSize = 12, Foreground = (Brush)Application.Current.Resources["TextFillColorSecondaryBrush"] });
+        content.Children.Add(texts);
+        var button = new Button
+        {
+            Content = content,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            HorizontalContentAlignment = HorizontalAlignment.Left,
+            Padding = new Thickness(16, 12, 16, 12),
+            Margin = new Thickness(0, 0, 8, 8),
+            MinWidth = 300,
+        };
+        button.Click += (_, _) => onClick();
+        return button;
     }
 
     private void RenderCategoryTiles()

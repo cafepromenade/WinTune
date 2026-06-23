@@ -55,7 +55,13 @@
 
             <StackPanel x:Name="BrowseSection" Spacing="10">
                 <TextBlock
+                    x:Name="ModulesHeader"
+                    Style="{StaticResource SubtitleTextBlockStyle}" />
+                <ItemsRepeater x:Name="ModuleRepeater" />
+
+                <TextBlock
                     x:Name="StatsHeader"
+                    Margin="0,8,0,0"
                     Style="{StaticResource SubtitleTextBlockStyle}" />
                 <StackPanel x:Name="StatsPanel" Spacing="6" />
 
