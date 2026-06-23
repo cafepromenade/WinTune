@@ -54,6 +54,9 @@ public sealed partial class MainWindow : Window
             case "scheduledtasks":
                 Navigator.GoToModule?.Invoke("module.tasks");
                 break;
+            case "devices":
+                Navigator.GoToModule?.Invoke("module.devices");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -157,6 +160,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.tasks":
                 NavFrame.Navigate(typeof(ScheduledTasksModule));
+                break;
+            case "module.devices":
+                NavFrame.Navigate(typeof(DevicesModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);

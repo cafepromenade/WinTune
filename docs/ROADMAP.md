@@ -490,5 +490,16 @@ _Source: windowsforum.com + thewindowsclub telemetry/Task-Scheduler threads._
 - [ ] **Disable Compatibility Appraiser via registry too** · 用登錄檔停埋相容性評估
   - _HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\... and the task; pair with the task disable for completeness._
 
+## 🌱 Newly discovered — iteration 5 · 第 5 次迭代新發掘
+
+_Source: windowscentral "Top 10 open-source Windows 11 apps recommended by Reddit" (PowerToys etc.)._
+- [x] **In-app Devices Manager** · App 內裝置管理員　(replaces devmgmt.msc) — DONE this iteration: Get-PnpDevice present list, enable/disable, native bilingual, no redirect.
+- [ ] **Batch file rename (PowerRename-style)** · 批次改檔名（PowerRename 式）　🆕 in-app module
+  - _Pure C# file IO + System.Text.RegularExpressions: pick a folder, preview find/replace or regex rename across files, apply. No external engine, fully in-app._
+- [ ] **In-app screen recorder** · App 內螢幕錄影
+  - _Wrap ffmpeg: ffmpeg -f gdigrab -framerate 30 -i desktop -c:v libx264 -preset ultrafast out.mp4; start/stop from a native panel. Part of a future Capture Studio module._
+- [ ] **Startup-apps manager (enable/disable)** · 開機程式管理（啟用／停用）
+  - _List from HKCU/HKLM ...\Run + Startup folders + Win32_StartupCommand; toggle via the Explorer\StartupApproved\Run binary blob (byte0 0x02=enabled / 0x03=disabled). In-app, replaces Task Manager's Startup tab._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
