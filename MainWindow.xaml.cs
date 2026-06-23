@@ -29,6 +29,34 @@ public sealed partial class MainWindow : Window
 
         NavFrame.Navigate(typeof(DashboardPage));
         ApplyStartPage();
+
+        // 背景運行：關窗收入系統匣，剪貼簿監察繼續運行。
+        // Keep running when closed: close hides to the tray; the clipboard monitor keeps going.
+        ClipboardService.Start(DispatcherQueue);
+        TrayService.Install(ShowFromTray, QuitFromTray, "WinTune · 視窗調校");
+        AppWindow.Closing += OnAppWindowClosing;
+    }
+
+    private bool _reallyQuit;
+
+    private void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
+    {
+        if (_reallyQuit || !TrayService.IsInstalled) return;
+        args.Cancel = true;       // don't exit — hide to the tray so background work continues
+        AppWindow.Hide();
+    }
+
+    private void ShowFromTray()
+    {
+        AppWindow.Show();
+        Activate();
+    }
+
+    private void QuitFromTray()
+    {
+        _reallyQuit = true;
+        TrayService.Remove();
+        Application.Current.Exit();
     }
 
     private void ApplyStartPage()
@@ -147,6 +175,10 @@ public sealed partial class MainWindow : Window
             case "env":
                 Navigator.GoToModule?.Invoke("module.envvars");
                 break;
+            case "clipboard":
+            case "clip":
+                Navigator.GoToModule?.Invoke("module.clipboard");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -245,6 +277,7 @@ public sealed partial class MainWindow : Window
         "module.awake" => typeof(AwakeModule),
         "module.colorpicker" => typeof(ColorPickerModule),
         "module.envvars" => typeof(EnvVarsModule),
+        "module.clipboard" => typeof(ClipboardModule),
         _ => typeof(DashboardPage),
     };
 
@@ -374,6 +407,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.envvars":
                 NavFrame.Navigate(typeof(EnvVarsModule));
+                break;
+            case "module.clipboard":
+                NavFrame.Navigate(typeof(ClipboardModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
