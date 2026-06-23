@@ -30,6 +30,7 @@ public static class TweakCatalog
         Add(list, Categories.Apps, AppsTweaks.All());
         Add(list, Categories.PowerTools, PowerToolsTweaks.All());
         Add(list, Categories.Launcher, LauncherTweaks.All());
+        Add(list, Categories.Maintenance, MaintenanceTweaks.All());
         Add(list, Categories.Info, InfoTweaks.All());
         return list;
     }

@@ -7,6 +7,7 @@
 ## ✅ Done · 已完成
 - [x] **Windows 11 control module** · Windows 11 控制模組 — 169 tweaks / 13 categories
 - [x] **Git & GitHub module** · Git 與 GitHub 模組 — repo ops, chunked uploader, 111 git/gh operations
+- [x] **Maintenance & Diagnostics module** · 維護與診斷模組 — 102 real ops (services, disk health, SFC/DISM, drivers, updates, event logs, power reports)
 
 ## 🔭 Discovered backlog · 發掘待辦（175 items / 項）
 
@@ -404,4 +405,33 @@
 - [ ] **Read selected text aloud (TTS) / export WAV** · 讀返揀咗嘅字出聲，或者出WAV檔
   - _.NET: Add-Type -AssemblyName System.Speech; $s = New-Object System.Speech.Synthesis.SpeechSynthesizer; choose a voice from $s.GetInstalledVoices(); $s.SpeakAsync(text) to play, or $s.SetOutputToWaveFile(path) then $s.Speak(text); $s.Dispose() flushes/closes the WAV._
 
-----grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
+## 🌱 Newly discovered — iteration 1 · 第 1 次迭代新發掘 (12)
+
+### Windows 11 / Maintenance (newly found · 新搵到)
+- [ ] **Free up Reserved Storage (~7 GB)** · 釋放保留儲存空間（約 7 GB）
+  - _DISM /Online /Set-ReservedStorageState /State:Disabled (admin). Reclaims the space Windows reserves for updates._
+- [ ] **Processor scheduling: Programs vs Background** · 處理器排程：程式定背景服務
+  - _HKLM\SYSTEM\CurrentControlSet\Control\PriorityControl -> DWORD Win32PrioritySeparation = 0x26 (programs) / 0x18 (background). admin._
+- [ ] **Disable USB selective suspend** · 熄咗 USB 選擇性暫停
+  - _powercfg /SETACVALUEINDEX SCHEME_CURRENT 2a737441-1930-4402-8d77-b2bebba308a3 48e6b7a6-50f5-4782-a5d4-53bb8f07e226 0 then powercfg /setactive SCHEME_CURRENT. admin._
+- [ ] **Set active network profile to Private** · 將目前網絡設為私人
+  - _Set-NetConnectionProfile -NetworkCategory Private (admin) — enables sharing & lowers firewall strictness on trusted nets._
+- [ ] **Toggle Hyper-V hypervisor launch** · 開熄 Hyper-V 虛擬化啟動
+  - _bcdedit /set hypervisorlaunchtype auto (on) / off. admin, reboot. Off can help some anti-cheat games; on needed for WSL2/sandbox._
+- [ ] **Rebuild performance counters** · 重建效能計數器
+  - _lodctr /R (admin) — fixes broken Task Manager / PerfMon counters._
+- [ ] **Disable/Enable RAM memory compression** · 開熄記憶體壓縮
+  - _Disable-MMAgent -MemoryCompression / Enable-MMAgent -MemoryCompression (admin, reboot)._
+- [ ] **Hardware-accelerated GPU scheduling (HAGS)** · 硬件加速 GPU 排程
+  - _HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers -> DWORD HwSchMode = 2 (on) / 1 (off). admin, reboot._
+- [ ] **Set crash dump to small (minidump)** · 將當機傾印設為小型 (minidump)
+  - _HKLM\SYSTEM\CurrentControlSet\Control\CrashControl -> DWORD CrashDumpEnabled = 3. admin. Saves disk vs full dumps._
+- [ ] **Disable SysMain (Superfetch) service** · 停用 SysMain (Superfetch) 服務
+  - _sc config SysMain start= disabled then sc stop SysMain (admin) — can reduce disk thrash on some SSD systems._
+- [ ] **GPU TDR delay (fix display-driver timeouts)** · GPU TDR 延遲（修顯示驅動逾時）
+  - _HKLM\SYSTEM\CurrentControlSet\Control\GraphicsDrivers -> DWORD TdrDelay = 8 (seconds). admin, reboot._
+- [ ] **Rebuild Windows Search index** · 重建 Windows 搜尋索引
+  - _HKLM\SOFTWARE\Microsoft\Windows Search -> DWORD SetupCompletedSuccessfully = 0, then restart the WSearch service (admin)._
+
+---
+_Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

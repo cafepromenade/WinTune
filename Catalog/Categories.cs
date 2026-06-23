@@ -115,6 +115,15 @@ public static class Categories
         Glyph = "",
     };
 
+    public static readonly AppCategory Maintenance = new()
+    {
+        Id = "maintenance",
+        Name = new("Maintenance & Diagnostics", "維護與診斷"),
+        Blurb = new("Services, scheduled tasks, disk health, SFC/DISM, drivers, updates, event logs and power reports.",
+            "服務、排程工作、磁碟健康、SFC/DISM、驅動程式、更新、事件記錄同電源報告。"),
+        Glyph = "",
+    };
+
     public static readonly AppCategory Info = new()
     {
         Id = "info",
@@ -128,6 +137,6 @@ public static class Categories
     public static readonly AppCategory[] All =
     {
         Appearance, Explorer, Taskbar, Privacy, Performance, Network,
-        Cleanup, Security, System, Apps, PowerTools, Launcher, Info,
+        Cleanup, Security, System, Apps, PowerTools, Launcher, Maintenance, Info,
     };
 }
