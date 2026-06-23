@@ -634,5 +634,14 @@ _Source: windowsforum / Microsoft Q&A — Xbox Game Bar can't reliably record th
 - [ ] **Animated GIF capture** · 錄製動畫 GIF
   - _gdigrab -t <secs> then the palettegen/paletteuse GIF pipeline already in the Media module. One-click "record a GIF"._
 
+## 🌱 Newly discovered — iteration 21 · 第 21 次迭代新發掘
+
+_Source: neowin / xda / windowscentral — power users replace Task Manager with System Informer / Process Explorer / TaskSlinger for real-time monitoring._
+- [x] **In-app System Monitor** · App 內系統監察 — DONE this iteration: live CPU% (GetSystemTimes), RAM used/total, network down/up (NetworkInterface byte deltas), uptime, top processes by memory with kill. Pure managed/P-Invoke, updates each second. No redirect.
+- [ ] **Per-process CPU% + set priority** · 每個程序 CPU% 同設定優先權
+  - _Track Process.TotalProcessorTime deltas for live CPU% per process; set ProcessPriorityClass (High/Normal/Idle). In-app, like Process Lasso._
+- [ ] **CPU temperature** · CPU 溫度
+  - _Get-CimInstance -Namespace root/wmi MSAcpi_ThermalZoneTemperature (where exposed); or note that most consumer boards need a vendor driver (OpenHardwareMonitor). Show when available._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

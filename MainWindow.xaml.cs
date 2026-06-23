@@ -103,6 +103,10 @@ public sealed partial class MainWindow : Window
             case "record":
                 Navigator.GoToModule?.Invoke("module.recorder");
                 break;
+            case "monitor":
+            case "sysmon":
+                Navigator.GoToModule?.Invoke("module.monitor");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -248,6 +252,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.recorder":
                 NavFrame.Navigate(typeof(ScreenRecorderModule));
+                break;
+            case "module.monitor":
+                NavFrame.Navigate(typeof(SystemMonitorModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
