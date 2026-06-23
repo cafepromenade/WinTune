@@ -32,10 +32,25 @@ public static class DocsExporter
             all.Add((t, "Media · 媒體"));
 
         foreach (var (t, module) in all)
-            File.WriteAllText(Path.Combine(dir, Sanitize(t.Id) + ".md"), BuildMd(t, module), Utf8);
+        {
+            var sub = Path.Combine(dir, Folder(module));
+            Directory.CreateDirectory(sub);
+            File.WriteAllText(Path.Combine(sub, Sanitize(t.Id) + ".md"), BuildMd(t, module), Utf8);
+        }
 
         WriteIndex(dir, all);
         return all.Count;
+    }
+
+    /// <summary>Folder slug from a "English · 粵語" module label, e.g. "Git &amp; GitHub · …" -&gt; "git-github".</summary>
+    private static string Folder(string module)
+    {
+        var en = module.Split('·')[0].Trim().ToLowerInvariant();
+        var chars = en.Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray();
+        var slug = new string(chars);
+        while (slug.Contains("--")) slug = slug.Replace("--", "-");
+        slug = slug.Trim('-');
+        return slug.Length == 0 ? "misc" : slug;
     }
 
     private static string BuildMd(TweakDefinition t, string module)
@@ -80,8 +95,9 @@ public static class DocsExporter
         foreach (var grp in all.GroupBy(x => x.module).OrderBy(g => g.Key))
         {
             sb.AppendLine($"## {grp.Key} ({grp.Count()})");
+            var folder = Folder(grp.Key);
             foreach (var (t, _) in grp.OrderBy(x => x.t.Id))
-                sb.AppendLine($"- [{t.Title.En} · {t.Title.Zh}]({Sanitize(t.Id)}.md)");
+                sb.AppendLine($"- [{t.Title.En} · {t.Title.Zh}]({folder}/{Sanitize(t.Id)}.md)");
             sb.AppendLine();
         }
         File.WriteAllText(Path.Combine(dir, "README.md"), sb.ToString(), Utf8);

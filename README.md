@@ -5,7 +5,9 @@
 **A fully bilingual Windows convenience suite — a kiosk-style control center that really changes Windows 11.**
 **一個全程雙語嘅 Windows 便利套件 — kiosk 全螢幕控制中心，真係會改到 Windows 11。**
 
-`169 Windows 11 tweaks` · `111 Git ops` · `kiosk full-screen` · `no-UAC launcher` · `WinUI 3` · `English + 粵語`
+`30+ in-app modules` · `1100+ tweaks & ops` · `PowerToys + Winaero built in` · `kiosk full-screen` · `tray / runs in background` · `WinUI 3` · `English + 粵語`
+
+`releases on every push` · `master search` · `no redirects — everything runs in-app`
 
 </div>
 

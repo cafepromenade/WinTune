@@ -791,5 +791,39 @@ desktop/Explorer, context-menu, privacy/network) and will land as a dedicated ca
 - [ ] **Keep running when closed** — system tray icon (Shell_NotifyIcon) + intercept window close to
   hide-to-tray instead of exit, so the clipboard runner keeps going. Tray menu: Open / Quit.
 
+## 🧩 Big integrations & goals — user-requested (iteration 29+) · 大型整合同目標
+
+Honouring the no-redirect rule: where a request names an external GUI app, WinTune reimplements its
+useful functions natively by WRAPPING the real engine (winget/adb/fastboot/dd-equivalent), not by
+launching the other app.
+
+### Done this iteration
+- [x] **Background Clipboard manager + tray** · 背景剪貼簿 + 系統匣 — DONE (text/image/file history, auto-convert, keep-running-when-closed via Shell_NotifyIcon).
+
+### Package management (covers "clone UniGetUI" + "auto-install common deps")
+- [ ] **Package Manager (UniGetUI-style)** · 套件管理員 — one GUI over winget + scoop + choco + pip + npm: search, install, update-all, uninstall, export/import a package list. Mechanism: wrap each CLI (`winget search/install/upgrade --id`, `scoop`, `choco`, `pip`, `npm -g`), parse to a unified list; bundle = JSON of {manager,id} re-installed on another PC.
+- [ ] **Auto-install common deps** · 一鍵安裝常用相依 — one-click winget-install of WinTune's own engines + common dev tools: ffmpeg (Gyan.FFmpeg), 7-Zip, Git, adb (Google.PlatformTools), Python, Node, .NET, OpenSSH. Detect-then-install with progress.
+
+### Dev environment
+- [ ] **Visual Studio installer panel (export/import .vsconfig)** · VS 安裝器面板 — wrap the VS bootstrapper / winget (`winget install Microsoft.VisualStudio.2022.Community --override "--config <file>"`); export the current install's .vsconfig and re-apply it; list/modify workloads. (Flashing/installer = real engine, in-app UI.)
+
+### Android (ADB + emulator + flashing)
+- [ ] **Android / ADB console** · Android／ADB 主控台 — wrap adb: list devices (`adb devices -l`), install/uninstall APK (`adb install/uninstall`), push/pull, `adb shell`, live logcat, screencap → save, reboot/bootloader, wireless `adb connect`. Engine: Google.PlatformTools adb.exe (auto-install via deps panel).
+- [ ] **Android emulator control** · Android 模擬器控制 — wrap the Android SDK emulator/avdmanager: list AVDs, create/launch/stop, cold-boot/wipe. (Needs SDK; offer to install via deps.)
+- [ ] **PixelFlasher-style flasher** · Pixel 刷機（PixelFlasher 式）— wrap fastboot + the boot-image patch flow: detect device (`fastboot devices`), unlock check, flash factory image / patched boot.img, sideload OTA. DANGEROUS → heavy guards, dry-run, explicit confirmations. (Reimplement the workflow natively; do not launch PixelFlasher.)
+
+### Imaging & game tools (need the engine/repo)
+- [ ] **Raspberry Pi Imager + pi boot config** · 樹莓派燒錄 — write an OS image to an SD card (raw volume write via CreateFile on \\.\PhysicalDriveN + WriteFile, with un/dismount + size guard), pick distro, and pre-seed boot config (ssh, wifi `wpa_supplicant`, user) on the boot partition. DANGEROUS (disk write) → drive picker with strong guards.
+- [ ] **Minecraft world downloader** · Minecraft 世界下載 — integrate the local GitHub repo (a proxy/mod that records chunks to a save). Plan: build the repo's jar with the bundled JDK, expose start/stop + output folder in-app; OR reimplement the proxy. NEEDS the repo path under C:\Users\cntow\Documents\GitHub.
+
+### Networking / VPN & DB tools (CLI-wrapping GUIs)
+- [ ] **NordVPN GUI (wraps the CLI)** · NordVPN 介面 — wrap `nordvpn` CLI: connect/disconnect, pick country/city/server, status, settings (killswitch, autoconnect), meshnet. In-app native UI over the CLI.
+- [ ] **Tailscale GUI (wraps the CLI)** · Tailscale 介面 — wrap `tailscale` CLI: up/down, status, device list (`tailscale status --json`), IP, exit-node pick, `tailscale ping`. Native UI.
+- [ ] **SSMS installer** · SSMS 安裝器 — install SQL Server Management Studio via winget (`Microsoft.SQLServerManagementStudio`) with progress; part of the dev/deps panel.
+
+### Program-wide goals
+- [ ] **1000-feature goal** · 1000 功能目標 — keep the loop discovering REAL features (no padding). Current: ~30 modules + 1140 catalog tweaks/ops + 17 recipes. Track the real total in About.
+- [ ] **Docs + wiki + CLI reference** · 文件 + wiki + CLI 參考 — generate docs/CLI.md (every `--page <id>`, `--category`, `--export-docs`, `--page search:<q>`), a GitHub wiki, and keep README + per-feature docs current.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_
