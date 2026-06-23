@@ -422,7 +422,7 @@
   - _Enumerate zones with TimeZoneInfo.GetSystemTimeZones() (or tzutil /l) and convert with TimeZoneInfo.ConvertTimeBySystemTimeZoneId(dt, srcId, dstId). Read the machine's current zone via tzutil /g; show a multi-city board updating each second. No network needed; zones come from the OS ICU/registry data._
 
 ### Voice & Read-Aloud · 🆕 new module / 新模組  (1)
-- [ ] **Read selected text aloud (TTS) / export WAV** · 讀返揀咗嘅字出聲，或者出WAV檔
+- [x] **Read selected text aloud (TTS) / export WAV** · 讀返揀咗嘅字出聲，或者出WAV檔
   - _.NET: Add-Type -AssemblyName System.Speech; $s = New-Object System.Speech.Synthesis.SpeechSynthesizer; choose a voice from $s.GetInstalledVoices(); $s.SpeakAsync(text) to play, or $s.SetOutputToWaveFile(path) then $s.Speak(text); $s.Dispose() flushes/closes the WAV._
 
 ## 🌱 Newly discovered — iteration 1 · 第 1 次迭代新發掘 (12)

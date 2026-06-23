@@ -301,6 +301,10 @@ public sealed partial class MainWindow : Window
             case "raspberrypi":
             case "minecraft":
                 Navigator.GoToModule?.Invoke("module.imaging");
+            case "voice":
+            case "tts":
+            case "speak":
+                Navigator.GoToModule?.Invoke("module.voice");
                 break;
             case null:
             case "":
@@ -428,6 +432,7 @@ public sealed partial class MainWindow : Window
         "module.timeunit" => typeof(TimeUnitModule),
         "module.settingshub" => typeof(SettingsHubModule),
         "module.imaging" => typeof(ImagingGameModule),
+        "module.voice" => typeof(VoiceModule),
         _ => typeof(DashboardPage),
     };
 
@@ -613,6 +618,8 @@ public sealed partial class MainWindow : Window
                 NavFrame.Navigate(typeof(SettingsHubModule));
             case "module.imaging":
                 NavFrame.Navigate(typeof(ImagingGameModule));
+            case "module.voice":
+                NavFrame.Navigate(typeof(VoiceModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
