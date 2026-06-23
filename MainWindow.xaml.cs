@@ -220,6 +220,14 @@ public sealed partial class MainWindow : Window
             case "android":
                 Navigator.GoToModule?.Invoke("module.adb");
                 break;
+            case "fastboot":
+            case "flasher":
+                Navigator.GoToModule?.Invoke("module.fastboot");
+                break;
+            case "emulator":
+            case "avd":
+                Navigator.GoToModule?.Invoke("module.emulator");
+                break;
             case "vpn":
             case "nordvpn":
             case "tailscale":
@@ -332,6 +340,8 @@ public sealed partial class MainWindow : Window
         "module.clipboard" => typeof(ClipboardModule),
         "module.packages" => typeof(PackageManagerModule),
         "module.adb" => typeof(AndroidAdbModule),
+        "module.fastboot" => typeof(FastbootModule),
+        "module.emulator" => typeof(EmulatorModule),
         "module.vpn" => typeof(VpnMeshModule),
         _ => typeof(DashboardPage),
     };
@@ -471,6 +481,12 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.adb":
                 NavFrame.Navigate(typeof(AndroidAdbModule));
+                break;
+            case "module.fastboot":
+                NavFrame.Navigate(typeof(FastbootModule));
+                break;
+            case "module.emulator":
+                NavFrame.Navigate(typeof(EmulatorModule));
                 break;
             case "module.vpn":
                 NavFrame.Navigate(typeof(VpnMeshModule));

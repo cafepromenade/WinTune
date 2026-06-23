@@ -52,7 +52,9 @@ public static class ModuleRegistry
         new() { Tag = "module.envvars", En = "Environment Variables", Zh = "環境變數", Glyph = "", Keywords = "environment variables path user system env 環境變數" },
         new() { Tag = "module.clipboard", En = "Clipboard", Zh = "剪貼簿", Glyph = ((char)0xE77F).ToString(), Keywords = "clipboard history text image file convert win+v 剪貼簿 歷史" },
         new() { Tag = "module.packages", En = "Package Manager", Zh = "套件管理", Glyph = ((char)0xECAA).ToString(), Keywords = "winget package install uninstall upgrade scoop choco dependencies unigetui 套件 安裝 相依" },
-        new() { Tag = "module.adb", En = "Android (ADB)", Zh = "Android（ADB）", Glyph = ((char)0xE8EA).ToString(), Keywords = "android adb apk logcat shell screenshot reboot fastboot scrcpy 手機 安卓" },
+        new() { Tag = "module.adb", En = "Android (ADB)", Zh = "Android（ADB）", Glyph = ((char)0xE8EA).ToString(), Keywords = "android adb apk logcat shell screenshot reboot fastboot scrcpy push pull file backup mirror 手機 安卓 鏡像 備份" },
+        new() { Tag = "module.fastboot", En = "Fastboot / Flasher", Zh = "Fastboot／刷機", Glyph = ((char)0xE7BA).ToString(), Keywords = "fastboot flash flasher bootloader unlock boot.img factory image sideload ota pixelflasher 刷機 解鎖" },
+        new() { Tag = "module.emulator", En = "Android Emulator", Zh = "Android 模擬器", Glyph = ((char)0xE8EA).ToString(), Keywords = "android emulator avd avdmanager sdkmanager virtual device launch wipe cold boot 模擬器 虛擬裝置" },
         new() { Tag = "module.vpn", En = "VPN & Mesh", Zh = "VPN 與網狀網", Glyph = ((char)0xE945).ToString(), Keywords = "vpn nordvpn tailscale mesh connect exit node ping 連線 網狀網" },
     };
 
