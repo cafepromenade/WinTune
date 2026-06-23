@@ -55,7 +55,7 @@ public static class ModuleRegistry
         new() { Tag = "module.awake", En = "Awake", Zh = "保持喚醒", Glyph = "", Keywords = "awake keep awake no sleep caffeine 唔瞓 喚醒" },
         new() { Tag = "module.colorpicker", En = "Color Picker", Zh = "螢幕取色", Glyph = "", Keywords = "color picker hex rgb hsl eyedropper 取色 顏色" },
         new() { Tag = "module.envvars", En = "Environment Variables", Zh = "環境變數", Glyph = "", Keywords = "environment variables path user system env 環境變數" },
-        new() { Tag = "module.clipboard", En = "Clipboard", Zh = "剪貼簿", Glyph = ((char)0xE77F).ToString(), Keywords = "clipboard history text image file convert win+v 剪貼簿 歷史" },
+        new() { Tag = "module.clipboard", En = "Clipboard", Zh = "剪貼簿", Glyph = ((char)0xE77F).ToString(), Keywords = "clipboard history text image file convert win+v qr qrcode qr code plain text paste 剪貼簿 歷史 二維碼 純文字" },
         new() { Tag = "module.packages", En = "Package Manager", Zh = "套件管理", Glyph = ((char)0xECAA).ToString(), Keywords = "winget package install uninstall upgrade scoop choco dependencies unigetui 套件 安裝 相依" },
         new() { Tag = "module.adb", En = "Android (ADB)", Zh = "Android（ADB）", Glyph = ((char)0xE8EA).ToString(), Keywords = "android adb apk logcat shell screenshot reboot fastboot scrcpy push pull file backup mirror 手機 安卓 鏡像 備份" },
         new() { Tag = "module.fastboot", En = "Fastboot / Flasher", Zh = "Fastboot／刷機", Glyph = ((char)0xE7BA).ToString(), Keywords = "fastboot flash flasher bootloader unlock boot.img factory image sideload ota pixelflasher 刷機 解鎖" },
