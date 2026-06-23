@@ -693,5 +693,29 @@ This batch came from three parallel agent workflows: a forum pain-point sweep, a
 - [ ] **Startup delay tuner** · 啟動延遲 — HKCU …\Explorer\Serialize\StartupDelayInMSec=0 (create Serialize key).
 - [ ] **Verbose boot diagnostics** · 詳細開機診斷 — HKLM …\Policies\System\VerboseStatus=1.
 
+## 🌱 Newly discovered — iteration 24 · 第 24 次迭代新發掘
+
+From a verify+discover workflow (iphlpapi P/Invoke adversarially confirmed `correct=true`, + 28 forum/tool finds).
+
+- [x] **Active Connections (TCPView-style)** · 即時連線檢視 — DONE: live IPv4 TCP+UDP sockets with owning process, state, filter, drop-a-connection (SetTcpEntry DELETE_TCB, admin) + end-process. `ConnectionsService` over iphlpapi (GetExtendedTcp/UdpTable), verified marshaling. `module.connections` / `--page connections`.
+
+### High-value tweak-catalog candidates (registry, perfect for the Win11 catalog) · 登錄檔調校
+- [ ] **AI / Copilot / Recall / Click-to-Do stripper** · 移除 AI — HKCU\…\WindowsAI\RemoveMicrosoftCopilotApp=1, DisableAIDataAnalysis=1 (Recall), DisableClickToDo=1; legacy TurnOffWindowsCopilot=1.
+- [ ] **Ad / Suggestion killer** · 廣告／建議清除 — HKCU\…\ContentDeliveryManager SubscribedContent-33838x/35369x=0, SilentInstalledAppsEnabled=0, OemPreInstalledAppsEnabled=0, SoftLandingEnabled=0; HKLM\…\CloudContent\DisableWindowsConsumerFeatures=1; SettingsPageVisibility="hide:home".
+- [ ] **Remove Bing/web from Search** · 移除搜尋 Bing — HKCU\…\Policies\…\Explorer\DisableSearchBoxSuggestions=1; Search\BingSearchEnabled=0, CortanaConsent=0; restart explorer.
+- [ ] **Classic context menu** · 傳統右鍵選單 — HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32 (empty default); restart explorer; revert=delete key.
+- [ ] **Clipboard history & cloud-clipboard** · 剪貼簿歷史 — HKCU\…\Clipboard\EnableClipboardHistory + CloudClipboardAutomaticUpload; clear via WinRT Clipboard.ClearHistory().
+- [ ] **Do-Not-Disturb / notification governor** · 通知管控 — HKCU\…\PushNotifications\ToastEnabled + per-app …\Notifications\Settings\<AUMID>\Enabled.
+- [ ] **Long path (MAX_PATH) enabler** · 長路徑 — HKLM\…\FileSystem\LongPathsEnabled=1 (reboot).
+- [ ] **Startup delay / boot accelerator** · 啟動延遲 — HKCU\…\Explorer\Serialize\StartupDelayInMSec=0 (create Serialize).
+- [ ] **Mapped-drive reconnect fixer** · 網絡磁碟重連 — HKLM\…\Policies\System\EnableLinkedConnections=1; Winlogon\SyncForegroundPolicy=1.
+
+### New module candidates · 新模組
+- [ ] **Wake / Sleep Doctor** · 喚醒／睡眠醫生 — parse powercfg /lastwake /waketimers /devicequery wake_armed + EventLog Kernel-Power 107; disarm via /devicedisablewake; disable wake timers (powrprof PowerWriteAcValueIndex on SUB_SLEEP\RTCWAKE).
+- [ ] **Network Repair Kit** · 網絡修復工具 — winsock/int-ip reset, flush/release/renew (DnsFlushResolverCache); NIC power-save PnPCapabilities=0x18.
+- [ ] **OneDrive Known-Folder un-hijacker** · OneDrive 解除騎劫 — IKnownFolderManager::SetPath / User Shell Folders; KFMBlockOptIn=1; remove Run\OneDrive.
+- [ ] **Default-apps lock** · 預設程式鎖定 — snapshot FileExts UserChoice (AssocQueryString) + re-apply to stop Edge reverting.
+- [ ] **File Explorer / context-menu speed-up** · 總管加速 — block slow shell-ext CLSIDs (…\Shell Extensions\Blocked); clear AutomaticDestinations jumplist cache; restart explorer.
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

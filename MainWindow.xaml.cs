@@ -107,6 +107,11 @@ public sealed partial class MainWindow : Window
             case "sysmon":
                 Navigator.GoToModule?.Invoke("module.monitor");
                 break;
+            case "connections":
+            case "netstat":
+            case "tcp":
+                Navigator.GoToModule?.Invoke("module.connections");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -255,6 +260,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.monitor":
                 NavFrame.Navigate(typeof(SystemMonitorModule));
+                break;
+            case "module.connections":
+                NavFrame.Navigate(typeof(ConnectionsModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
