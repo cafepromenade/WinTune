@@ -137,6 +137,11 @@
                         <FontIcon Glyph="&#xE962;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Screen Recorder · 螢幕錄影" Tag="module.recorder">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE714;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItemHeader Content="Windows 11 · 視窗 11" />
             </NavigationView.MenuItems>
             <NavigationView.FooterMenuItems>

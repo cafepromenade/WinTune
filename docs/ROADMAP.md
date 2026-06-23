@@ -625,5 +625,14 @@ _Source: howtogeek / windowsforum — "Enhance pointer precision" (accel) is bur
 - [ ] **Touchpad settings (precision)** · 觸控板設定（精準觸控板）
   - _HKCU\Software\Microsoft\Windows\CurrentVersion\PrecisionTouchPad values (sensitivity, tap, scroll direction). In-app panel where a precision touchpad exists._
 
+## 🌱 Newly discovered — iteration 20 · 第 20 次迭代新發掘
+
+_Source: windowsforum / Microsoft Q&A — Xbox Game Bar can't reliably record the desktop / File Explorer ("gaming features aren't available")._
+- [x] **In-app Screen Recorder** · App 內螢幕錄影 — DONE this iteration: records the WHOLE desktop (incl. Explorer/Start) via ffmpeg gdigrab + libx264, start/stop with a live timer, graceful stop ('q' to stdin → valid MP4). No external tool, no redirect.
+- [ ] **Record audio with screen** · 連聲一齊錄
+  - _ffmpeg -f dshow -i audio="<device>" alongside gdigrab; enumerate capture/loopback devices (ffmpeg -list_devices). Add as an option._
+- [ ] **Animated GIF capture** · 錄製動畫 GIF
+  - _gdigrab -t <secs> then the palettegen/paletteuse GIF pipeline already in the Media module. One-click "record a GIF"._
+
 ---
 _Auto-grown by the WinTune build loop · 由 WinTune 建置迴圈自動擴充_

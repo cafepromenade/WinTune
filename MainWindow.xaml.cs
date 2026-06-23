@@ -99,6 +99,10 @@ public sealed partial class MainWindow : Window
             case "mouse":
                 Navigator.GoToModule?.Invoke("module.mouse");
                 break;
+            case "recorder":
+            case "record":
+                Navigator.GoToModule?.Invoke("module.recorder");
+                break;
             case null:
             case "":
             case "dashboard":
@@ -241,6 +245,9 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.mouse":
                 NavFrame.Navigate(typeof(MouseModule));
+                break;
+            case "module.recorder":
+                NavFrame.Navigate(typeof(ScreenRecorderModule));
                 break;
             default:
                 var cat = Categories.All.FirstOrDefault(c => c.Id == tag);
