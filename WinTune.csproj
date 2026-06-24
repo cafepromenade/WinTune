@@ -18,6 +18,9 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Vendored upstream sources under external/ (git submodules) must NEVER be compiled into WinTune;
+         exclude them from all default item globs so a 'git submodule update' can't break the build. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);external\**</DefaultItemExcludes>
   </PropertyGroup>
 
   <ItemGroup>
