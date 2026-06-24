@@ -118,6 +118,18 @@ public sealed partial class MainWindow : Window
             case "github":
                 Navigator.GoToModule?.Invoke("module.git");
                 break;
+            case "ai":
+            case "aiagents":
+            case "claude":
+            case "codex":
+                Navigator.GoToModule?.Invoke("module.aiagents");
+                break;
+            case "cloudflare":
+            case "tunnel":
+            case "cloudflared":
+            case "warp":
+                Navigator.GoToModule?.Invoke("module.cloudflare");
+                break;
             case "archives":
             case "archive":
                 Navigator.GoToModule?.Invoke("module.archives");
@@ -398,6 +410,8 @@ public sealed partial class MainWindow : Window
     private static Type MapType(string key) => key switch
     {
         "module.git" => typeof(GitHubModule),
+        "module.aiagents" => typeof(AiAgentsModule),
+        "module.cloudflare" => typeof(CloudflareModule),
         "module.archives" => typeof(ArchivesModule),
         "module.media" => typeof(MediaModule),
         "module.regedit" => typeof(RegistryEditor),
@@ -498,6 +512,12 @@ public sealed partial class MainWindow : Window
                 break;
             case "module.git":
                 NavFrame.Navigate(typeof(GitHubModule));
+                break;
+            case "module.aiagents":
+                NavFrame.Navigate(typeof(AiAgentsModule));
+                break;
+            case "module.cloudflare":
+                NavFrame.Navigate(typeof(CloudflareModule));
                 break;
             case "module.archives":
                 NavFrame.Navigate(typeof(ArchivesModule));
