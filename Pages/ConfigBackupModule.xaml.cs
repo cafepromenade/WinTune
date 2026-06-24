@@ -182,35 +182,23 @@ public sealed partial class ConfigBackupModule : Page
 
     private async void ExportReg_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker
-        {
-            SuggestedFileName = $"wintune-registry-{DateTime.Now:yyyyMMdd}",
-        };
-        picker.FileTypeChoices.Add("Registry", new System.Collections.Generic.List<string> { ".reg" });
-        Init(picker);
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        await Run(() => ConfigBackupService.ExportRegistry(f.Path), P("Export registry", "匯出登錄檔"));
+        var path = await FileDialogs.SaveFileAsync($"wintune-registry-{DateTime.Now:yyyyMMdd}", ".reg");
+        if (path is null) return;
+        await Run(() => ConfigBackupService.ExportRegistry(path), P("Export registry", "匯出登錄檔"));
     }
 
     private async void ExportWinget_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "apps" };
-        picker.FileTypeChoices.Add("JSON", new System.Collections.Generic.List<string> { ".json" });
-        Init(picker);
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        await Run(() => ConfigBackupService.ExportWingetApps(f.Path), P("Capture app list", "擷取程式清單"));
+        var path = await FileDialogs.SaveFileAsync("apps", ".json");
+        if (path is null) return;
+        await Run(() => ConfigBackupService.ExportWingetApps(path), P("Capture app list", "擷取程式清單"));
     }
 
     private async void BackupTaskbar_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        Init(picker);
-        var f = await picker.PickSingleFolderAsync();
-        if (f is null) return;
-        await Run(() => ConfigBackupService.BackupTaskbarAndStart(f.Path), P("Back up taskbar / Start", "備份工作列／開始選單"));
+        var path = await FileDialogs.OpenFolderAsync();
+        if (path is null) return;
+        await Run(() => ConfigBackupService.BackupTaskbarAndStart(path), P("Back up taskbar / Start", "備份工作列／開始選單"));
     }
 
     // ───────────────────────── automate & mirror ─────────────────────────
