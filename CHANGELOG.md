@@ -2,6 +2,26 @@
 
 _Cleaned-up project history. Contributor / author names intentionally omitted._
 
+## Latest — dialogs fix, crash-proofing, Cloudflare, AI agents, settings & more
+
+- **File/folder dialogs now open** — replaced every WinRT picker (which fails silently when the app
+  runs as administrator) with a Win32 COM `IFileDialog` helper (`Services/FileDialogs.cs`) that works
+  elevated or not. Migrated ~30 modules.
+- **Crash-proofing** — global unhandled-exception handlers log to `crash.log` and keep the app alive
+  (`Services/CrashLogger.cs`); **OCR no longer crashes** (the full-screen capture is now downscaled to
+  the OCR engine's max dimension before recognition).
+- **Cloudflare & Tunnel module** — cloudflared named/quick tunnels, route DNS, Cloudflare Access,
+  DNS-over-HTTPS and WARP, all in-app.
+- **AI Agents module** — install / configure / launch **Claude Code, OpenAI Codex, opencode, Pi,
+  OpenClaw and Hermes Agent** (npm / winget / official installers, API-key setup, one-click launch).
+- **Run on startup** — Clipboard (and the suite) can launch at login, minimized to the tray.
+- **Media GUI remade** — working file dialogs, live ffprobe info, trim / GIF / frame-grab panels,
+  more quick conversions.
+- **UniGetUI parity** — added **vcpkg**, package **Details**, advanced **install options** (version /
+  scope / architecture / interactive / custom args), **Sources** view, and **ignored-updates**.
+- **Settings & Control Panel revamped** — change settings **in-app** (the live, current-state-reading
+  tweak catalog, grouped into categories) and **Open in Windows** (every applet, grouped & searchable).
+
 ## Latest — Git/GitHub workbench + UniGetUI multi-manager
 
 A full revamp of the Git & GitHub module and the Package Manager, generated and adversarially
