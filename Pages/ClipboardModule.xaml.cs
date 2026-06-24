@@ -48,6 +48,20 @@ public sealed partial class ClipboardModule : Page
         BgBar.Title = P("Running in the background", "喺背景運行緊");
         BgBar.Message = P("The monitor keeps capturing even when the window is closed to the tray. Right-click the tray icon to Quit.",
             "就算關窗收入系統匣，監察都會繼續捕捉。右鍵系統匣圖示就可以結束。");
+
+        // Run-on-startup toggle (launches WinTune minimized to the tray at login).
+        var startup = new ToggleSwitch
+        {
+            OnContent = P("Run on startup", "開機自動執行"),
+            OffContent = P("Run on startup", "開機自動執行"),
+            Margin = new Thickness(0, 6, 0, 0),
+        };
+        startup.IsOn = StartupManager.IsSelfStartupEnabled();   // set BEFORE wiring so this doesn't fire the handler
+        startup.Toggled += (_, _) =>
+        {
+            try { StartupManager.SetSelfStartup(startup.IsOn); } catch { /* best effort */ }
+        };
+        BgBar.Content = startup;
     }
 
     private void Build()

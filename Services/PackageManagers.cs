@@ -1029,6 +1029,88 @@ public sealed class CargoManager : IPackageManager
     }
 }
 
+/// <summary>vcpkg（C/C++ 程式庫）· The vcpkg C/C++ library manager.</summary>
+public sealed class VcpkgManager : IPackageManager
+{
+    public string Key => "vcpkg";
+    public string NameEn => "vcpkg";
+    public string NameZh => "vcpkg";
+    public string Cli => "vcpkg";
+
+    public async Task<bool> IsAvailableAsync(CancellationToken ct)
+    {
+        try { var o = await ShellRunner.Capture("vcpkg", "version", ct); return !string.IsNullOrWhiteSpace(o); }
+        catch { return false; }
+    }
+
+    public async Task<List<PackageItem>> SearchAsync(string query, CancellationToken ct)
+    {
+        var res = new List<PackageItem>();
+        try
+        {
+            var o = await ShellRunner.Capture("vcpkg", $"search {PkgParse.Q(query)}", ct);
+            foreach (var raw in PkgParse.Lines(o))
+            {
+                var ln = raw.Trim();
+                if (ln.Length == 0 || ln.StartsWith("The result")) continue;
+                var parts = ln.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 1) continue;
+                res.Add(new PackageItem
+                {
+                    Name = parts[0], Id = parts[0],
+                    Version = parts.Length > 1 ? parts[1] : "",
+                    ManagerKey = Key,
+                });
+            }
+        }
+        catch { }
+        return res;
+    }
+
+    public async Task<List<PackageItem>> ListInstalledAsync(CancellationToken ct)
+    {
+        var res = new List<PackageItem>();
+        try
+        {
+            var o = await ShellRunner.Capture("vcpkg", "list", ct);
+            foreach (var raw in PkgParse.Lines(o))
+            {
+                var ln = raw.Trim();
+                if (ln.Length == 0) continue;
+                var parts = ln.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 1) continue;
+                var name = parts[0]; // name:triplet
+                res.Add(new PackageItem
+                {
+                    Name = name, Id = name,
+                    Version = parts.Length > 1 ? parts[1] : "",
+                    ManagerKey = Key,
+                });
+            }
+        }
+        catch { }
+        return res;
+    }
+
+    public Task<List<PackageItem>> ListUpdatesAsync(CancellationToken ct)
+        => Task.FromResult(new List<PackageItem>());
+
+    public Task<TweakResult> InstallAsync(string id, CancellationToken ct)
+        => SafeRun($"vcpkg install {PkgParse.Q(id)}", ct);
+
+    public Task<TweakResult> UninstallAsync(string id, CancellationToken ct)
+        => SafeRun($"vcpkg remove {PkgParse.Q(id)}", ct);
+
+    public Task<TweakResult> UpdateAsync(string id, CancellationToken ct)
+        => SafeRun($"vcpkg upgrade {PkgParse.Q(id)} --no-dry-run", ct);
+
+    private static async Task<TweakResult> SafeRun(string cmd, CancellationToken ct)
+    {
+        try { return await ShellRunner.RunCmd(cmd, false, ct); }
+        catch (Exception ex) { return TweakResult.Fail(ex.Message, $"出錯：{ex.Message}"); }
+    }
+}
+
 /// <summary>
 /// 套件管理器登記處 · Registry of all package managers + cross-manager helpers.
 /// 一處集齊所有引擎，畀 UI 一鍵跨管理器搜尋／更新。
@@ -1047,6 +1129,7 @@ public static class PackageManagerRegistry
         new DotnetToolManager(),
         new PsGalleryManager(),
         new CargoManager(),
+        new VcpkgManager(),
     };
 
     /// <summary>按鍵值搵管理器，搵唔到回 null · Look up a manager by key, null if none.</summary>
@@ -1117,5 +1200,118 @@ public static class PackageManagerRegistry
         }
         catch { /* swallow — defensive */ }
         return result;
+    }
+
+    // ===== package details / sources / advanced install (UniGetUI parity) =====
+
+    /// <summary>顯示一個套件嘅詳情 · Show full details for one package (description, version, homepage…).</summary>
+    public static async Task<string> DetailsAsync(PackageItem item, CancellationToken ct = default)
+    {
+        try
+        {
+            var id = item.Id;
+            return item.ManagerKey switch
+            {
+                "winget" => await ShellRunner.CapturePowershell($"winget show --id \"{id}\" -e --accept-source-agreements --disable-interactivity | Out-String -Width 200", ct),
+                "scoop" => await ShellRunner.Capture("scoop", $"info \"{id}\"", ct),
+                "choco" => await ShellRunner.Capture("choco", $"info \"{id}\"", ct),
+                "pip" => await ShellRunner.Capture("pip", $"show \"{id}\"", ct),
+                "npm" => await ShellRunner.Capture("npm", $"view \"{id}\"", ct),
+                "dotnet" => await ShellRunner.Capture("dotnet", $"tool search \"{id}\" --detail", ct),
+                "cargo" => await ShellRunner.Capture("cargo", $"search \"{id}\"", ct),
+                "vcpkg" => await ShellRunner.Capture("vcpkg", $"search \"{id}\"", ct),
+                "psgallery" => await ShellRunner.CapturePowershell($"Find-Module -Name \"{id}\" | Format-List Name,Version,Author,ProjectUri,Description | Out-String -Width 200", ct),
+                _ => "",
+            };
+        }
+        catch (Exception ex) { return ex.Message; }
+    }
+
+    /// <summary>列出一個管理器嘅來源／bucket／feed · List a manager's sources / buckets / feeds.</summary>
+    public static async Task<string> SourcesAsync(string key, CancellationToken ct = default)
+    {
+        try
+        {
+            return key switch
+            {
+                "winget" => await ShellRunner.Capture("winget", "source list", ct),
+                "scoop" => await ShellRunner.Capture("scoop", "bucket list", ct),
+                "choco" => await ShellRunner.Capture("choco", "source list", ct),
+                "pip" => await ShellRunner.Capture("pip", "config list", ct),
+                "npm" => await ShellRunner.Capture("npm", "config get registry", ct),
+                "dotnet" => await ShellRunner.Capture("dotnet", "nuget list source", ct),
+                "psgallery" => await ShellRunner.CapturePowershell("Get-PSRepository | Format-Table Name,InstallationPolicy,SourceLocation | Out-String -Width 200", ct),
+                "cargo" => "crates.io (default registry)",
+                "vcpkg" => await ShellRunner.Capture("vcpkg", "x-update-baseline --dry-run", ct),
+                _ => "",
+            };
+        }
+        catch (Exception ex) { return ex.Message; }
+    }
+
+    /// <summary>
+    /// 進階安裝（版本／範圍／架構／互動／自訂參數）· Advanced install with version / scope / architecture /
+    /// interactive / custom args. winget supports them all; other managers map what they can.
+    /// </summary>
+    public static async Task<TweakResult> InstallAdvancedAsync(string key, string id, string? version,
+        string? scope, string? arch, bool interactive, string? customArgs, CancellationToken ct = default)
+    {
+        string q = $"\"{id}\"";
+        string extra = string.IsNullOrWhiteSpace(customArgs) ? "" : " " + customArgs.Trim();
+        try
+        {
+            switch (key)
+            {
+                case "winget":
+                {
+                    var cmd = $"winget install --id {q} -e --accept-source-agreements --accept-package-agreements";
+                    if (!string.IsNullOrWhiteSpace(version)) cmd += $" --version {version}";
+                    if (!string.IsNullOrWhiteSpace(scope)) cmd += $" --scope {scope}";
+                    if (!string.IsNullOrWhiteSpace(arch)) cmd += $" --architecture {arch}";
+                    cmd += interactive ? " --interactive" : " --silent --disable-interactivity";
+                    return await ShellRunner.RunCmd(cmd + extra, false, ct);
+                }
+                case "scoop":
+                    return await ShellRunner.RunCmd($"scoop install {id}{(string.IsNullOrWhiteSpace(version) ? "" : "@" + version)}{extra}", false, ct);
+                case "choco":
+                {
+                    var cmd = $"choco install {id} -y";
+                    if (!string.IsNullOrWhiteSpace(version)) cmd += $" --version {version}";
+                    if (interactive) cmd += " --notsilent";
+                    return await ShellRunner.RunCmd(cmd + extra, false, ct);
+                }
+                case "pip":
+                    return await ShellRunner.RunCmd($"pip install {id}{(string.IsNullOrWhiteSpace(version) ? "" : "==" + version)}{extra}", false, ct);
+                case "npm":
+                    return await ShellRunner.RunCmd($"npm install -g {id}{(string.IsNullOrWhiteSpace(version) ? "" : "@" + version)}{extra}", false, ct);
+                case "dotnet":
+                {
+                    var cmd = $"dotnet tool install -g {id}";
+                    if (!string.IsNullOrWhiteSpace(version)) cmd += $" --version {version}";
+                    return await ShellRunner.RunCmd(cmd + extra, false, ct);
+                }
+                case "cargo":
+                {
+                    var cmd = $"cargo install {id}";
+                    if (!string.IsNullOrWhiteSpace(version)) cmd += $" --version {version}";
+                    return await ShellRunner.RunCmd(cmd + extra, false, ct);
+                }
+                case "vcpkg":
+                    return await ShellRunner.RunCmd($"vcpkg install {id}{extra}", false, ct);
+                case "psgallery":
+                {
+                    var ps = $"Install-Module -Name {q} -Force -Scope CurrentUser";
+                    if (!string.IsNullOrWhiteSpace(version)) ps += $" -RequiredVersion {version}";
+                    return await ShellRunner.RunPowershell(ps, false, ct);
+                }
+                default:
+                {
+                    var m = ByKey(key);
+                    return m is not null ? await m.InstallAsync(id, ct)
+                                         : TweakResult.Fail("Unknown manager.", "未知管理器。");
+                }
+            }
+        }
+        catch (Exception ex) { return TweakResult.Fail(ex.Message, $"出錯：{ex.Message}"); }
     }
 }

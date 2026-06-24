@@ -480,14 +480,11 @@ public sealed partial class VpnMeshModule : Page
                 P("Install WireGuard first (see the notice above).", "請先安裝 WireGuard（睇上面提示）。"));
             return;
         }
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add(".conf");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSingleFileAsync();
-        if (file is null) return;
+        var path = await FileDialogs.OpenFileAsync(".conf");
+        if (path is null) return;
 
         WgBusy.IsActive = true;
-        var r = await WireGuardService.ImportConfig(file.Path);
+        var r = await WireGuardService.ImportConfig(path);
         WgBusy.IsActive = false;
         WgNotify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error,
             r.Success ? P("Tunnel imported", "已匯入隧道") : P("Import failed", "匯入失敗"), Msg(r));

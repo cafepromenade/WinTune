@@ -66,15 +66,10 @@ public sealed partial class FontManagerModule : Page
             return;
         }
 
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        foreach (var ext in new[] { ".ttf", ".otf", ".ttc", ".otc", ".fon" })
-            picker.FileTypeFilter.Add(ext);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-
-        var files = await picker.PickMultipleFilesAsync();
+        var files = await FileDialogs.OpenFilesAsync(".ttf", ".otf", ".ttc", ".otc", ".fon");
         if (files is null || files.Count == 0) return;
 
-        var (installed, errors) = FontService.InstallMany(files.Select(f => f.Path), machineWide);
+        var (installed, errors) = FontService.InstallMany(files, machineWide);
 
         var where = machineWide ? P("all users", "所有使用者") : P("your account", "你嘅帳戶");
         if (installed.Count > 0 && errors.Count == 0)

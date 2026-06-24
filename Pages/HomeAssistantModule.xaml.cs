@@ -446,14 +446,10 @@ public sealed partial class HomeAssistantModule : Page
     private async void SaveSnap_Click(object sender, RoutedEventArgs e)
     {
         if (_lastSnap is null) { Warn(CamResult, P("Take a snapshot first", "先影一格"), ""); return; }
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = $"ha-snapshot-{DateTime.Now:yyyyMMdd-HHmmss}" };
-        picker.FileTypeChoices.Add("JPEG", new List<string> { ".jpg" });
-        if (App.Shell is not null)
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        await System.IO.File.WriteAllBytesAsync(f.Path, _lastSnap);
-        Ok(CamResult, P("Saved", "已儲存"), f.Path);
+        var path = await FileDialogs.SaveFileAsync($"ha-snapshot-{DateTime.Now:yyyyMMdd-HHmmss}", ".jpg");
+        if (path is null) return;
+        await System.IO.File.WriteAllBytesAsync(path, _lastSnap);
+        Ok(CamResult, P("Saved", "已儲存"), path);
     }
 
     // ── Calendar ─────────────────────────────────────────────────────────────

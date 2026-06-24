@@ -116,49 +116,28 @@ public sealed partial class ArchivesModule : Page
     }
 
     // ---- pickers ----
-    private static void Init(object picker)
-    {
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Shell);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-    }
-
     private async void OpenArchive_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        foreach (var ext in new[] { ".7z", ".zip", ".rar", ".tar", ".gz", ".bz2", ".xz", ".cab", ".iso", ".wim", "*" })
-            picker.FileTypeFilter.Add(ext);
-        Init(picker);
-        var f = await picker.PickSingleFileAsync();
-        if (f is not null) { AppState.CurrentArchivePath = f.Path; RefreshSelection(); }
+        var path = await FileDialogs.OpenFileAsync(".7z", ".zip", ".rar", ".tar", ".gz", ".bz2", ".xz", ".cab", ".iso", ".wim");
+        if (path is not null) { AppState.CurrentArchivePath = path; RefreshSelection(); }
     }
 
     private async void NewArchive_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "archive" };
-        picker.FileTypeChoices.Add("7-Zip", new List<string> { ".7z" });
-        picker.FileTypeChoices.Add("Zip", new List<string> { ".zip" });
-        picker.FileTypeChoices.Add("Tar", new List<string> { ".tar" });
-        Init(picker);
-        var f = await picker.PickSaveFileAsync();
-        if (f is not null) { AppState.CurrentArchivePath = f.Path; RefreshSelection(); }
+        var path = await FileDialogs.SaveFileAsync("archive", ".7z", ".zip", ".tar");
+        if (path is not null) { AppState.CurrentArchivePath = path; RefreshSelection(); }
     }
 
     private async void SourceFile_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add("*");
-        Init(picker);
-        var f = await picker.PickSingleFileAsync();
-        if (f is not null) { AppState.CurrentSourcePath = f.Path; RefreshSelection(); }
+        var path = await FileDialogs.OpenFileAsync();
+        if (path is not null) { AppState.CurrentSourcePath = path; RefreshSelection(); }
     }
 
     private async void SourceFolder_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        Init(picker);
-        var f = await picker.PickSingleFolderAsync();
-        if (f is not null) { AppState.CurrentSourcePath = f.Path; RefreshSelection(); }
+        var path = await FileDialogs.OpenFolderAsync();
+        if (path is not null) { AppState.CurrentSourcePath = path; RefreshSelection(); }
     }
 
     private async void Create_Click(object sender, RoutedEventArgs e)

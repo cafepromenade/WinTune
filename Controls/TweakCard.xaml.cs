@@ -369,11 +369,11 @@ public sealed partial class TweakCard : UserControl
     {
         try
         {
-            var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "wintune-output" };
-            picker.FileTypeChoices.Add("Text", new System.Collections.Generic.List<string> { ".txt" });
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(WinTune.App.Shell));
-            var f = await picker.PickSaveFileAsync();
-            if (f is not null) await Windows.Storage.FileIO.WriteTextAsync(f, _lastOutput);
+            // Win32 COM save dialog (FileDialogs) — works whether or not the app is elevated;
+            // the old WinRT FileSavePicker failed silently under admin.
+            // Win32 COM 儲存對話框，無論係咪管理員身分都用得；舊嘅 WinRT picker 喺管理員模式會默默失敗。
+            var path = await FileDialogs.SaveFileAsync("wintune-output", ".txt");
+            if (path is not null) await File.WriteAllTextAsync(path, _lastOutput);
         }
         catch { }
     }

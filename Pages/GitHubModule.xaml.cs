@@ -264,20 +264,9 @@ public sealed partial class GitHubModule : Page
 
     private async Task<string?> PickFolder()
     {
-        try
-        {
-            var picker = new Windows.Storage.Pickers.FolderPicker();
-            picker.FileTypeFilter.Add("*");
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Shell);
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-            var folder = await picker.PickSingleFolderAsync();
-            return folder?.Path;
-        }
-        catch (Exception ex)
-        {
-            RepoStatus.Text = ex.Message;
-            return null;
-        }
+        // Win32 COM folder dialog (works elevated, unlike the WinRT FolderPicker).
+        try { return await FileDialogs.OpenFolderAsync(); }
+        catch (Exception ex) { RepoStatus.Text = ex.Message; return null; }
     }
 
     // ===== Active repo =====

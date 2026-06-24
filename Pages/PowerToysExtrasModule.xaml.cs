@@ -11,7 +11,6 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Globalization;
 using Windows.Storage;
-using Windows.Storage.Pickers;
 using WinTune.Services;
 
 namespace WinTune.Pages;
@@ -150,22 +149,16 @@ public sealed partial class PowerToysExtrasModule : Page
         ResultBar.IsOpen = true;
     }
 
-    private static void InitPicker(object picker)
-        => WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-
     // ===================== Image Resizer =====================
 
     private void UpdateResizeCount() => ResizeCountText.Text = P($"{_resizeFiles.Count} image(s)", $"{_resizeFiles.Count} 張圖");
 
     private async void ResizeAdd_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new FileOpenPicker();
-        foreach (var ext in ImageResizeService.SupportedExtensions) picker.FileTypeFilter.Add(ext);
-        InitPicker(picker);
-        var files = await picker.PickMultipleFilesAsync();
+        var files = await FileDialogs.OpenFilesAsync(ImageResizeService.SupportedExtensions.ToArray());
         if (files is null) return;
         foreach (var f in files)
-            if (!_resizeFiles.Contains(f.Path)) _resizeFiles.Add(f.Path);
+            if (!_resizeFiles.Contains(f)) _resizeFiles.Add(f);
         UpdateResizeCount();
     }
 
@@ -182,11 +175,8 @@ public sealed partial class PowerToysExtrasModule : Page
 
     private async void OutFolder_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        InitPicker(picker);
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder is not null) OutFolderBox.Text = folder.Path;
+        var folder = await FileDialogs.OpenFolderAsync();
+        if (folder is not null) OutFolderBox.Text = folder;
     }
 
     private async void ResizeRun_Click(object sender, RoutedEventArgs e)

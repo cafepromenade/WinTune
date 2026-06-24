@@ -67,16 +67,12 @@ public sealed partial class ContextMenuModule : Page
 
     private async void Browse_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add(".exe");
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        if (f is not null)
+        var path = await FileDialogs.OpenFileAsync(".exe");
+        if (path is not null)
         {
             string ph = ContextMenuService.ScopePlaceholder(Math.Max(0, ScopeBox.SelectedIndex));
-            CommandBox.Text = $"\"{f.Path}\" \"{ph}\"";
-            if (string.IsNullOrWhiteSpace(IconBox.Text)) IconBox.Text = f.Path;
+            CommandBox.Text = $"\"{path}\" \"{ph}\"";
+            if (string.IsNullOrWhiteSpace(IconBox.Text)) IconBox.Text = path;
         }
     }
 

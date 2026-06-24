@@ -171,16 +171,12 @@ public sealed partial class WslVmModule : Page
     {
         var name = Tag(sender);
         if (name.Length == 0) return;
-        var picker = new Windows.Storage.Pickers.FileSavePicker();
-        picker.FileTypeChoices.Add("WSL backup (.tar)", new List<string> { ".tar" });
-        picker.SuggestedFileName = $"{name}-backup";
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSaveFileAsync();
-        if (file is null) return;
+        var path = await FileDialogs.SaveFileAsync($"{name}-backup", ".tar");
+        if (path is null) return;
         WslBusy.IsActive = true;
-        var r = await WslVmService.Export(name, file.Path);
+        var r = await WslVmService.Export(name, path);
         WslBusy.IsActive = false;
-        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Export", "匯出"), r.Success ? file.Path : Msg(r));
+        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Export", "匯出"), r.Success ? path : Msg(r));
     }
 
     private async void DistroUnregister_Click(object sender, RoutedEventArgs e)
@@ -228,17 +224,11 @@ public sealed partial class WslVmModule : Page
     private async void WslImport_Click(object sender, RoutedEventArgs e)
     {
         // pick the .tar backup
-        var filePicker = new Windows.Storage.Pickers.FileOpenPicker();
-        filePicker.FileTypeFilter.Add(".tar");
-        WinRT.Interop.InitializeWithWindow.Initialize(filePicker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var tar = await filePicker.PickSingleFileAsync();
+        var tar = await FileDialogs.OpenFileAsync(".tar");
         if (tar is null) return;
 
         // pick the install dir
-        var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-        folderPicker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var dir = await folderPicker.PickSingleFolderAsync();
+        var dir = await FileDialogs.OpenFolderAsync();
         if (dir is null) return;
 
         // ask for a name
@@ -257,7 +247,7 @@ public sealed partial class WslVmModule : Page
         if (name.Length == 0) return;
 
         WslBusy.IsActive = true;
-        var r = await WslVmService.Import(name, dir.Path, tar.Path);
+        var r = await WslVmService.Import(name, dir, tar);
         WslBusy.IsActive = false;
         Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Import", "匯入"), r.Success ? name : Msg(r));
         await RefreshDistros();
@@ -267,11 +257,8 @@ public sealed partial class WslVmModule : Page
 
     private async void MapBrowse_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder is not null) MapFolderBox.Text = folder.Path;
+        var folder = await FileDialogs.OpenFolderAsync();
+        if (folder is not null) MapFolderBox.Text = folder;
     }
 
     private string BuildWsb()
@@ -295,14 +282,10 @@ public sealed partial class WslVmModule : Page
 
     private async void SaveWsb_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker();
-        picker.FileTypeChoices.Add("Windows Sandbox config (.wsb)", new List<string> { ".wsb" });
-        picker.SuggestedFileName = "wintune-sandbox";
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSaveFileAsync();
-        if (file is null) return;
-        await File.WriteAllTextAsync(file.Path, BuildWsb());
-        Notify(InfoBarSeverity.Success, P("Saved .wsb", "已儲存 .wsb"), file.Path);
+        var path = await FileDialogs.SaveFileAsync("wintune-sandbox", ".wsb");
+        if (path is null) return;
+        await File.WriteAllTextAsync(path, BuildWsb());
+        Notify(InfoBarSeverity.Success, P("Saved .wsb", "已儲存 .wsb"), path);
     }
 
     private async void LaunchSandbox_Click(object sender, RoutedEventArgs e)

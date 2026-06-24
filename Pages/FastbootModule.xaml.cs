@@ -198,13 +198,7 @@ public sealed partial class FastbootModule : Page
     }
 
     private async Task<string?> PickFile(string ext)
-    {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add(ext);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        return f?.Path;
-    }
+        => await FileDialogs.OpenFileAsync(ext);
 
     private void Report(TweakResult r)
     {

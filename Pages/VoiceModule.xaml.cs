@@ -114,21 +114,15 @@ public sealed partial class VoiceModule : Page
             return;
         }
 
-        var picker = new Windows.Storage.Pickers.FileSavePicker
-        {
-            SuggestedFileName = $"WinTune-speech-{DateTime.Now:yyyyMMdd-HHmmss}",
-        };
-        picker.FileTypeChoices.Add("WAV", new System.Collections.Generic.List<string> { ".wav" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSaveFileAsync();
-        if (file is null) return;
+        var path = await FileDialogs.SaveFileAsync($"WinTune-speech-{DateTime.Now:yyyyMMdd-HHmmss}", ".wav");
+        if (path is null) return;
 
         ResultBar.IsOpen = false;
         ExportBtn.IsEnabled = false;
         try
         {
-            await VoiceService.ExportWavAsync(text, SelectedVoice, (int)RateSlider.Value, (int)VolumeSlider.Value, file.Path);
-            ShowResult(InfoBarSeverity.Success, P("Exported", "已匯出"), file.Path);
+            await VoiceService.ExportWavAsync(text, SelectedVoice, (int)RateSlider.Value, (int)VolumeSlider.Value, path);
+            ShowResult(InfoBarSeverity.Success, P("Exported", "已匯出"), path);
         }
         catch (Exception ex)
         {

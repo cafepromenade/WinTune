@@ -85,11 +85,7 @@ public sealed partial class DrivesModule : Page
 
     private async Task<string?> PickImage()
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        foreach (var ext in new[] { ".iso", ".vhd", ".vhdx", ".img" }) picker.FileTypeFilter.Add(ext);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        return f?.Path;
+        return await FileDialogs.OpenFileAsync(".iso", ".vhd", ".vhdx", ".img");
     }
 
     private async void Mount_Click(object sender, RoutedEventArgs e)
@@ -106,12 +102,8 @@ public sealed partial class DrivesModule : Page
 
     private async void Create_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "disk" };
-        picker.FileTypeChoices.Add("VHDX", new List<string> { ".vhdx" });
-        picker.FileTypeChoices.Add("VHD", new List<string> { ".vhd" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
+        var savePath = await FileDialogs.SaveFileAsync("disk", ".vhdx", ".vhd");
+        if (savePath is null) return;
 
         var size = new NumberBox { Header = P("Size (GB)", "大細 (GB)"), Value = 10, Minimum = 1, Maximum = 65536, SpinButtonPlacementMode = NumberBoxSpinButtonPlacementMode.Inline };
         var dyn = new CheckBox { Content = P("Dynamically expanding", "動態擴充"), IsChecked = true };
@@ -129,7 +121,7 @@ public sealed partial class DrivesModule : Page
         };
         if (await dlg.ShowAsync() != ContentDialogResult.Primary) return;
 
-        await Run(() => DriveService.CreateVhd(f.Path, (int)size.Value, dyn.IsChecked == true), P("Create VHD", "建立 VHD"));
+        await Run(() => DriveService.CreateVhd(savePath, (int)size.Value, dyn.IsChecked == true), P("Create VHD", "建立 VHD"));
     }
 
     private async Task Run(Func<Task<Models.TweakResult>> op, string verb)
