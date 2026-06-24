@@ -23,7 +23,7 @@ public static class ModuleRegistry
     public static readonly List<ModuleInfo> All = new()
     {
         new() { Tag = "dashboard", En = "Dashboard", Zh = "概覽", Glyph = "", Keywords = "home overview start 主頁 概覽" },
-        new() { Tag = "module.git", En = "Git & GitHub", Zh = "Git 與 GitHub", Glyph = "", Keywords = "git github commit push repo clone uploader 版本控制" },
+        new() { Tag = "module.git", En = "Git & GitHub", Zh = "Git 與 GitHub", Glyph = "", Keywords = "git github commit push pull fetch repo repos list clone branch tag merge rebase stash remote worktree submodule uploader issue pull request pr actions workflow release gist secret label star fork notifications gh cli 版本控制 儲存庫 分支 標籤" },
         new() { Tag = "module.archives", En = "Archives", Zh = "壓縮檔", Glyph = "", Keywords = "zip 7z rar tar gzip compress extract 解壓 壓縮" },
         new() { Tag = "module.media", En = "Media", Zh = "媒體", Glyph = "", Keywords = "ffmpeg video audio convert trim gif 影片 音訊 轉檔" },
         new() { Tag = "module.regedit", En = "Registry Editor", Zh = "登錄編輯器", Glyph = "", Keywords = "registry regedit hive key value 登錄檔" },
@@ -56,7 +56,7 @@ public static class ModuleRegistry
         new() { Tag = "module.colorpicker", En = "Color Picker", Zh = "螢幕取色", Glyph = "", Keywords = "color picker hex rgb hsl eyedropper 取色 顏色" },
         new() { Tag = "module.envvars", En = "Environment Variables", Zh = "環境變數", Glyph = "", Keywords = "environment variables path user system env 環境變數" },
         new() { Tag = "module.clipboard", En = "Clipboard", Zh = "剪貼簿", Glyph = ((char)0xE77F).ToString(), Keywords = "clipboard history text image file convert win+v qr qrcode qr code plain text paste 剪貼簿 歷史 二維碼 純文字" },
-        new() { Tag = "module.packages", En = "Package Manager", Zh = "套件管理", Glyph = ((char)0xECAA).ToString(), Keywords = "winget package install uninstall upgrade scoop choco dependencies unigetui 套件 安裝 相依" },
+        new() { Tag = "module.packages", En = "Package Manager", Zh = "套件管理", Glyph = ((char)0xECAA).ToString(), Keywords = "winget package install uninstall upgrade update scoop choco chocolatey pip python npm node dotnet tool powershell gallery psgallery cargo rust dependencies unigetui discover bundle export import 套件 安裝 更新 解除安裝 相依 清單" },
         new() { Tag = "module.adb", En = "Android (ADB)", Zh = "Android（ADB）", Glyph = ((char)0xE8EA).ToString(), Keywords = "android adb apk logcat shell screenshot reboot fastboot scrcpy push pull file backup mirror 手機 安卓 鏡像 備份" },
         new() { Tag = "module.fastboot", En = "Fastboot / Flasher", Zh = "Fastboot／刷機", Glyph = ((char)0xE7BA).ToString(), Keywords = "fastboot flash flasher bootloader unlock boot.img factory image sideload ota pixelflasher 刷機 解鎖" },
         new() { Tag = "module.emulator", En = "Android Emulator", Zh = "Android 模擬器", Glyph = ((char)0xE8EA).ToString(), Keywords = "android emulator avd avdmanager sdkmanager virtual device launch wipe cold boot 模擬器 虛擬裝置" },

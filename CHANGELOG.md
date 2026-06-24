@@ -2,6 +2,27 @@
 
 _Cleaned-up project history. Contributor / author names intentionally omitted._
 
+## Latest — Git/GitHub workbench + UniGetUI multi-manager
+
+A full revamp of the Git & GitHub module and the Package Manager, generated and adversarially
+verified through an ultracode multi-agent workflow:
+
+- **Multi-repository list** — add a folder, scan a parent tree for repos, or clone a URL; every
+  repo is saved to a switchable list (`Services/RepoStore.cs`). Selecting one drives every action.
+- **Complete git CLI** — the full porcelain + plumbing surface as data-driven operations
+  (`Catalog/GitCliOperations.cs`), on top of the existing common ops.
+- **Complete GitHub** — everything GitHub exposes through `gh` and `gh api {owner}/{repo}`:
+  repos, issues, PRs, Actions, releases, gists, secrets, labels, projects, codespaces, stars,
+  notifications, webhooks, collaborators, branch protection, traffic, Dependabot/code-scanning
+  (`Catalog/GitHubOperations.cs`). Aggregated + de-duplicated in `Catalog/GitCatalog.cs`.
+- **In-GUI workbench** — repo list, stage/commit/branch switch & create, chunked uploader,
+  a free-form `git`/`gh` command runner with a console, and a filterable operation library
+  (All / Git / GitHub).
+- **UniGetUI clone** — one front-end over **8 package managers** (winget, Scoop, Chocolatey,
+  pip, npm, .NET tools, PowerShell Gallery, Cargo) via `Services/PackageManagers.cs`:
+  Discover / Updates / Installed / Bundles (export-import) / Setup, with per-manager filtering,
+  batch update, and one-click engine bootstrap.
+
 ## Latest — 22-module roadmap fan-out
 
 One isolated build per roadmap category, merged together:
