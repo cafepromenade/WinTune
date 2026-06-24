@@ -58,11 +58,8 @@ public sealed partial class DuplicatesModule : Page
 
     private async void Browse_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder is not null) { _folder = folder.Path; FolderBox.Text = _folder; }
+        var folder = await FileDialogs.OpenFolderAsync();
+        if (folder is not null) { _folder = folder; FolderBox.Text = _folder; }
     }
 
     private async void Scan_Click(object sender, RoutedEventArgs e) => await DoScan();

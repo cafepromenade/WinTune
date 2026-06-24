@@ -138,11 +138,8 @@ public sealed partial class EnvVarsModule : Page
         var browse = new Button { Content = P("Browse…", "瀏覽…") };
         browse.Click += async (_, _) =>
         {
-            var picker = new Windows.Storage.Pickers.FolderPicker();
-            picker.FileTypeFilter.Add("*");
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-            var f = await picker.PickSingleFolderAsync();
-            if (f is not null) { entries.Add(f.Path); Rebuild(); }
+            var folder = await FileDialogs.OpenFolderAsync();
+            if (folder is not null) { entries.Add(folder); Rebuild(); }
         };
         var addG = new Grid { ColumnSpacing = 6 };
         addG.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });

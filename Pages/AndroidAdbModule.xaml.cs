@@ -183,13 +183,10 @@ public sealed partial class AndroidAdbModule : Page
     private async void Install_Click(object sender, RoutedEventArgs e)
     {
         if (!Require(out var serial)) return;
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add(".apk");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        if (f is null) return;
+        var path = await FileDialogs.OpenFileAsync(".apk");
+        if (path is null) return;
         Busy.IsActive = true;
-        var r = await AdbService.Install(serial, f.Path);
+        var r = await AdbService.Install(serial, path);
         Busy.IsActive = false;
         Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Install APK", "安裝 APK"), Msg(r));
     }
@@ -307,14 +304,11 @@ public sealed partial class AndroidAdbModule : Page
     private async void Push_Click(object sender, RoutedEventArgs e)
     {
         if (!Require(out var serial)) return;
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        if (f is null) return;
-        var remote = Combine(_cwd, Path.GetFileName(f.Path));
+        var path = await FileDialogs.OpenFileAsync();
+        if (path is null) return;
+        var remote = Combine(_cwd, Path.GetFileName(path));
         Busy.IsActive = true;
-        var r = await AdbService.Push(serial, f.Path, remote);
+        var r = await AdbService.Push(serial, path, remote);
         Busy.IsActive = false;
         Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Push", "推送"), r.Success ? remote : Msg(r));
         if (r.Success) await LoadDir(_cwd);
@@ -368,15 +362,12 @@ public sealed partial class AndroidAdbModule : Page
             Notify(InfoBarSeverity.Warning, P("Pick an app first", "請先揀一個程式"), "");
             return;
         }
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = pkg.Package };
-        picker.FileTypeChoices.Add("APK", new List<string> { ".apk" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
+        var path = await FileDialogs.SaveFileAsync(pkg.Package, ".apk");
+        if (path is null) return;
         Busy.IsActive = true;
-        var r = await AdbService.BackupApk(serial, pkg.Package, f.Path);
+        var r = await AdbService.BackupApk(serial, pkg.Package, path);
         Busy.IsActive = false;
-        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("APK backup", "APK 備份"), r.Success ? f.Path : Msg(r));
+        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("APK backup", "APK 備份"), r.Success ? path : Msg(r));
     }
 
     // ── Live logcat tab ─────────────────────────────────────────────────────────────
@@ -453,14 +444,10 @@ public sealed partial class AndroidAdbModule : Page
     private async void MirrorRecord_Click(object sender, RoutedEventArgs e)
     {
         if (!Require(out _)) return;
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = $"scrcpy-{DateTime.Now:yyyyMMdd-HHmmss}" };
-        picker.FileTypeChoices.Add("MP4", new List<string> { ".mp4" });
-        picker.FileTypeChoices.Add("MKV", new List<string> { ".mkv" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        var r = ScrcpyService.Start(BuildScrcpy(true, f.Path));
-        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Screen mirror + record", "螢幕鏡像＋錄影"), r.Success ? f.Path : Msg(r));
+        var path = await FileDialogs.SaveFileAsync($"scrcpy-{DateTime.Now:yyyyMMdd-HHmmss}", ".mp4", ".mkv");
+        if (path is null) return;
+        var r = ScrcpyService.Start(BuildScrcpy(true, path));
+        Notify(r.Success ? InfoBarSeverity.Success : InfoBarSeverity.Error, P("Screen mirror + record", "螢幕鏡像＋錄影"), r.Success ? path : Msg(r));
         SyncMirrorButtons();
     }
 

@@ -529,20 +529,8 @@ public sealed partial class SystemDoctorsModule : Page
     }
 
     private static async Task<string?> PickFolder()
-    {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
-        return folder?.Path;
-    }
+        => await FileDialogs.OpenFolderAsync();
 
     private static async Task<string?> PickFile()
-    {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSingleFileAsync();
-        return file?.Path;
-    }
+        => await FileDialogs.OpenFileAsync();
 }

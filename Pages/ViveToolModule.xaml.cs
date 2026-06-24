@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.Storage.Pickers;
 using WinTune.Models;
 using WinTune.Services;
 
@@ -281,26 +280,17 @@ public sealed partial class ViveToolModule : Page
     private async void Export_Click(object sender, RoutedEventArgs e)
     {
         if (!await EnsureInstalled()) return;
-        var picker = new FileSavePicker { SuggestedStartLocation = PickerLocationId.Desktop, SuggestedFileName = "WinTune-vivetool-profile" };
-        picker.FileTypeChoices.Add("ViVeTool profile", new List<string> { ".json", ".vto", ".bin" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSaveFileAsync();
-        if (file is null) return;
-        await RunGlobal(() => ViveToolService.Export(file.Path), P("Export profile", "匯出設定檔"), null);
+        var path = await FileDialogs.SaveFileAsync("WinTune-vivetool-profile", ".json", ".vto", ".bin");
+        if (path is null) return;
+        await RunGlobal(() => ViveToolService.Export(path), P("Export profile", "匯出設定檔"), null);
     }
 
     private async void Import_Click(object sender, RoutedEventArgs e)
     {
         if (!await EnsureInstalled()) return;
-        var picker = new FileOpenPicker { SuggestedStartLocation = PickerLocationId.Desktop };
-        picker.FileTypeFilter.Add(".json");
-        picker.FileTypeFilter.Add(".vto");
-        picker.FileTypeFilter.Add(".bin");
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var file = await picker.PickSingleFileAsync();
-        if (file is null) return;
-        await RunGlobal(() => ViveToolService.Import(file.Path), P("Import profile", "匯入設定檔"), false);
+        var path = await FileDialogs.OpenFileAsync(".json", ".vto", ".bin");
+        if (path is null) return;
+        await RunGlobal(() => ViveToolService.Import(path), P("Import profile", "匯入設定檔"), false);
     }
 
     private async void RestartExplorer_Click(object sender, RoutedEventArgs e)

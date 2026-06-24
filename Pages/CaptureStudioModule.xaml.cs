@@ -96,11 +96,8 @@ public sealed partial class CaptureStudioModule : Page
 
     private async void Change_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = $"WinTune-{DateTime.Now:yyyyMMdd-HHmmss}" };
-        picker.FileTypeChoices.Add("MP4", new System.Collections.Generic.List<string> { ".mp4" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is not null) { _output = f.Path; OutputBox.Text = _output; }
+        var path = await FileDialogs.SaveFileAsync($"WinTune-{DateTime.Now:yyyyMMdd-HHmmss}", ".mp4");
+        if (path is not null) { _output = path; OutputBox.Text = _output; }
     }
 
     // ---------- region recording ----------
@@ -188,14 +185,11 @@ public sealed partial class CaptureStudioModule : Page
     private async void SaveSnip_Click(object sender, RoutedEventArgs e)
     {
         if (_lastSnip is null) return;
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = $"WinTune-snip-{DateTime.Now:yyyyMMdd-HHmmss}" };
-        picker.FileTypeChoices.Add("PNG", new System.Collections.Generic.List<string> { ".png" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        var r = await CaptureService.SavePng(_lastSnip, f.Path);
+        var path = await FileDialogs.SaveFileAsync($"WinTune-snip-{DateTime.Now:yyyyMMdd-HHmmss}", ".png");
+        if (path is null) return;
+        var r = await CaptureService.SavePng(_lastSnip, path);
         ShowBar(SnipBar, r.Success, r.Success ? P("Saved", "已儲存") : P("Failed", "失敗"),
-            r.Success ? f.Path : Msg(r));
+            r.Success ? path : Msg(r));
     }
 
     // ---------- OCR ----------
@@ -212,12 +206,9 @@ public sealed partial class CaptureStudioModule : Page
 
     private async void OcrFile_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        foreach (var ext in new[] { ".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff" }) picker.FileTypeFilter.Add(ext);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        if (f is null) return;
-        var (r, text) = await CaptureService.OcrFile(f.Path);
+        var path = await FileDialogs.OpenFileAsync(".png", ".jpg", ".jpeg", ".bmp", ".gif", ".tiff");
+        if (path is null) return;
+        var (r, text) = await CaptureService.OcrFile(path);
         ShowOcr(r, text);
     }
 

@@ -346,20 +346,17 @@ public sealed partial class ImagingGameModule : Page
 
     private async void LocateRepo_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
+        var folder = await FileDialogs.OpenFolderAsync();
         if (folder is null) return;
-        if (!File.Exists(Path.Combine(folder.Path, "pom.xml")))
+        if (!File.Exists(Path.Combine(folder, "pom.xml")))
         {
             McNotify(InfoBarSeverity.Error, P("Not the repo", "唔係嗰個 repo"),
                 P("That folder has no pom.xml. Pick the minecraft-world-downloader folder.", "嗰個資料夾冇 pom.xml。請揀 minecraft-world-downloader 資料夾。"));
             return;
         }
-        MinecraftService.SetRepo(folder.Path);
+        MinecraftService.SetRepo(folder);
         RefreshMcEngine();
-        McNotify(InfoBarSeverity.Success, P("Repo set", "已設定 repo"), folder.Path);
+        McNotify(InfoBarSeverity.Success, P("Repo set", "已設定 repo"), folder);
     }
 
     private async void BuildJar_Click(object sender, RoutedEventArgs e)
@@ -404,11 +401,8 @@ public sealed partial class ImagingGameModule : Page
 
     private async void McPickOut_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder is not null) McOutBox.Text = folder.Path;
+        var folder = await FileDialogs.OpenFolderAsync();
+        if (folder is not null) McOutBox.Text = folder;
     }
 
     private void McOpenOut_Click(object sender, RoutedEventArgs e)

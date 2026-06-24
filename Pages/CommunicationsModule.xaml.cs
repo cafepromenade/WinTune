@@ -160,11 +160,8 @@ public sealed partial class CommunicationsModule : Page
 
     private async void AttachBrowse_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        if (f is not null) AttachPath.Text = f.Path;
+        var path = await FileDialogs.OpenFileAsync();
+        if (path is not null) AttachPath.Text = path;
     }
 
     private void AttachSend_Click(object sender, RoutedEventArgs e)
