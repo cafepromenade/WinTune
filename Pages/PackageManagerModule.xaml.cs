@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -10,18 +14,38 @@ using WinTune.Services;
 namespace WinTune.Pages;
 
 /// <summary>
-/// 套件管理（UniGetUI 式，包 winget）· In-app package manager — install common dependencies in one click,
-/// and search / install / uninstall any winget package. No redirect (wraps winget). Bilingual.
+/// 套件管理（UniGetUI 式，多引擎）· In-app UniGetUI clone — one front-end over winget, Scoop, Chocolatey,
+/// pip, npm, .NET tools, PowerShell Gallery and Cargo. Discover / Updates / Installed / Bundles / Setup,
+/// with a per-manager filter, batch update, and bundle export/import. No redirects — wraps the real engines.
 /// </summary>
 public sealed partial class PackageManagerModule : Page
 {
-    private HashSet<string> _installed = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> _selected = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, bool> _available = new(StringComparer.OrdinalIgnoreCase);
+    private int _view; // 0 Discover, 1 Updates, 2 Installed, 3 Bundles, 4 Setup
+    private HashSet<string> _wingetInstalled = new(StringComparer.OrdinalIgnoreCase);
+
+    private sealed class BundleEntry
+    {
+        public string Manager { get; set; } = "";
+        public string Id { get; set; } = "";
+        public string Name { get; set; } = "";
+        public string Version { get; set; } = "";
+    }
 
     public PackageManagerModule()
     {
         InitializeComponent();
-        Loc.I.LanguageChanged += (_, _) => { Render(); BuildDeps(); };
-        Loaded += async (_, _) => { Render(); BuildDeps(); await RefreshInstalled(); };
+        foreach (var m in PackageManagerRegistry.All) _selected.Add(m.Key);
+        Loc.I.LanguageChanged += (_, _) => { Render(); BuildManagerFilters(); BuildViewCombo(); };
+        Loaded += async (_, _) =>
+        {
+            Render();
+            BuildManagerFilters();
+            BuildViewCombo();
+            ViewCombo.SelectedIndex = 0;
+            await CheckAvailability();
+        };
     }
 
     private string P(string en, string zh) => Loc.I.Pick(en, zh);
@@ -29,137 +53,480 @@ public sealed partial class PackageManagerModule : Page
     private void Render()
     {
         HeaderTitle.Text = "Package Manager · 套件管理";
-        HeaderBlurb.Text = P("Install WinTune's engines and common tools in one click, or search and install any app — powered by winget, all in-app.",
-            "一鍵安裝 WinTune 嘅引擎同常用工具，或者搜尋安裝任何 app — 用 winget 引擎，全部喺 app 內。");
-        SearchBox.PlaceholderText = P("Search winget (e.g. vscode, vlc, obs)…", "搜尋 winget（例如 vscode、vlc、obs）…");
-        UpgradesBtn.Content = P("Upgrades", "可更新");
-        DepsHeader.Text = P("Common dependencies", "常用相依");
-        InstallAllBtn.Content = P("Install all missing", "安裝全部欠缺");
-        ResultsHeader.Text = "";
+        HeaderBlurb.Text = P(
+            "A UniGetUI-style hub over winget, Scoop, Chocolatey, pip, npm, .NET tools, PowerShell Gallery and Cargo — discover, update, uninstall and bundle, all in-app.",
+            "UniGetUI 式總管，統一 winget、Scoop、Chocolatey、pip、npm、.NET 工具、PowerShell Gallery 同 Cargo — 搜尋、更新、解除安裝同打包，全部喺 app 內。");
+        ManagersLabel.Text = P("Package managers", "套件管理器");
+        SearchBox.PlaceholderText = P("Search packages (e.g. vscode, vlc, obs)…", "搜尋套件（例如 vscode、vlc、obs）…");
     }
 
-    private async Task RefreshInstalled()
+    private void BuildViewCombo()
+    {
+        int sel = ViewCombo.SelectedIndex;
+        ViewCombo.Items.Clear();
+        ViewCombo.Items.Add(P("Discover", "搜尋安裝"));
+        ViewCombo.Items.Add(P("Updates", "可更新"));
+        ViewCombo.Items.Add(P("Installed", "已安裝"));
+        ViewCombo.Items.Add(P("Bundles", "套件清單"));
+        ViewCombo.Items.Add(P("Setup", "設定引擎"));
+        ViewCombo.SelectedIndex = sel < 0 ? 0 : sel;
+    }
+
+    private void BuildManagerFilters()
+    {
+        ManagerFilters.Children.Clear();
+        foreach (var m in PackageManagerRegistry.All)
+        {
+            string key = m.Key;
+            bool avail = _available.TryGetValue(key, out var a) && a;
+            bool known = _available.ContainsKey(key);
+            var cb = new CheckBox
+            {
+                Content = known && !avail ? $"{m.NameEn} · {m.NameZh}  {P("(not found)", "（搵唔到）")}" : $"{m.NameEn} · {m.NameZh}",
+                IsChecked = _selected.Contains(key),
+                IsEnabled = !known || avail,
+                Tag = key,
+            };
+            cb.Checked += (_, _) => _selected.Add(key);
+            cb.Unchecked += (_, _) => _selected.Remove(key);
+            ManagerFilters.Children.Add(cb);
+        }
+    }
+
+    private async Task CheckAvailability()
     {
         Busy.IsActive = true;
-        try { _installed = await PackageService.InstalledIds(); } catch { }
-        Busy.IsActive = false;
-        BuildDeps();
+        try
+        {
+            foreach (var m in PackageManagerRegistry.All)
+            {
+                bool ok;
+                try { ok = await m.IsAvailableAsync(CancellationToken.None); }
+                catch { ok = false; }
+                _available[m.Key] = ok;
+                if (!ok) _selected.Remove(m.Key);
+            }
+        }
+        finally { Busy.IsActive = false; }
+        BuildManagerFilters();
+        await LoadView();
     }
 
-    private void BuildDeps()
+    private List<string> SelectedAvailable() =>
+        PackageManagerRegistry.All
+            .Where(m => _selected.Contains(m.Key) && _available.TryGetValue(m.Key, out var a) && a)
+            .Select(m => m.Key).ToList();
+
+    private async void View_Changed(object sender, SelectionChangedEventArgs e)
     {
-        DepsPanel.Children.Clear();
-        foreach (var dep in PackageService.Deps)
-        {
-            bool installed = _installed.Contains(dep.Id);
-            DepsPanel.Children.Add(Row($"{dep.En} · {dep.Zh}", dep.Id, installed,
-                onAction: btn => InstallDep(dep.Id, btn), isInstalledAction: false));
-        }
+        _view = ViewCombo.SelectedIndex < 0 ? 0 : ViewCombo.SelectedIndex;
+        await LoadView();
     }
 
-    private Border Row(string title, string id, bool installed, Action<Button> onAction, bool isInstalledAction)
+    private async Task LoadView()
     {
-        var grid = new Grid { ColumnSpacing = 10 };
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-        var texts = new StackPanel { Spacing = 1, VerticalAlignment = VerticalAlignment.Center };
-        texts.Children.Add(new TextBlock { Text = title, FontWeight = Microsoft.UI.Text.FontWeights.SemiBold, FontSize = 13, TextWrapping = TextWrapping.Wrap });
-        texts.Children.Add(new TextBlock { Text = id, FontSize = 11, FontFamily = new FontFamily("Consolas"), Foreground = (Brush)Application.Current.Resources["TextFillColorTertiaryBrush"] });
-        Grid.SetColumn(texts, 0);
-        grid.Children.Add(texts);
-
-        var btn = new Button { Padding = new Thickness(12, 4, 12, 4) };
-        if (installed)
+        ResultsPanel.Children.Clear();
+        ResultsHeader.Text = "";
+        switch (_view)
         {
-            btn.Content = P("Installed", "已安裝");
-            btn.IsEnabled = false;
+            case 0: // Discover
+                SearchBox.IsEnabled = true;
+                PrimaryActionBtn.Content = P("Search", "搜尋");
+                PrimaryActionBtn.Visibility = Visibility.Visible;
+                SecondaryActionBtn.Visibility = Visibility.Collapsed;
+                ResultsHeader.Text = P("Type a query and press Enter, or click Search.", "輸入關鍵字撳 Enter，或者撳搜尋。");
+                break;
+            case 1: // Updates
+                SearchBox.IsEnabled = false;
+                PrimaryActionBtn.Content = P("Refresh", "重新整理");
+                PrimaryActionBtn.Visibility = Visibility.Visible;
+                SecondaryActionBtn.Content = P("Update all", "全部更新");
+                SecondaryActionBtn.Visibility = Visibility.Visible;
+                await LoadUpdates();
+                break;
+            case 2: // Installed
+                SearchBox.IsEnabled = false;
+                PrimaryActionBtn.Content = P("Refresh", "重新整理");
+                PrimaryActionBtn.Visibility = Visibility.Visible;
+                SecondaryActionBtn.Visibility = Visibility.Collapsed;
+                await LoadInstalled();
+                break;
+            case 3: // Bundles
+                SearchBox.IsEnabled = false;
+                PrimaryActionBtn.Content = P("Export…", "匯出…");
+                PrimaryActionBtn.Visibility = Visibility.Visible;
+                SecondaryActionBtn.Content = P("Import…", "匯入…");
+                SecondaryActionBtn.Visibility = Visibility.Visible;
+                ResultsHeader.Text = P("Export your installed packages to a JSON bundle, or import one to reinstall.",
+                    "將已安裝套件匯出做 JSON 清單，或者匯入一個嚟重新安裝。");
+                break;
+            case 4: // Setup
+                SearchBox.IsEnabled = false;
+                PrimaryActionBtn.Content = P("Install all deps", "安裝全部相依");
+                PrimaryActionBtn.Visibility = Visibility.Visible;
+                SecondaryActionBtn.Visibility = Visibility.Collapsed;
+                await LoadSetup();
+                break;
         }
-        else
-        {
-            btn.Content = P("Install", "安裝");
-            btn.Click += (_, _) => onAction(btn);
-        }
-        Grid.SetColumn(btn, 1);
-        grid.Children.Add(btn);
-
-        return new Border
-        {
-            Padding = new Thickness(14, 10, 14, 10),
-            Background = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"],
-            BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
-            BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(8),
-            Child = grid,
-        };
-    }
-
-    private async void InstallDep(string id, Button btn)
-    {
-        btn.IsEnabled = false;
-        btn.Content = P("Installing…", "安裝緊…");
-        var r = await PackageService.Install(id);
-        btn.Content = r.Success ? P("Installed", "已安裝") : P("Retry", "重試");
-        btn.IsEnabled = !r.Success;
-        if (r.Success) _installed.Add(id);
-    }
-
-    private async void InstallAll_Click(object sender, RoutedEventArgs e)
-    {
-        InstallAllBtn.IsEnabled = false;
-        InstallAllBtn.Content = P("Installing…", "安裝緊…");
-        foreach (var dep in PackageService.Deps)
-        {
-            if (_installed.Contains(dep.Id)) continue;
-            var r = await PackageService.Install(dep.Id);
-            if (r.Success) _installed.Add(dep.Id);
-        }
-        BuildDeps();
-        InstallAllBtn.Content = P("Install all missing", "安裝全部欠缺");
-        InstallAllBtn.IsEnabled = true;
     }
 
     private async void Search_Submitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
     {
-        var q = (args.QueryText ?? "").Trim();
-        if (q.Length < 2) return;
-        ResultsHeader.Text = P("Searching…", "搜尋緊…");
+        if (_view == 0) await DoSearch((args.QueryText ?? "").Trim());
+    }
+
+    private async void PrimaryAction_Click(object sender, RoutedEventArgs e)
+    {
+        switch (_view)
+        {
+            case 0: await DoSearch((SearchBox.Text ?? "").Trim()); break;
+            case 1: await LoadUpdates(); break;
+            case 2: await LoadInstalled(); break;
+            case 3: await ExportBundle(); break;
+            case 4: await InstallAllDeps(); break;
+        }
+    }
+
+    private async void SecondaryAction_Click(object sender, RoutedEventArgs e)
+    {
+        switch (_view)
+        {
+            case 1: await UpdateAll(); break;
+            case 3: await ImportBundle(); break;
+        }
+    }
+
+    // ===== Discover =====
+
+    private async Task DoSearch(string query)
+    {
+        if (query.Length < 2)
+        {
+            ResultsHeader.Text = P("Enter at least 2 characters.", "請輸入最少 2 個字元。");
+            return;
+        }
+        var keys = SelectedAvailable();
+        if (keys.Count == 0) { ResultsHeader.Text = P("No managers selected/available.", "未揀／冇可用嘅管理器。"); return; }
+
         ResultsPanel.Children.Clear();
+        ResultsHeader.Text = P("Searching…", "搜尋緊…");
         Busy.IsActive = true;
-        List<PkgResult> results;
-        try { results = await PackageService.Search(q); } catch { results = new(); }
+        List<PackageItem> results;
+        try { results = await PackageManagerRegistry.SearchAllAsync(query, keys, CancellationToken.None); }
+        catch { results = new(); }
         Busy.IsActive = false;
 
         ResultsHeader.Text = P($"Results — {results.Count}", $"結果 — {results.Count}");
-        foreach (var r in results)
+        foreach (var item in results)
+            ResultsPanel.Children.Add(RowFor(item, P("Install", "安裝"), async btn => await ActionInstall(item, btn)));
+    }
+
+    // ===== Updates =====
+
+    private async Task LoadUpdates()
+    {
+        var keys = SelectedAvailable();
+        ResultsPanel.Children.Clear();
+        ResultsHeader.Text = P("Checking for updates…", "檢查更新緊…");
+        Busy.IsActive = true;
+        List<PackageItem> ups;
+        try { ups = await PackageManagerRegistry.AllUpdatesAsync(keys, CancellationToken.None); }
+        catch { ups = new(); }
+        Busy.IsActive = false;
+        ResultsHeader.Text = P($"Updatable — {ups.Count}", $"可更新 — {ups.Count}");
+        foreach (var item in ups)
         {
-            string capturedId = r.Id;
-            ResultsPanel.Children.Add(Row($"{r.Name}  ({r.Version})", r.Id, _installed.Contains(r.Id),
-                onAction: btn => InstallDep(capturedId, btn), isInstalledAction: false));
+            var label = string.IsNullOrEmpty(item.AvailableVersion) ? P("Update", "更新") : $"{P("Update", "更新")} → {item.AvailableVersion}";
+            ResultsPanel.Children.Add(RowFor(item, label, async btn => await ActionUpdate(item, btn)));
         }
     }
 
-    private async void Upgrades_Click(object sender, RoutedEventArgs e)
+    private async Task UpdateAll()
     {
-        ResultsHeader.Text = P("Checking upgrades…", "檢查更新緊…");
-        ResultsPanel.Children.Clear();
+        var keys = SelectedAvailable();
         Busy.IsActive = true;
-        List<PkgResult> ups;
-        try { ups = await PackageService.Upgradable(); } catch { ups = new(); }
+        List<PackageItem> ups;
+        try { ups = await PackageManagerRegistry.AllUpdatesAsync(keys, CancellationToken.None); }
+        catch { ups = new(); }
         Busy.IsActive = false;
-        ResultsHeader.Text = P($"Upgradable — {ups.Count}", $"可更新 — {ups.Count}");
-        foreach (var u in ups)
+        int done = 0;
+        foreach (var item in ups)
         {
-            string capturedId = u.Id;
-            var border = Row($"{u.Name}  ({u.Version})", u.Id, false, onAction: async btn =>
-            {
-                btn.IsEnabled = false; btn.Content = P("Updating…", "更新緊…");
-                var r = await PackageService.Upgrade(capturedId);
-                btn.Content = r.Success ? P("Updated", "已更新") : P("Retry", "重試");
-                btn.IsEnabled = !r.Success;
-            }, isInstalledAction: false);
-            // relabel the action button to "Update"
-            ResultsPanel.Children.Add(border);
+            var mgr = PackageManagerRegistry.ByKey(item.ManagerKey);
+            if (mgr is null) continue;
+            ResultsHeader.Text = P($"Updating {item.Name}… ({done + 1}/{ups.Count})", $"更新緊 {item.Name}…（{done + 1}/{ups.Count}）");
+            try { var r = await mgr.UpdateAsync(item.Id, CancellationToken.None); if (r.Success) done++; } catch { }
+        }
+        ResultsHeader.Text = P($"Updated {done}/{ups.Count}.", $"更新咗 {done}/{ups.Count}。");
+        await LoadUpdates();
+    }
+
+    // ===== Installed =====
+
+    private async Task LoadInstalled()
+    {
+        var keys = SelectedAvailable();
+        ResultsPanel.Children.Clear();
+        ResultsHeader.Text = P("Listing installed packages…", "列出已安裝套件緊…");
+        Busy.IsActive = true;
+        List<PackageItem> items;
+        try { items = await PackageManagerRegistry.AllInstalledAsync(keys, CancellationToken.None); }
+        catch { items = new(); }
+        Busy.IsActive = false;
+        ResultsHeader.Text = P($"Installed — {items.Count}", $"已安裝 — {items.Count}");
+        foreach (var item in items)
+            ResultsPanel.Children.Add(RowFor(item, P("Uninstall", "解除安裝"), async btn => await ActionUninstall(item, btn)));
+    }
+
+    // ===== Bundles =====
+
+    private async Task ExportBundle()
+    {
+        var keys = SelectedAvailable();
+        Busy.IsActive = true;
+        List<PackageItem> items;
+        try { items = await PackageManagerRegistry.AllInstalledAsync(keys, CancellationToken.None); }
+        catch { items = new(); }
+        Busy.IsActive = false;
+        if (items.Count == 0) { ResultsHeader.Text = P("Nothing to export.", "冇嘢可以匯出。"); return; }
+
+        var entries = items.Select(i => new BundleEntry { Manager = i.ManagerKey, Id = i.Id, Name = i.Name, Version = i.Version }).ToList();
+        try
+        {
+            var picker = new Windows.Storage.Pickers.FileSavePicker();
+            picker.FileTypeChoices.Add("JSON", new List<string> { ".json" });
+            picker.SuggestedFileName = "wintune-packages";
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Shell);
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+            var file = await picker.PickSaveFileAsync();
+            if (file is null) return;
+            var json = JsonSerializer.Serialize(entries, new JsonSerializerOptions { WriteIndented = true });
+            await File.WriteAllTextAsync(file.Path, json);
+            ResultsHeader.Text = P($"Exported {entries.Count} package(s).", $"匯出咗 {entries.Count} 個套件。");
+        }
+        catch (Exception ex) { ResultsHeader.Text = ex.Message; }
+    }
+
+    private async Task ImportBundle()
+    {
+        List<BundleEntry>? entries = null;
+        try
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.FileTypeFilter.Add(".json");
+            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Shell);
+            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+            var file = await picker.PickSingleFileAsync();
+            if (file is null) return;
+            var json = await File.ReadAllTextAsync(file.Path);
+            entries = JsonSerializer.Deserialize<List<BundleEntry>>(json);
+        }
+        catch (Exception ex) { ResultsHeader.Text = ex.Message; return; }
+        if (entries is null || entries.Count == 0) { ResultsHeader.Text = P("Bundle is empty.", "清單係空嘅。"); return; }
+
+        ResultsPanel.Children.Clear();
+        int done = 0;
+        Busy.IsActive = true;
+        foreach (var en in entries)
+        {
+            var mgr = PackageManagerRegistry.ByKey(en.Manager);
+            if (mgr is null || !(_available.TryGetValue(en.Manager, out var a) && a)) continue;
+            ResultsHeader.Text = P($"Installing {en.Name}… ({done + 1}/{entries.Count})", $"安裝緊 {en.Name}…（{done + 1}/{entries.Count}）");
+            try { var r = await mgr.InstallAsync(en.Id, CancellationToken.None); if (r.Success) done++; } catch { }
+        }
+        Busy.IsActive = false;
+        ResultsHeader.Text = P($"Installed {done}/{entries.Count} from bundle.", $"由清單安裝咗 {done}/{entries.Count}。");
+    }
+
+    // ===== Setup =====
+
+    private async Task LoadSetup()
+    {
+        ResultsPanel.Children.Clear();
+        ResultsHeader.Text = P("Engines & common dependencies", "引擎同常用相依");
+
+        // Manager availability + bootstrap helpers.
+        ResultsPanel.Children.Add(SectionLabel(P("Package managers", "套件管理器")));
+        foreach (var m in PackageManagerRegistry.All)
+        {
+            bool avail = _available.TryGetValue(m.Key, out var a) && a;
+            string status = avail ? P("Available", "可用") : P("Not installed", "未安裝");
+            var (canBootstrap, bootstrap) = Bootstrap(m.Key);
+            ResultsPanel.Children.Add(StatusRow($"{m.NameEn} · {m.NameZh}", m.Key, status, avail,
+                avail || !canBootstrap ? null : (P("Install", "安裝"), bootstrap)));
+        }
+
+        // Curated common dependencies via winget (kept from the classic view).
+        ResultsPanel.Children.Add(SectionLabel(P("Common dependencies (winget)", "常用相依（winget）")));
+        try { _wingetInstalled = await PackageService.InstalledIds(); } catch { }
+        foreach (var dep in PackageService.Deps)
+        {
+            bool installed = _wingetInstalled.Contains(dep.Id);
+            ResultsPanel.Children.Add(StatusRow($"{dep.En} · {dep.Zh}", dep.Id,
+                installed ? P("Installed", "已安裝") : P("Missing", "欠缺"), installed,
+                installed ? null : (P("Install", "安裝"), async () => { await PackageService.Install(dep.Id); _wingetInstalled.Add(dep.Id); })));
         }
     }
+
+    private async Task InstallAllDeps()
+    {
+        PrimaryActionBtn.IsEnabled = false;
+        Busy.IsActive = true;
+        try
+        {
+            foreach (var dep in PackageService.Deps)
+            {
+                if (_wingetInstalled.Contains(dep.Id)) continue;
+                ResultsHeader.Text = P($"Installing {dep.En}…", $"安裝緊 {dep.En}…");
+                var r = await PackageService.Install(dep.Id);
+                if (r.Success) _wingetInstalled.Add(dep.Id);
+            }
+        }
+        finally { Busy.IsActive = false; PrimaryActionBtn.IsEnabled = true; }
+        await LoadSetup();
+    }
+
+    /// <summary>Per-manager bootstrap so users can install a missing engine in one click.</summary>
+    private (bool, Func<Task>) Bootstrap(string key) => key switch
+    {
+        "scoop" => (true, async () => await ShellRunner.RunPowershell(
+            "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression", false)),
+        "choco" => (true, async () => await ShellRunner.RunPowershell(
+            "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))", true)),
+        "pip" => (true, async () => await PackageService.Install("Python.Python.3.12")),
+        "npm" => (true, async () => await PackageService.Install("OpenJS.NodeJS.LTS")),
+        "dotnet" => (true, async () => await PackageService.Install("Microsoft.DotNet.SDK.9")),
+        "cargo" => (true, async () => await PackageService.Install("Rustlang.Rustup")),
+        _ => (false, () => Task.CompletedTask),
+    };
+
+    // ===== Row builders =====
+
+    private async Task ActionInstall(PackageItem item, Button btn)
+    {
+        var mgr = PackageManagerRegistry.ByKey(item.ManagerKey);
+        if (mgr is null) return;
+        btn.IsEnabled = false; btn.Content = P("Installing…", "安裝緊…");
+        var r = await mgr.InstallAsync(item.Id, CancellationToken.None);
+        btn.Content = r.Success ? P("Installed", "已安裝") : P("Retry", "重試");
+        btn.IsEnabled = !r.Success;
+    }
+
+    private async Task ActionUpdate(PackageItem item, Button btn)
+    {
+        var mgr = PackageManagerRegistry.ByKey(item.ManagerKey);
+        if (mgr is null) return;
+        btn.IsEnabled = false; btn.Content = P("Updating…", "更新緊…");
+        var r = await mgr.UpdateAsync(item.Id, CancellationToken.None);
+        btn.Content = r.Success ? P("Updated", "已更新") : P("Retry", "重試");
+        btn.IsEnabled = !r.Success;
+    }
+
+    private async Task ActionUninstall(PackageItem item, Button btn)
+    {
+        var mgr = PackageManagerRegistry.ByKey(item.ManagerKey);
+        if (mgr is null) return;
+        btn.IsEnabled = false; btn.Content = P("Removing…", "移除緊…");
+        var r = await mgr.UninstallAsync(item.Id, CancellationToken.None);
+        btn.Content = r.Success ? P("Removed", "已移除") : P("Retry", "重試");
+        btn.IsEnabled = !r.Success;
+    }
+
+    private TextBlock SectionLabel(string text) => new()
+    {
+        Text = text,
+        FontWeight = FontWeights.SemiBold,
+        FontSize = 14,
+        Margin = new Thickness(0, 10, 0, 2),
+    };
+
+    private Border RowFor(PackageItem item, string actionLabel, Func<Button, Task> action)
+    {
+        var grid = new Grid { ColumnSpacing = 10 };
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        grid.Children.Add(ManagerBadge(item.ManagerKey));
+
+        var texts = new StackPanel { Spacing = 1, VerticalAlignment = VerticalAlignment.Center };
+        var ver = string.IsNullOrEmpty(item.Version) ? "" : $"  ({item.Version})";
+        texts.Children.Add(new TextBlock { Text = $"{item.Name}{ver}", FontWeight = FontWeights.SemiBold, FontSize = 13, TextTrimming = TextTrimming.CharacterEllipsis });
+        var sub = string.IsNullOrEmpty(item.Source) ? item.Id : $"{item.Id}  ·  {item.Source}";
+        texts.Children.Add(new TextBlock { Text = sub, FontSize = 11, FontFamily = new FontFamily("Consolas"), Foreground = (Brush)Application.Current.Resources["TextFillColorTertiaryBrush"], TextTrimming = TextTrimming.CharacterEllipsis });
+        Grid.SetColumn(texts, 1);
+        grid.Children.Add(texts);
+
+        var btn = new Button { Content = actionLabel, Padding = new Thickness(12, 4, 12, 4) };
+        btn.Click += async (_, _) => await action(btn);
+        Grid.SetColumn(btn, 2);
+        grid.Children.Add(btn);
+
+        return Card(grid);
+    }
+
+    private Border StatusRow(string title, string id, string status, bool ok, (string label, Func<Task> action)? action)
+    {
+        var grid = new Grid { ColumnSpacing = 10 };
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+        var texts = new StackPanel { Spacing = 1, VerticalAlignment = VerticalAlignment.Center };
+        texts.Children.Add(new TextBlock { Text = title, FontWeight = FontWeights.SemiBold, FontSize = 13, TextWrapping = TextWrapping.Wrap });
+        texts.Children.Add(new TextBlock { Text = id, FontSize = 11, FontFamily = new FontFamily("Consolas"), Foreground = (Brush)Application.Current.Resources["TextFillColorTertiaryBrush"] });
+        Grid.SetColumn(texts, 0);
+        grid.Children.Add(texts);
+
+        var st = new TextBlock
+        {
+            Text = status,
+            VerticalAlignment = VerticalAlignment.Center,
+            FontSize = 12,
+            Foreground = (Brush)Application.Current.Resources[ok ? "SystemFillColorSuccessBrush" : "TextFillColorSecondaryBrush"],
+        };
+        Grid.SetColumn(st, 1);
+        grid.Children.Add(st);
+
+        if (action is { } act)
+        {
+            var btn = new Button { Content = act.label, Padding = new Thickness(12, 4, 12, 4) };
+            btn.Click += async (_, _) =>
+            {
+                btn.IsEnabled = false; btn.Content = P("Working…", "處理緊…");
+                try { await act.action(); btn.Content = P("Done", "完成"); }
+                catch { btn.Content = P("Retry", "重試"); btn.IsEnabled = true; }
+            };
+            Grid.SetColumn(btn, 2);
+            grid.Children.Add(btn);
+        }
+
+        return Card(grid);
+    }
+
+    private Border ManagerBadge(string key)
+    {
+        var badge = new Border
+        {
+            Background = (Brush)Application.Current.Resources["LayerFillColorDefaultBrush"],
+            BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
+            BorderThickness = new Thickness(1),
+            CornerRadius = new CornerRadius(4),
+            Padding = new Thickness(6, 2, 6, 2),
+            VerticalAlignment = VerticalAlignment.Center,
+            Child = new TextBlock { Text = key, FontSize = 10, FontWeight = FontWeights.SemiBold },
+        };
+        Grid.SetColumn(badge, 0);
+        return badge;
+    }
+
+    private static Border Card(UIElement child) => new()
+    {
+        Padding = new Thickness(14, 10, 14, 10),
+        Background = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"],
+        BorderBrush = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"],
+        BorderThickness = new Thickness(1),
+        CornerRadius = new CornerRadius(8),
+        Child = child,
+    };
 }

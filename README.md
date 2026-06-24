@@ -21,7 +21,8 @@
 | Module · 模組 | What's inside · 內容 |
 |---|---|
 | **Windows 11 control · Windows 11 控制** | 169 real tweaks across 13 categories (registry, power, privacy, cleanup, security, the no-UAC launcher…). <br> 13 個分類、169 項真實調校（登錄檔、電源、私隱、清理、安全、免 UAC 啟動器…）。 |
-| **Git & GitHub · Git 與 GitHub** | Repo picker, stage/commit/branch/sync, the **chunked uploader** (N-MB-per-commit, push one at a time), and **111** advanced git/gh operations. <br> 儲存庫選擇、暫存／提交／分支／同步、**分批上載**（每個 commit N-MB、逐個 push）、同 **111** 個進階 git/gh 操作。 |
+| **Git & GitHub · Git 與 GitHub** | A multi-**repository list** (add / scan / clone), stage/commit/branch/sync, the **chunked uploader** (N-MB-per-commit, push one at a time), a free-form **git & gh command runner**, and a **553-operation** library covering the complete git CLI **and** everything GitHub exposes through `gh` / `gh api`. <br> **多儲存庫清單**（加／掃描／複製）、暫存／提交／分支／同步、**分批上載**（每個 commit N-MB、逐個 push）、**git 同 gh 指令執行器**，加埋 **553** 個操作嘅資料庫，涵蓋成個 git CLI **同埋** GitHub 透過 `gh` / `gh api` 提供嘅一切。 |
+| **Package Manager · 套件管理（UniGetUI 式）** | One front-end over **8 package managers** — winget, Scoop, Chocolatey, pip, npm, .NET tools, PowerShell Gallery, Cargo — with Discover / Updates / Installed / **Bundles** (export-import) / Setup, per-manager filtering, batch update, and one-click engine bootstrap. <br> 一個介面統管 **8 個套件管理器**（winget、Scoop、Chocolatey、pip、npm、.NET 工具、PowerShell Gallery、Cargo）— 搜尋／更新／已安裝／**清單**（匯出匯入）／設定、逐個引擎篩選、批次更新、一鍵安裝引擎。 |
 
 <div align="center">
 
