@@ -25,6 +25,8 @@ public static class TextExtractorService
     [DllImport("gdi32.dll")] private static extern IntPtr CreateCompatibleBitmap(IntPtr hdc, int w, int h);
     [DllImport("gdi32.dll")] private static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);
     [DllImport("gdi32.dll")] private static extern bool BitBlt(IntPtr dest, int dx, int dy, int w, int h, IntPtr src, int sx, int sy, uint rop);
+    [DllImport("gdi32.dll")] private static extern bool StretchBlt(IntPtr dest, int dx, int dy, int dw, int dh, IntPtr src, int sx, int sy, int sw, int sh, uint rop);
+    [DllImport("gdi32.dll")] private static extern int SetStretchBltMode(IntPtr hdc, int mode);
     [DllImport("gdi32.dll")] private static extern bool DeleteObject(IntPtr obj);
     [DllImport("gdi32.dll")] private static extern bool DeleteDC(IntPtr hdc);
     [DllImport("gdi32.dll")] private static extern int GetDIBits(IntPtr hdc, IntPtr hbmp, uint start, uint lines, byte[]? bits, ref BITMAPINFO bmi, uint usage);
@@ -56,37 +58,57 @@ public static class TextExtractorService
         GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN),
         GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
 
-    /// <summary>擷取一個螢幕區域成 SoftwareBitmap · Capture a screen rect to a SoftwareBitmap (BGRA8).</summary>
-    public static SoftwareBitmap CaptureRegion(ScreenRect r)
+    /// <summary>
+    /// 擷取一個螢幕區域成 SoftwareBitmap · Capture a screen rect to a SoftwareBitmap (BGRA8).
+    /// maxDim &gt; 0 會將過大嘅擷取按比例縮細（OCR 引擎有最大尺寸限制，過大會令 RecognizeAsync 崩潰）。
+    /// When maxDim &gt; 0, oversized captures are scaled down so they stay within the OCR engine's limit.
+    /// </summary>
+    public static SoftwareBitmap CaptureRegion(ScreenRect r, int maxDim = 0)
     {
         if (r.Width <= 0 || r.Height <= 0) throw new ArgumentException("Capture region is empty.");
 
+        int tw = r.Width, th = r.Height;
+        if (maxDim > 0 && (r.Width > maxDim || r.Height > maxDim))
+        {
+            double scale = Math.Min((double)maxDim / r.Width, (double)maxDim / r.Height);
+            tw = Math.Max(1, (int)Math.Round(r.Width * scale));
+            th = Math.Max(1, (int)Math.Round(r.Height * scale));
+        }
+
         IntPtr screenDC = GetDC(IntPtr.Zero);
         IntPtr memDC = CreateCompatibleDC(screenDC);
-        IntPtr hbmp = CreateCompatibleBitmap(screenDC, r.Width, r.Height);
+        IntPtr hbmp = CreateCompatibleBitmap(screenDC, tw, th);
         IntPtr old = SelectObject(memDC, hbmp);
         try
         {
-            BitBlt(memDC, 0, 0, r.Width, r.Height, screenDC, r.X, r.Y, SRCCOPY);
+            if (tw == r.Width && th == r.Height)
+            {
+                BitBlt(memDC, 0, 0, tw, th, screenDC, r.X, r.Y, SRCCOPY);
+            }
+            else
+            {
+                SetStretchBltMode(memDC, 4 /* HALFTONE */);
+                StretchBlt(memDC, 0, 0, tw, th, screenDC, r.X, r.Y, r.Width, r.Height, SRCCOPY);
+            }
 
             var bmi = new BITMAPINFO
             {
                 bmiHeader = new BITMAPINFOHEADER
                 {
                     biSize = (uint)Marshal.SizeOf<BITMAPINFOHEADER>(),
-                    biWidth = r.Width,
-                    biHeight = -r.Height, // top-down
+                    biWidth = tw,
+                    biHeight = -th, // top-down
                     biPlanes = 1,
                     biBitCount = 32,
                     biCompression = 0, // BI_RGB
                 },
                 bmiColors = new uint[256],
             };
-            var bytes = new byte[r.Width * r.Height * 4];
-            GetDIBits(memDC, hbmp, 0, (uint)r.Height, bytes, ref bmi, DIB_RGB_COLORS);
+            var bytes = new byte[tw * th * 4];
+            GetDIBits(memDC, hbmp, 0, (uint)th, bytes, ref bmi, DIB_RGB_COLORS);
 
             // GDI gives BGRA already (32-bit BI_RGB on Windows). Build a SoftwareBitmap.
-            var sb = new SoftwareBitmap(BitmapPixelFormat.Bgra8, r.Width, r.Height, BitmapAlphaMode.Premultiplied);
+            var sb = new SoftwareBitmap(BitmapPixelFormat.Bgra8, tw, th, BitmapAlphaMode.Premultiplied);
             sb.CopyFromBuffer(bytes.AsBuffer());
             return sb;
         }
@@ -109,8 +131,6 @@ public static class TextExtractorService
     /// <summary>對一個區域做 OCR · Run OCR over a region, returning recognised text.</summary>
     public static async Task<string> ExtractTextAsync(ScreenRect r, Language? lang = null)
     {
-        using var bmp = CaptureRegion(r);
-
         OcrEngine? engine = null;
         if (lang is not null) engine = OcrEngine.TryCreateFromLanguage(lang);
         engine ??= OcrEngine.TryCreateFromUserProfileLanguages();
@@ -118,6 +138,8 @@ public static class TextExtractorService
             throw new InvalidOperationException(
                 "No OCR language pack is installed. Add one in Windows Settings → Time & language → Language & region → (a language) → Optional features → handwriting/OCR.");
 
+        // The OCR engine rejects images larger than MaxImageDimension — downscale the capture to fit.
+        using var bmp = CaptureRegion(r, (int)OcrEngine.MaxImageDimension);
         var result = await engine.RecognizeAsync(bmp);
         return result.Text ?? "";
     }

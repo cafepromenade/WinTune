@@ -59,6 +59,12 @@ public sealed partial class MainWindow : Window
         Activate();
     }
 
+    /// <summary>開機自啟動：唔顯示視窗，淨係坐喺系統匣（背景服務照跑）· Login startup: stay hidden in the tray.</summary>
+    public void StartHiddenInTray()
+    {
+        try { AppWindow.Hide(); } catch { /* tray icon already installed; services already running */ }
+    }
+
     private void QuitFromTray()
     {
         _reallyQuit = true;

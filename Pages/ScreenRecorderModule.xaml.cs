@@ -59,11 +59,8 @@ public sealed partial class ScreenRecorderModule : Page
 
     private async void Change_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = $"WinTune-{DateTime.Now:yyyyMMdd-HHmmss}" };
-        picker.FileTypeChoices.Add("MP4", new System.Collections.Generic.List<string> { ".mp4" });
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSaveFileAsync();
-        if (f is not null) { _output = f.Path; OutputBox.Text = _output; }
+        var path = await FileDialogs.SaveFileAsync($"WinTune-{DateTime.Now:yyyyMMdd-HHmmss}", ".mp4");
+        if (path is not null) { _output = path; OutputBox.Text = _output; }
     }
 
     private void Record_Click(object sender, RoutedEventArgs e)

@@ -68,14 +68,6 @@ public sealed partial class ConfigBackupModule : Page
         CopyOutputBtn.Content = P("Copy", "複製");
     }
 
-    // ───────────────────────── pickers ─────────────────────────
-
-    private static void Init(object picker)
-    {
-        var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Shell);
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-    }
-
     // ───────────────────────── result/output plumbing ─────────────────────────
 
     private void Show(TweakResult r, string verb)
@@ -114,25 +106,16 @@ public sealed partial class ConfigBackupModule : Page
 
     private async void ExportBundle_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker
-        {
-            SuggestedFileName = $"WinTune-config-{DateTime.Now:yyyyMMdd-HHmm}",
-        };
-        picker.FileTypeChoices.Add("Zip", new System.Collections.Generic.List<string> { ".zip" });
-        Init(picker);
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        await Run(() => ConfigBackupService.ExportBundle(f.Path), P("Export bundle", "匯出檔案"));
+        var path = await FileDialogs.SaveFileAsync($"WinTune-config-{DateTime.Now:yyyyMMdd-HHmm}", ".zip");
+        if (path is null) return;
+        await Run(() => ConfigBackupService.ExportBundle(path), P("Export bundle", "匯出檔案"));
     }
 
     private async void ImportBundle_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        picker.FileTypeFilter.Add(".zip");
-        Init(picker);
-        var f = await picker.PickSingleFileAsync();
-        if (f is null) return;
-        await Run(() => ConfigBackupService.ImportBundle(f.Path), P("Import bundle", "匯入檔案"));
+        var path = await FileDialogs.OpenFileAsync(".zip");
+        if (path is null) return;
+        await Run(() => ConfigBackupService.ImportBundle(path), P("Import bundle", "匯入檔案"));
     }
 
     // ───────────────────────── snapshots ─────────────────────────
@@ -190,15 +173,9 @@ public sealed partial class ConfigBackupModule : Page
 
     private async void BundleFile_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileSavePicker
-        {
-            SuggestedFileName = $"wintune-config-{DateTime.Now:yyyyMMdd}",
-        };
-        picker.FileTypeChoices.Add("Git bundle", new System.Collections.Generic.List<string> { ".bundle" });
-        Init(picker);
-        var f = await picker.PickSaveFileAsync();
-        if (f is null) return;
-        await Run(() => ConfigBackupService.CreateBundle(f.Path), P("Create bundle", "建立 bundle"));
+        var path = await FileDialogs.SaveFileAsync($"wintune-config-{DateTime.Now:yyyyMMdd}", ".bundle");
+        if (path is null) return;
+        await Run(() => ConfigBackupService.CreateBundle(path), P("Create bundle", "建立 bundle"));
     }
 
     // ───────────────────────── capture & export ─────────────────────────
@@ -261,13 +238,10 @@ public sealed partial class ConfigBackupModule : Page
 
     private async void Mirror_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        Init(picker);
-        var f = await picker.PickSingleFolderAsync();
-        if (f is null) return;
-        MirrorDest.Text = f.Path;
-        await Run(() => ConfigBackupService.MirrorTo(f.Path), P("Mirror", "鏡像"));
+        var path = await FileDialogs.OpenFolderAsync();
+        if (path is null) return;
+        MirrorDest.Text = path;
+        await Run(() => ConfigBackupService.MirrorTo(path), P("Mirror", "鏡像"));
     }
 
     // ───────────────────────── output ─────────────────────────

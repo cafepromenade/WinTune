@@ -88,14 +88,7 @@ public sealed partial class BulkOpsModule : Page
         if (f is not null) { _target = f; TargetBox.Text = f; }
     }
 
-    private static async Task<string?> PickFolder()
-    {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
-        return folder?.Path;
-    }
+    private static Task<string?> PickFolder() => FileDialogs.OpenFolderAsync();
 
     private void Done(int ok, int fail, string verb)
     {

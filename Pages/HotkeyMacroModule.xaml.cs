@@ -162,12 +162,10 @@ public sealed partial class HotkeyMacroModule : Page
     {
         try
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.Shell);
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
-            picker.FileTypeFilter.Add("*");
-            var file = await picker.PickSingleFileAsync();
-            if (file is not null) TargetBox.Text = file.Path;
+            // Win32 COM picker (FileDialogs) instead of the WinRT FileOpenPicker, which fails silently
+            // when the app runs elevated. "*" all-files filter is omitted — FileDialogs always adds All files.
+            var path = await FileDialogs.OpenFileAsync();
+            if (path is not null) TargetBox.Text = path;
         }
         catch (Exception ex) { Fail(ex.Message); }
     }

@@ -154,15 +154,10 @@ public sealed partial class OneDriveModule : Page
 
     private async void Pick_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FolderPicker();
-        picker.FileTypeFilter.Add("*");
-        if (!string.IsNullOrWhiteSpace(_currentFolder))
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.ComputerFolder;
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var folder = await picker.PickSingleFolderAsync();
-        if (folder is not null)
+        var folder = await FileDialogs.OpenFolderAsync(P("Pick a OneDrive folder", "揀一個 OneDrive 資料夾"));
+        if (!string.IsNullOrWhiteSpace(folder))
         {
-            _currentFolder = folder.Path;
+            _currentFolder = folder;
             Reload();
         }
     }

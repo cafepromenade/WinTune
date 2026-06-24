@@ -22,8 +22,14 @@ public partial class App : Application
     private static string? _exportDocsDir;
     private static bool _takeSnapshot;
 
+    /// <summary>由命令列 "--minimized" 設定：開機自啟動時收入系統匣 · Start hidden in the tray (login startup).</summary>
+    public static bool StartMinimized { get; private set; }
+
     protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
     {
+        // 全域例外處理：任何模組出錯都唔會冧 app · Install global crash handling first of all.
+        CrashLogger.Install(this);
+
         ParseArgs();
 
         // 無頭模式：匯出每個功能嘅 Markdown 然後退出 · headless docs export then exit.
@@ -51,7 +57,10 @@ public partial class App : Application
 
         Shell = new MainWindow();
         ApplyThemeFromSettings();
-        Shell.Activate();
+        if (StartMinimized && Shell is MainWindow mw)
+            mw.StartHiddenInTray();      // login startup → stay in the tray, background services still run
+        else
+            Shell.Activate();
     }
 
     private static void ParseArgs()
@@ -63,6 +72,11 @@ public partial class App : Application
             if (string.Equals(argv[i], "--snapshot", StringComparison.OrdinalIgnoreCase))
             {
                 _takeSnapshot = true;
+                continue;
+            }
+            if (string.Equals(argv[i], "--minimized", StringComparison.OrdinalIgnoreCase))
+            {
+                StartMinimized = true;
                 continue;
             }
 

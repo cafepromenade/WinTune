@@ -98,13 +98,9 @@ public sealed partial class ImagingGameModule : Page
 
     private async void PickImage_Click(object sender, RoutedEventArgs e)
     {
-        var picker = new Windows.Storage.Pickers.FileOpenPicker();
-        foreach (var ext in new[] { ".img", ".iso", ".bin", ".raw", ".wic" }) picker.FileTypeFilter.Add(ext);
-        picker.FileTypeFilter.Add("*");
-        WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-        var f = await picker.PickSingleFileAsync();
-        if (f is null) return;
-        ImagePathBox.Text = f.Path;
+        var path = await FileDialogs.OpenFileAsync(".img", ".iso", ".bin", ".raw", ".wic");
+        if (path is null) return;
+        ImagePathBox.Text = path;
         UpdateImageSizeText();
     }
 

@@ -76,13 +76,10 @@ public sealed partial class RenameModule : Page
     {
         try
         {
-            var picker = new Windows.Storage.Pickers.FolderPicker();
-            picker.FileTypeFilter.Add("*");
-            WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-            var folder = await picker.PickSingleFolderAsync();
+            var folder = await FileDialogs.OpenFolderAsync(P("Pick a folder to rename in", "揀一個要改名嘅資料夾"));
             if (folder is not null)
             {
-                _folder = folder.Path;
+                _folder = folder;
                 FolderBox.Text = _folder;
                 LoadFiles();
                 Recompute();

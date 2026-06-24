@@ -109,4 +109,39 @@ public static class StartupManager
         blob[0] = enabled ? (byte)0x02 : (byte)0x03; // rest left as zeros (timestamp optional)
         RegistryHelper.SetValue(item.ApprovedRoot, item.ApprovedKey, item.ApprovedName, blob, RegistryValueKind.Binary);
     }
+
+    // ===== WinTune self-startup (run on login, minimized to the tray) =====
+
+    private const string SelfStartupName = "WinTune";
+
+    private static string SelfExePath()
+    {
+        try { return Environment.ProcessPath ?? ""; } catch { return ""; }
+    }
+
+    /// <summary>WinTune 開機自啟動係咪開咗 · Whether WinTune is set to run at login.</summary>
+    public static bool IsSelfStartupEnabled()
+    {
+        var v = RegistryHelper.GetValue(RegRoot.HKCU, RunKey, SelfStartupName) as string;
+        return !string.IsNullOrEmpty(v);
+    }
+
+    /// <summary>
+    /// 設定 WinTune 開機自啟動（HKCU Run，加 --minimized 收入系統匣）。
+    /// Enable/disable launching WinTune at login via HKCU\...\Run, started minimized to the tray.
+    /// </summary>
+    public static void SetSelfStartup(bool enabled)
+    {
+        if (enabled)
+        {
+            var exe = SelfExePath();
+            if (string.IsNullOrEmpty(exe)) return;
+            RegistryHelper.SetValue(RegRoot.HKCU, RunKey, SelfStartupName,
+                $"\"{exe}\" --minimized", RegistryValueKind.String);
+        }
+        else
+        {
+            RegistryHelper.DeleteValue(RegRoot.HKCU, RunKey, SelfStartupName);
+        }
+    }
 }

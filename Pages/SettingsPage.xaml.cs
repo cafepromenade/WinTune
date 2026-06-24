@@ -58,14 +58,11 @@ public sealed partial class SettingsPage : Page
         {
             try
             {
-                var picker = new Windows.Storage.Pickers.FileSavePicker { SuggestedFileName = "wintune-settings" };
-                picker.FileTypeChoices.Add("JSON", new System.Collections.Generic.List<string> { ".json" });
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-                var f = await picker.PickSaveFileAsync();
-                if (f is not null)
+                var path = await FileDialogs.SaveFileAsync("wintune-settings", ".json");
+                if (path is not null)
                 {
-                    SettingsStore.ExportTo(f.Path);
-                    Show(bar, InfoBarSeverity.Success, Loc.I.Pick("Exported.", "已匯出。"), f.Path);
+                    SettingsStore.ExportTo(path);
+                    Show(bar, InfoBarSeverity.Success, Loc.I.Pick("Exported.", "已匯出。"), path);
                 }
             }
             catch (Exception ex) { Show(bar, InfoBarSeverity.Error, Loc.I.Pick("Export failed", "匯出失敗"), ex.Message); }
@@ -76,13 +73,10 @@ public sealed partial class SettingsPage : Page
         {
             try
             {
-                var picker = new Windows.Storage.Pickers.FileOpenPicker();
-                picker.FileTypeFilter.Add(".json");
-                WinRT.Interop.InitializeWithWindow.Initialize(picker, WinRT.Interop.WindowNative.GetWindowHandle(App.Shell));
-                var f = await picker.PickSingleFileAsync();
-                if (f is not null)
+                var path = await FileDialogs.OpenFileAsync(".json");
+                if (path is not null)
                 {
-                    int n = SettingsStore.ImportFrom(f.Path);
+                    int n = SettingsStore.ImportFrom(path);
                     App.ApplyThemeFromSettings();
                     Show(bar, InfoBarSeverity.Success,
                         Loc.I.Pick($"Imported {n} setting(s).", $"已匯入 {n} 項設定。"),
